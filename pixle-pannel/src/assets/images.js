@@ -7,7 +7,7 @@ export const images = {
   logoBook: p('logo.png'),
   logoText: p('pixel panel.png'),
 
-  profile: '/44234cc2b1f391c26eddaf614bd9b90c8e7a14a4.jpg',
+  profile: '44234cc2b1f391c26eddaf614bd9b90c8e7a14a4.jpg',
 
   topbar: {
     search: '/search.png',
@@ -18,6 +18,7 @@ export const images = {
   },
 
   hero: '/photo_3_2026-06-24_15-49-22.jpg',
+  heroBanner: '652aed27b189d19bb89628c139de723b042f56e7.jpg',
 
   trending: {
     featured: '/photo_1_2026-06-24_15-49-22.jpg',
