@@ -1,13 +1,21 @@
-// Preview PAGE 1 (Sign Up)
-//import Page from './page-1/signup_page';
-
-// Preview PAGE 2 (Log In) — uncomment this, comment page1 line
-//import Page from './page-2/login_page';
-
-
-// Preview PAGE 3 (Get Started) — uncomment this, comment page1 line
-import Page from './page-3/page_3';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
+import GetStartedPage from './pages/GetStartedPage';
+import InterestsPage from './pages/InterestsPage';
+import HomePage from './pages/HomePage';
+import ReaderPage from './pages/ReaderPage';
 
 export default function App() {
-  return <Page />;
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/signup" replace />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/get-started" element={<GetStartedPage />} />
+      <Route path="/interests" element={<InterestsPage />} />
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/reader" element={<ReaderPage />} />
+    </Routes>
+  );
 }

@@ -1,0 +1,15 @@
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo__icon {
+  display: block;
+  height: auto;
+}
+
+.logo__icon--full {
+  width: clamp(180px, 28vw, 260px);
+  max-width: 100%;
+  object-fit: contain;
+}

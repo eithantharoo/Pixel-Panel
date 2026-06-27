@@ -1,0 +1,181 @@
+.manga-card {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.manga-card__cover {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #2a2040;
+}
+
+.manga-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* For you – large with title overlay */
+.manga-card--overlay .manga-card__cover { width: 140px; height: 190px; }
+
+.manga-card__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+  padding: 0.75rem;
+}
+
+.manga-card__overlay-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+/* Newly released */
+.manga-card--new .manga-card__cover { width: 120px; height: 160px; }
+
+.manga-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: #fcf807;
+  color: #000;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Popular */
+.manga-card--popular .manga-card__cover { width: 120px; height: 160px; }
+
+.manga-card__rating {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.manga-card--new .manga-card__title,
+.manga-card--popular .manga-card__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #3d114b;
+  line-height: 1.3;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Trending sidebar */
+.manga-card--trending {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.manga-card--trending .manga-card__cover { width: 48px; height: 64px; flex-shrink: 0; }
+
+.manga-card--featured .manga-card__cover { width: 100%; height: 120px; }
+.manga-card--featured { width: 100%; }
+
+.manga-card__rank--featured {
+  top: 8px; left: 8px;
+  width: 26px; height: 26px;
+  font-size: 0.8125rem;
+}
+
+.manga-card__rank {
+  position: absolute;
+  top: 6px; left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: #fcf807;
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.manga-card--trending .manga-card__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manga-card__rating--inline {
+  position: static;
+  background: transparent;
+  padding: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+/* Continue reading */
+.manga-card--continue {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.manga-card--continue .manga-card__cover { width: 44px; height: 58px; flex-shrink: 0; }
+
+.manga-card__continue-info { flex: 1; min-width: 0; }
+
+.manga-card__continue-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manga-card__continue-chapter {
+  margin-top: 0.125rem;
+  font-size: 0.6875rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.manga-card__progress {
+  margin-top: 0.375rem;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.2);
+  overflow: hidden;
+}
+
+.manga-card__progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: #fcf807;
+  transition: width 0.3s ease;
+}

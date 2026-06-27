@@ -1,0 +1,33 @@
+/* Shares base auth styles defined in SignUpPage.css.
+   Both pages use the same .auth-page / .auth-card / .auth-form class names,
+   so importing this file alongside SignUpPage.css gives the full ruleset. */
+
+.auth-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -6px;
+}
+
+.auth-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.auth-checkbox input {
+  margin-top: 4px;
+  accent-color: var(--yellow-normal);
+}
+
+.auth-checkbox strong {
+  display: block;
+}
+
+.auth-checkbox small {
+  display: block;
+  margin-top: 2px;
+  opacity: 0.85;
+  font-weight: 400;
+}

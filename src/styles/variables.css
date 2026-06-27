@@ -23,7 +23,9 @@
   --purple-dark-active: #4e2d58;
   --purple-darker: #3d2345;
 
+  /* Base tokens */
   --text-white: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.75);
   --input-bg: #e6d9c5;
   --input-placeholder: #8a7f72;
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -31,4 +33,13 @@
   --radius-pill: 999px;
   --radius-card: 28px;
   --shadow-card: 0 24px 60px rgba(61, 35, 69, 0.25);
+
+  /* Reader semantic tokens (used by reader page components) */
+  --bg-main: var(--purple-normal);
+  --bg-sidebar: var(--purple-dark);
+  --bg-card: var(--purple-dark-active);
+  --bg-card-secondary: var(--purple-darker);
+  --text-yellow: var(--yellow-normal);
+  --genre-pill: var(--purple-light-active);
+  --progress-bg: #2a1f32;
 }
