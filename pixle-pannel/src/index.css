@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+:root {
+  --purple-light: #f7eff9;
+  --purple-light-hover: #f3e8f6;
+  --purple-light-active: #e6cfed;
+  --purple-normal: #ad63c4;
+  --purple-normal-hover: #9c59b0;
+  --purple-normal-active: #8a4f9d;
+  --purple-dark: #824a93;
+  --purple-dark-hover: #683b76;
+  --purple-dark-active: #4e2d58;
+  --purple-darker: #3d2345;
+  --yellow-light: #fffee6;
+  --yellow-normal: #fcf807;
+  --yellow-normal-hover: #e3df06;
+  --yellow-normal-active: #cac606;
+  --yellow-dark: #bdba05;
+  --yellow-dark-hover: #979504;
+  --yellow-dark-active: #717003;
+  --yellow-darker: #585702;
+  --bg-main: var(--purple-normal);
+  --bg-sidebar: var(--purple-dark);
+  --bg-card: var(--purple-dark-active);
+  --bg-card-secondary: var(--purple-darker);
+  --bg-topbar: transparent;
+  --text-yellow: var(--yellow-normal);
+  --btn-yellow: var(--yellow-normal);
+  --btn-yellow-hover: var(--yellow-normal-hover);
+  --btn-purple: var(--purple-normal-hover);
+  --btn-purple-hover: var(--purple-normal-active);
+  --icon-hover-green: var(--yellow-dark-active);
+  --progress-bg: #2a1f32;
+  --genre-pill: var(--purple-light-active);
+  --text-muted: #ffffffbf;
+  --sidebar-gradient: linear-gradient(
+    180deg,
+    var(--purple-dark) 0%,
+    var(--purple-dark-hover) 40%,
+    var(--purple-dark-active) 75%,
+    var(--purple-darker) 100%
+  );
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+.btn-yellow {
+  background-color: var(--btn-yellow);
+  color: #000;
+  transition: background-color 0.2s;
+}
+
+.btn-yellow:hover {
+  background-color: var(--btn-yellow-hover);
+}
+
+.btn-yellow:active {
+  background-color: var(--yellow-normal-active);
+}
+
+.btn-purple {
+  background-color: var(--btn-purple);
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.btn-purple:hover {
+  background-color: var(--btn-purple-hover);
+}
+
+.sidebar-gradient {
+  background: var(--sidebar-gradient);
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.progress-track {
+  background-color: var(--progress-bg);
+  border-radius: 9999px;
+  flex: 1;
+  height: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(
+    90deg,
+    var(--yellow-normal) 0%,
+    var(--yellow-dark) 55%,
+    var(--yellow-dark-active) 100%
+  );
+  border-radius: 9999px;
+  height: 100%;
+  box-shadow: 0 0 6px rgba(252, 248, 7, 0.45);
+}
+
+.icon-swap {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  position: relative;
+}
+
+.icon-swap img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s;
+  position: absolute;
+  inset: 0;
+}
+
+.icon-swap .icon-default {
+  opacity: 1;
+}
+
+.icon-swap .icon-hover,
+.group:hover .icon-swap .icon-default {
+  opacity: 0;
+}
+
+.icon-swap.w-4 {
+  width: 1rem;
+  height: 1rem;
+}
+
+.group:hover .icon-swap .icon-hover {
+  opacity: 1;
+}
