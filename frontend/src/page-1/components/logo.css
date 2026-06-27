@@ -1,15 +1,7 @@
 .logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo__icon {
   display: block;
-  height: auto;
-}
-
-.logo__icon--full {
-  width: clamp(180px, 28vw, 260px);
+  width: clamp(280px, 32vw, 420px);
   max-width: 100%;
+  height: auto;
   object-fit: contain;
 }

@@ -1,22 +1,8 @@
-.book {
-  position: absolute;
-  width: 90px;
-}
-
-.book--red {
-  top: 18%;
-  left: 8%;
-  transform: rotate(-8deg);
-}
-
-.book--yellow {
-  top: 42%;
-  left: 34%;
-  transform: rotate(6deg);
-}
-
-.book--stack {
-  bottom: 12%;
-  right: 10%;
-  width: 110px;
+.brand-sidebar {
+  flex: 1;
+  min-width: 280px;
+  padding: 48px 40px;
+  display: flex;
+  align-items: flex-start;      
+  justify-content: flex-start; 
 }
