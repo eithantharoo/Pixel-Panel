@@ -1,6 +1,6 @@
 name: Telegram Git Push Notification
 
-on:
+on: 
   push:
 
 jobs:
@@ -12,8 +12,10 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          message_thread_id: ${{ secrets.TELEGRAM_THREAD_ID }} # 👈 Add this line
           message: |
             🚀 New push to repository: ${{ github.repository }}
             👤 Pushed by: ${{ github.actor }}
             📝 Commit message: ${{ github.event.head_commit.message }}
             🔗 View changes: ${{ github.event.compare }}
+            📌 Don't forget to pull
