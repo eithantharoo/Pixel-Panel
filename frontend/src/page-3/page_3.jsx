@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './page_3.css';
 
 const COMIC_COVERS = [
@@ -14,6 +15,7 @@ const COMIC_COVERS = [
 ];
 
 export default function StoryHubLanding() {
+  const navigate = useNavigate();
   return (
     <div className="landing-container">
       {/* Left Content Column */}
@@ -24,7 +26,7 @@ export default function StoryHubLanding() {
         <p className="sub-heading">
           Pick a few genres and types that excite you. We'll personalize your Story Hub just for you.
         </p>
-        <button className="get-started-btn">
+        <button className="get-started-btn" onClick={() => navigate('/interests')}>
           Get Started 
           <span className="arrow-icon">→</span>
         </button>

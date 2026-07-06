@@ -5,19 +5,19 @@ import './InterestsPage.css';
 
 const INTEREST_ROWS = [
   [
-    { id: 'romance',      label: 'Romance' },
-    { id: 'mystery',      label: 'Mystery' },
-    { id: 'comedy',       label: 'Comedy' },
-    { id: 'fantasy',      label: 'Fantasy' },
-    { id: 'horror',       label: 'Horror' },
+    { id: 'romance', label: 'Romance' },
+    { id: 'mystery', label: 'Mystery' },
+    { id: 'comedy', label: 'Comedy' },
+    { id: 'fantasy', label: 'Fantasy' },
+    { id: 'horror', label: 'Horror' },
   ],
   [
-    { id: 'sci-fi',       label: 'Sci-Fi' },
-    { id: 'slice of life',label: 'Slice of Life' },
-    { id: 'historical',   label: 'Historical' },
-    { id: 'adventure',    label: 'Adventure' },
-    { id: 'drama',        label: 'Drama' },
-    { id: 'thriller',     label: 'Thriller' },
+    { id: 'sci-fi', label: 'Sci-Fi' },
+    { id: 'slice of life', label: 'Slice of Life' },
+    { id: 'historical', label: 'Historical' },
+    { id: 'adventure', label: 'Adventure' },
+    { id: 'drama', label: 'Drama' },
+    { id: 'thriller', label: 'Thriller' },
   ],
 ];
 
@@ -61,7 +61,7 @@ export default function InterestsPage() {
     <section className="interests-page">
       <div className="interests-page__picker">
         <h2 className="interests-page__heading">Choose Your interests</h2>
-        <p className="interests-page__subheading">select three or more</p>
+        <p className="interests-page__subheading">select at least three or more</p>
 
         <div className="interests-page__rows">
           {INTEREST_ROWS.map((row) => (
