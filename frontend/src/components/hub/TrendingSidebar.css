@@ -73,6 +73,22 @@
 
 .trending__view-all:hover { filter: brightness(1.05); }
 
+/* Clickable card wrapper */
+.trending__card-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+/* "Read Now" overlay for trending cards */
+.trending__card-btn:hover .manga-card__cover::after {
+  opacity: 1;
+}
+
 @media (max-width: 1100px) {
   .trending { display: none; }
 }

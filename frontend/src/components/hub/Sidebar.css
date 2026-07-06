@@ -54,10 +54,122 @@
 .sidebar__arrow {
   margin-left: auto;
   opacity: 0.6;
+  transition: transform 0.25s ease;
+}
+
+.sidebar__arrow--up {
+  transform: rotate(180deg);
 }
 
 @media (max-width: 900px) {
   .sidebar {
     display: none;
   }
+}
+
+/* ── Genres inline submenu ─────────────────────────────────── */
+.sidebar__genres-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__link--genres-open {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Collapsible container */
+.sidebar__genre-list {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar__genre-list--open {
+  max-height: 260px;
+}
+
+/* Scrollable inner ul — scrollbar always visible */
+.sidebar__genre-list ul {
+  list-style: none;
+  margin: 0.25rem 0 0.25rem 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  max-height: 236px;
+  overflow-y: scroll;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.12);
+}
+
+/* WebKit (Chrome, Safari, Edge) — explicit width forces persistent classic scrollbar on macOS */
+.sidebar__genre-list ul::-webkit-scrollbar {
+  width: 6px;
+  display: block;
+}
+
+.sidebar__genre-list ul::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  margin: 4px 0;
+}
+
+.sidebar__genre-list ul::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  min-height: 24px;
+}
+
+.sidebar__genre-list ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Genre items */
+.sidebar__genre-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.45rem 0.625rem;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar__genre-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.sidebar__genre-item--active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-weight: 700;
+}
+
+.sidebar__genre-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.sidebar__genre-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__genre-item svg {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.9;
 }

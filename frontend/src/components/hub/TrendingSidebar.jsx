@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import MangaCard from './MangaCard';
 import './TrendingSidebar.css';
 
 function TrendingSidebar({ items }) {
+  const navigate = useNavigate();
   const featured = items.find((item) => item.featured);
   const list = items.filter((item) => !item.featured);
 
@@ -12,13 +14,20 @@ function TrendingSidebar({ items }) {
 
         {featured && (
           <div className="trending__featured">
-            <MangaCard
-              title={featured.title}
-              color={featured.color}
-              variant="featured"
-              rating={featured.rating}
-              rank={featured.rank}
-            />
+            <button
+              type="button"
+              className="trending__card-btn"
+              aria-label={`Read ${featured.title}`}
+              onClick={() => navigate('/reader')}
+            >
+              <MangaCard
+                title={featured.title}
+                color={featured.color}
+                variant="featured"
+                rating={featured.rating}
+                rank={featured.rank}
+              />
+            </button>
             <div className="trending__featured-info">
               <span className="trending__featured-rank">#{featured.rank}</span>
               <p className="trending__featured-title">{featured.title}</p>
@@ -35,13 +44,20 @@ function TrendingSidebar({ items }) {
         <ul className="trending__list">
           {list.map((item) => (
             <li key={item.id}>
-              <MangaCard
-                title={item.title}
-                color={item.color}
-                variant="trending"
-                rating={item.rating}
-                rank={item.rank}
-              />
+              <button
+                type="button"
+                className="trending__card-btn"
+                aria-label={`Read ${item.title}`}
+                onClick={() => navigate('/reader')}
+              >
+                <MangaCard
+                  title={item.title}
+                  color={item.color}
+                  variant="trending"
+                  rating={item.rating}
+                  rank={item.rank}
+                />
+              </button>
             </li>
           ))}
         </ul>

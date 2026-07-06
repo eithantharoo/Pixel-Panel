@@ -17,9 +17,27 @@
 .continue-reading__items {
   display: flex;
   flex: 1;
-  gap: 1.5rem;
+  gap: 1rem;
   min-width: 0;
-  overflow-x: auto;
+  overflow: hidden;
+}
+
+/* Clickable wrapper for each book card */
+.continue-reading__btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.continue-reading__btn:hover {
+  transform: translateY(-2px);
 }
 
 .continue-reading__view-all {

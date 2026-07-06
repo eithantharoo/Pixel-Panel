@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { GENRES } from '../../data/home_data';
 import './Sidebar.css';
 
 const NAV_ITEMS = [
@@ -5,7 +7,6 @@ const NAV_ITEMS = [
   { id: 'favorite', label: 'Favorite', icon: 'heart' },
   { id: 'library',  label: 'Library',  icon: 'library' },
   { id: 'history',  label: 'History',  icon: 'history' },
-  { id: 'genres',   label: 'Genres',   icon: 'genres', hasArrow: true },
 ];
 
 const BOTTOM_ITEMS = [
@@ -58,7 +59,22 @@ function NavIcon({ type }) {
   );
 }
 
-function Sidebar({ activeItem = 'home' }) {
+function Sidebar({ activeItem = 'home', onNavChange, activeGenre, onGenreSelect }) {
+  const [genreOpen, setGenreOpen] = useState(false);
+
+  function handleGenresClick() {
+    setGenreOpen(v => !v);
+  }
+
+  function handleGenrePick(genreId) {
+    onGenreSelect && onGenreSelect(genreId);
+  }
+
+  function handleNavClick(id) {
+    if (id !== 'genres') setGenreOpen(false);
+    onNavChange && onNavChange(id);
+  }
+
   return (
     <aside className="sidebar">
       <nav className="sidebar__nav" aria-label="Sidebar navigation">
@@ -67,16 +83,58 @@ function Sidebar({ activeItem = 'home' }) {
             key={item.id}
             type="button"
             className={`sidebar__link${activeItem === item.id ? ' sidebar__link--active' : ''}`}
+            onClick={() => handleNavClick(item.id)}
           >
             <NavIcon type={item.icon} />
             <span>{item.label}</span>
-            {item.hasArrow && (
-              <svg className="sidebar__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            )}
           </button>
         ))}
+
+        {/* Genres with inline expandable submenu */}
+        <div className="sidebar__genres-group">
+          <button
+            type="button"
+            id="sidebar-genres-btn"
+            className={`sidebar__link sidebar__link--genres${genreOpen ? ' sidebar__link--genres-open' : ''}${activeGenre ? ' sidebar__link--active' : ''}`}
+            aria-expanded={genreOpen}
+            onClick={handleGenresClick}
+          >
+            <NavIcon type="genres" />
+            <span>Genres</span>
+            <svg
+              className={`sidebar__arrow${genreOpen ? ' sidebar__arrow--up' : ''}`}
+              width="12" height="12" viewBox="0 0 12 12"
+              aria-hidden="true"
+            >
+              <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+
+          {/* Scrollable genre list */}
+          <div className={`sidebar__genre-list${genreOpen ? ' sidebar__genre-list--open' : ''}`}>
+            <ul role="listbox" aria-label="Genre options">
+              {GENRES.map(genre => (
+                <li key={genre.id}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={activeGenre === genre.id}
+                    className={`sidebar__genre-item${activeGenre === genre.id ? ' sidebar__genre-item--active' : ''}`}
+                    onClick={() => handleGenrePick(genre.id)}
+                  >
+                    <span className="sidebar__genre-icon">{genre.icon}</span>
+                    <span className="sidebar__genre-label">{genre.label}</span>
+                    {activeGenre === genre.id && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </nav>
 
       <div className="sidebar__bottom">
