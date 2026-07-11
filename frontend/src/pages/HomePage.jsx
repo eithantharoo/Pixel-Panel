@@ -61,14 +61,14 @@ export default function HomePage() {
     setActiveGenre(null);
   }
 
-  // When genre is selected, switch back to home view
+  // When genre is selected (from header dropdown or sidebar), switch back to home view
   function handleGenreSelect(genreId) {
     setActiveGenre(genreId);
     if (genreId !== null) setActiveNav('home');
   }
 
   const showSidebar  = activeNav === 'home' && !activeGenre;
-  const showContinue = activeNav === 'home';
+  const showContinue = activeNav !== 'history'; // hide footer on History view
 
   function renderContent() {
     if (activeNav === 'favorite') return <FavoritesView items={FAVORITES} />;
@@ -82,7 +82,10 @@ export default function HomePage() {
       <Sidebar activeItem={activeNav} onNavChange={handleNavChange} activeGenre={activeGenre} onGenreSelect={handleGenreSelect} />
 
       <div className="home-page__main">
-        <HomeHeader />
+        <HomeHeader
+          activeGenre={activeGenre}
+          onGenreSelect={handleGenreSelect}
+        />
 
         <div className={`home-page__body${showSidebar ? '' : ' home-page__body--full'}`}>
           <div className="home-page__content">
@@ -93,7 +96,13 @@ export default function HomePage() {
         </div>
       </div>
 
-      {showContinue && <ContinueReading items={CONTINUE_READING} onViewAll={() => handleNavChange('history')} />}
+      {/* Footer Continue Reading bar — hidden on History view */}
+      {showContinue && (
+        <ContinueReading
+          items={CONTINUE_READING}
+          onViewAll={() => handleNavChange('history')}
+        />
+      )}
     </div>
   );
 }

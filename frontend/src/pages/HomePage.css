@@ -1,3 +1,4 @@
+/* ── Base layout ─────────────────────────────────────────────────── */
 .home-page {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -11,10 +12,12 @@
   background: #e6cfed;
 }
 
-/* When ContinueReading strip is hidden (Favorites / History views) */
+/* ContinueReading footer is always visible now — kept for fallback */
 .home-page--no-continue {
-  grid-template-rows: 1fr;
-  grid-template-areas: "nav main";
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "nav main"
+    "continue continue";
 }
 
 .home-page > .sidebar {
@@ -31,18 +34,21 @@
   min-width: 0;
   min-height: 0;
   background: #e6cfed;
+  overflow: hidden;
 }
 
 .home-page > .continue-reading {
   grid-area: continue;
 }
 
+/* ── Body (content + trending sidebar) ──────────────────────────── */
 .home-page__body {
   display: flex;
   flex: 1;
   gap: 0.75rem;
   padding: 0 1rem 1rem 1.5rem;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* Full-width body when TrendingSidebar is hidden */
@@ -59,6 +65,7 @@
   overflow-y: auto;
 }
 
+/* ── Manga sections ──────────────────────────────────────────────── */
 .home-section__title {
   font-size: 1rem;
   font-weight: 700;
@@ -88,12 +95,62 @@
   flex-shrink: 0;
 }
 
+/* ── Responsive: Tablet (≤ 1024px) ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .home-page__body {
+    padding: 0 0.75rem 1rem 1rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 1rem;
+  }
+}
+
+/* ── Responsive: No sidebar (≤ 900px) ───────────────────────────── */
 @media (max-width: 900px) {
   .home-page {
     grid-template-columns: 1fr;
-    grid-template-areas: "main" "continue";
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "main"
+      "continue";
   }
 
-  .home-page > .sidebar { display: none; }
-  .home-page__body { padding: 0 1rem 1rem; }
+  .home-page > .sidebar {
+    display: none;
+  }
+
+  .home-page__body {
+    padding: 0 1rem 1rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 1rem;
+  }
+}
+
+/* ── Responsive: Mobile (≤ 600px) ───────────────────────────────── */
+@media (max-width: 600px) {
+  .home-page__body {
+    padding: 0 0.75rem 1rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 0.75rem;
+  }
+
+  .home-section__title {
+    font-size: 0.9375rem;
+  }
+
+  .home-section__row {
+    gap: 0.625rem;
+  }
+}
+
+/* ── Responsive: Small mobile (≤ 400px) ─────────────────────────── */
+@media (max-width: 400px) {
+  .home-page__body {
+    padding: 0 0.5rem 1rem;
+  }
 }
