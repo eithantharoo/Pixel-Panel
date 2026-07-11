@@ -1,0 +1,31 @@
+name: Telegram Git Push Notification
+
+on: 
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Message via Native API
+        env:
+          CHAT_ID: ${{ secrets.TELEGRAM_TO }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+          TEXT: |
+            🚀 New push to repository: ${{ github.repository }}
+            👤 Pushed by: ${{ github.actor }}
+            📝 Commit message: ${{ github.event.head_commit.message }}
+            🔗 View changes: ${{ github.event.compare }}
+        run: |
+          # JSON payload generation using jq to protect against special characters
+          PAYLOAD=$(jq -n \
+            --arg chat_id "$CHAT_ID" \
+            --arg thread_id "$THREAD_ID" \
+            --arg text "$TEXT" \
+            '{chat_id: $chat_id, message_thread_id: ($thread_id | tonumber), text: $text}')
+          
+          # Hit Telegram's API directly
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"

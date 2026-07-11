@@ -1,0 +1,112 @@
+.interest-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem;
+  color: #3d114b;
+  transition: transform 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.interest-card:hover {
+  transform: translateY(-2px);
+}
+
+.interest-card:active {
+  transform: translateY(0);
+}
+
+.interest-card--compact {
+  gap: 0;
+  padding: 0;
+}
+
+.interest-card__cube-wrap {
+  position: relative;
+  display: inline-flex;
+  border-radius: 12px;
+  transition: box-shadow 0.25s ease;
+}
+
+.interest-card--selected .interest-card__cube-wrap {
+  box-shadow: 0 0 0 3px #fefdb2;
+}
+
+.interest-card__cube {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: radial-gradient(circle at center, #f7eafb 0%, #e6bff3 45%, #ad31d7 100%);
+  box-shadow: 0 2px 8px rgba(173, 49, 215, 0.25);
+}
+
+.interest-card--compact .interest-card__cube-wrap {
+  border-radius: 10px;
+}
+
+.interest-card--compact .interest-card__cube {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+}
+
+.interest-card--compact .interest-card__cube>svg {
+  width: 22px;
+  height: 22px;
+}
+
+.interest-card__tick {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.interest-card__tick svg {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.interest-card--selected .interest-card__tick svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.interest-card--compact .interest-card__tick {
+  top: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.interest-card--compact .interest-card__tick svg {
+  width: 8px;
+  height: 7px;
+}
+
+.interest-card__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #3d114b;
+  text-align: center;
+  line-height: 1.2;
+}

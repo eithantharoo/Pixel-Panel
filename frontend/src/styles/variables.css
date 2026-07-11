@@ -1,0 +1,68 @@
+:root {
+  /* Dashboard design tokens - EXACT TO REFERENCE */
+  --color-bg-app-canvas: #a77fdc;
+  --color-bg-panel-dark: #2b1b42;
+  --color-bg-panel-dark-alt: #24143a;
+  --color-accent-yellow: #fde130;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255,255,255,0.8);
+  --color-panel-border: rgba(255,255,255,0.12);
+  --color-progress-track: rgba(255,255,255,0.18);
+  --layout-gap: 16px;
+
+  /* Yellow palette — shared across the whole app (auth pages + home/reader) */
+  --yellow-light: #fffee6;
+  --yellow-light-hover: #fffeda;
+  --yellow-light-active: #fefdb2;
+  --yellow-normal: var(--color-accent-yellow);
+  --yellow-normal-hover: #f3d41c;
+  --yellow-normal-active: #dfbf10;
+  --yellow-dark: #bdba05;
+  --yellow-dark-hover: #979504;
+  --yellow-dark-active: #717003;
+  --yellow-darker: #585702;
+
+  /* Purple palette — shared across the whole app (auth pages + home/reader) */
+  --purple-light: #f7eff9;
+  --purple-light-hover: #f3e8f6;
+  --purple-light-active: #e6cfed;
+  --purple-normal: #ad63c4;
+  --purple-normal-hover: #9c59b0;
+  --purple-normal-active: #8a4f9d;
+  --purple-dark: #824a93;
+  --purple-dark-hover: #683b76;
+  --purple-dark-active: #4e2d58;
+  --purple-darker: #3d2345;
+
+  --text-white: #ffffff;
+  --input-bg: #e6d9c5;
+  --input-placeholder: #8a7f72;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
+  --radius-pill: 9999px;
+  --radius-card: 24px;
+  --shadow-card: 0 28px 64px rgba(31, 14, 56, 0.3);
+
+  /* App shell (home/reader) — light lavender surround, royal-purple panels */
+  --bg-app: var(--color-bg-app-canvas);
+  --bg-card: var(--color-bg-panel-dark);
+  --bg-card-secondary: var(--color-bg-panel-dark-alt);
+  --text-yellow: var(--color-accent-yellow);
+  --text-muted: var(--color-text-secondary);
+  --panel-control-idle: rgba(126, 78, 156, 0.18);
+  --panel-control-hover: rgba(155, 112, 189, 0.32);
+  --panel-control-active: rgba(253, 225, 48, 0.16);
+  --panel-control-active-strong: rgba(253, 225, 48, 0.22);
+  --panel-control-border: rgba(198, 162, 224, 0.16);
+  --panel-control-border-strong: rgba(253, 225, 48, 0.28);
+  --panel-control-text: #eee3f7;
+  --panel-control-muted: #cdb8dd;
+  --panel-divider: rgba(198, 162, 224, 0.2);
+  --panel-hover-text: #fff4a8;
+
+  /* Secondary accent (home/reader only) — lilac pills & secondary actions */
+  --accent-lilac: #9b70bd;
+  --accent-lilac-hover: #8a5fac;
+  --accent-lilac-active: #794f9a;
+  --genre-pill: var(--accent-lilac);
+}

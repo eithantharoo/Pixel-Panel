@@ -1,0 +1,7 @@
+.logo {
+  display: block;
+  width: clamp(280px, 32vw, 420px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}

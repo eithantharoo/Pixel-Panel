@@ -1,0 +1,69 @@
+import { useNavigate } from 'react-router-dom';
+import { Star } from 'lucide-react';
+import { GENRES } from '../../data/home_data';
+import GenreIcon from './GenreIcon';
+import './GenreView.css';
+
+function normalise(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+export default function GenreView({ genreId, query = '' }) {
+  const navigate = useNavigate();
+  const genre = GENRES.find(g => g.id === genreId);
+
+  if (!genre) return null;
+
+  const filteredBooks = genre.books.filter((book) => normalise(book.title).includes(normalise(query)));
+  const subtitle = query
+    ? `${filteredBooks.length} of ${genre.books.length} titles match`
+    : `${genre.books.length} titles in this genre`;
+
+  return (
+    <div className="genre-view">
+      <div className="genre-view__banner">
+        <span className="genre-view__banner-icon">
+          <GenreIcon genreId={genre.id} size={28} strokeWidth={2.1} />
+        </span>
+        <div>
+          <h2 className="genre-view__title">{genre.label}</h2>
+          <p className="genre-view__subtitle">{subtitle}</p>
+        </div>
+      </div>
+
+      {filteredBooks.length === 0 ? (
+        <div className="genre-view__empty">
+          <p>No titles found</p>
+          <span>Try another search in {genre.label}.</span>
+        </div>
+      ) : (
+        <div className="genre-view__grid">
+          {filteredBooks.map(book => (
+            <button
+              key={book.id}
+              type="button"
+              className="genre-view__book-btn"
+              onClick={() => navigate('/reader')}
+              aria-label={`Read ${book.title}`}
+            >
+              <div
+                className="genre-view__cover"
+                style={{ background: `linear-gradient(160deg, ${book.color}, ${book.color}88)` }}
+              >
+                <div className="genre-view__rating">
+                  <Star size={11} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />
+                  <span>{book.rating.toFixed(1)}</span>
+                </div>
+
+                <div className="genre-view__hover-overlay">
+                  <span className="genre-view__read-btn">Read Now</span>
+                </div>
+              </div>
+              <p className="genre-view__book-title">{book.title}</p>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
