@@ -1,0 +1,181 @@
+/* ── Footer bar — full width, rounded top corners ───────────────── */
+.continue-reading {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #3d2345 0%, #2a1535 100%);
+  border-radius: 0 16px 0 0;           /* left flush, right top rounded */
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(173, 99, 196, 0.28);
+  flex-shrink: 0;
+  overflow: hidden;                     /* clip items as they slide in */
+}
+
+/* ── Hidden checkbox — drives the open/close state ──────────────── */
+.continue-reading__checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ── Toggle label (the "Continue Reading" button) ───────────────── */
+.continue-reading__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(130, 74, 147, 0.2);
+  border: 1px solid rgba(173, 99, 196, 0.28);
+  color: #e3d060;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.continue-reading__toggle:hover {
+  background: rgba(173, 99, 196, 0.32);
+  border-color: rgba(230, 207, 237, 0.34);
+}
+
+/* Active state when the strip is expanded */
+.continue-reading--open .continue-reading__toggle {
+  background: rgba(252, 248, 7, 0.15);
+  border-color: rgba(252, 248, 7, 0.35);
+  color: #fcf807;
+}
+
+.continue-reading__toggle-icon {
+  flex-shrink: 0;
+}
+
+.continue-reading__toggle-arrow {
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when open */
+.continue-reading--open .continue-reading__toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* ── Book strip — hidden by default, slides in on open ──────────── */
+.continue-reading__items {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;                              /* take all remaining space */
+
+  /* Collapsed state */
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-left: 0;
+
+  /* Smooth slide transition */
+  transition:
+    max-width   0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity     0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Expanded state when checkbox is checked */
+.continue-reading--open .continue-reading__items {
+  max-width: 2000px;                    /* large enough for 4 books */
+  opacity: 1;
+  margin-left: 1.25rem;
+}
+
+/* ── Each book button in the strip ──────────────────────────────── */
+.continue-reading__item-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.continue-reading__item-btn:hover {
+  background: rgba(173, 99, 196, 0.18);
+  transform: translateY(-2px);
+}
+
+/* ── View All button — hidden by default, slides in with books ───── */
+.continue-reading__view-all {
+  flex-shrink: 0;
+  padding: 0.45rem 1.25rem;
+  border-radius: 999px;
+  background: #fcf807;
+  color: #000;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+
+  /* Collapsed state */
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+
+  /* Smooth slide transition — slightly delayed so books appear first */
+  transition:
+    max-width   0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    opacity     0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.08s,
+    padding     0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    filter      0.2s ease;
+}
+
+/* Expanded state */
+.continue-reading--open .continue-reading__view-all {
+  max-width: 160px;
+  opacity: 1;
+  padding: 0.45rem 1.25rem;
+  margin-left: 1rem;
+}
+
+.continue-reading__view-all:hover { filter: brightness(1.08); }
+
+/* ── Responsive: Tablet ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .continue-reading {
+    padding: 0.75rem 1rem;
+    border-radius: 0 12px 0 0;
+  }
+
+  .continue-reading__items {
+    gap: 0.75rem;
+  }
+}
+
+/* ── Responsive: Mobile ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .continue-reading {
+    padding: 0.625rem 0.875rem;
+    border-radius: 0 10px 0 0;
+  }
+
+  .continue-reading__toggle {
+    font-size: 0.8125rem;
+    padding: 0.3rem 0.625rem 0.3rem 0.4rem;
+  }
+}

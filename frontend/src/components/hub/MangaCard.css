@@ -7,10 +7,9 @@
 
 .manga-card__cover {
   position: relative;
-  border-radius: 16px;
+  border-radius: 10px;
   overflow: hidden;
   background: #2a2040;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .manga-card__cover img {
@@ -22,8 +21,8 @@
 
 /* For you – large with title overlay */
 .manga-card--overlay .manga-card__cover {
-  width: 156px;
-  height: 212px;
+  width: 140px;
+  height: 190px;
 }
 
 .manga-card__overlay {
@@ -44,8 +43,8 @@
 
 /* Newly released */
 .manga-card--new .manga-card__cover {
-  width: 132px;
-  height: 176px;
+  width: 120px;
+  height: 160px;
 }
 
 .manga-card__badge {
@@ -63,8 +62,8 @@
 
 /* Popular */
 .manga-card--popular .manga-card__cover {
-  width: 132px;
-  height: 176px;
+  width: 120px;
+  height: 160px;
 }
 
 .manga-card__rating {
@@ -82,19 +81,13 @@
   font-weight: 600;
 }
 
-.manga-card__star {
-  fill: var(--text-yellow);
-  color: var(--text-yellow);
-  flex-shrink: 0;
-}
-
 .manga-card--new .manga-card__title,
 .manga-card--popular .manga-card__title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #3d114b;
   line-height: 1.3;
-  max-width: 132px;
+  max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -243,4 +236,10 @@ button:hover > article.manga-card .manga-card__cover::after,
 .home-manga-btn:hover .manga-card__cover::after,
 .continue-reading__btn:hover .manga-card__cover::after {
   opacity: 1;
+}
+
+.manga-card__star {
+  fill: #fcf807;
+  color: #fcf807;
+  flex-shrink: 0;
 }

@@ -1,34 +1,40 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AppLayout from '../components/layout/AppLayout';
-import Topbar from '../components/layout/Topbar';
-import Sidebar from '../components/layout/Sidebar';
-import TrendingPanel from '../components/layout/TrendingPanel';
-import ContinueReadingBar from '../components/layout/ContinueReadingBar';
+import Sidebar from '../components/hub/Sidebar';
+import HomeHeader from '../components/hub/HomeHeader';
 import MangaCard from '../components/hub/MangaCard';
+import TrendingSidebar from '../components/hub/TrendingSidebar';
+import ContinueReading from '../components/hub/ContinueReading';
 import FavoritesView from '../components/hub/FavoritesView';
 import HistoryView from '../components/hub/HistoryView';
 import GenreView from '../components/hub/GenreView';
-import { FOR_YOU, NEWLY_RELEASED, POPULAR, TRENDING, CONTINUE_READING, FAVORITES, HISTORY } from '../data/home_data';
+import {
+  FOR_YOU,
+  NEWLY_RELEASED,
+  POPULAR,
+  TRENDING,
+  CONTINUE_READING,
+  FAVORITES,
+  HISTORY,
+} from '../data/home_data';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
 const LIBRARY_ITEMS = Array.from(
-  new Map([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...FAVORITES].map((item) => [item.title, item])).values()
+  new Map([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...FAVORITES].map((item) => [item.title, item])).values(),
 );
 
 function normalise(value) {
   return String(value || '').trim().toLowerCase();
 }
 
-function matchesSearch(item, query) {
-  const q = normalise(query);
-  if (!q) return true;
-  return [item.title, item.genre, item.chapter].some((value) => normalise(value).includes(q));
-}
-
 function filterItems(items, query) {
-  return items.filter((item) => matchesSearch(item, query));
+  const normalisedQuery = normalise(query);
+  if (!normalisedQuery) return items;
+
+  return items.filter((item) =>
+    [item.title, item.genre, item.chapter].some((value) => normalise(value).includes(normalisedQuery)),
+  );
 }
 
 function EmptyResults({ query }) {
@@ -52,7 +58,7 @@ function SectionRow({ title, children }) {
 
 function MangaButton({ manga, navigate, variant }) {
   return (
-    <button key={manga.id} type="button" className="home-manga-btn" onClick={() => navigate('/reader')}>
+    <button type="button" className="home-manga-btn" onClick={() => navigate('/reader')}>
       <MangaCard title={manga.title} color={manga.color} variant={variant} rating={manga.rating} />
     </button>
   );
@@ -78,7 +84,6 @@ function HomeMainContent({ navigate, searchQuery }) {
 
 function LibraryContent({ navigate, searchQuery }) {
   const books = filterItems(LIBRARY_ITEMS, searchQuery);
-
   if (books.length === 0) return <EmptyResults query={searchQuery} />;
 
   return (
@@ -112,20 +117,18 @@ export default function HomePage() {
   const [activeGenre, setActiveGenre] = useState(initialGenre);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // When a sidebar nav item is selected, clear the genre filter
   function handleNavChange(nav) {
     setActiveNav(nav);
     setActiveGenre(null);
   }
 
-  // When genre is selected, switch back to home view
   function handleGenreSelect(genreId) {
     setActiveGenre(genreId);
     if (genreId !== null) setActiveNav('home');
   }
 
   const showTrending = activeNav === 'home' && !activeGenre;
-  const showContinue = activeNav === 'home';
+  const showContinue = activeNav !== 'history';
 
   function renderContent() {
     if (activeNav === 'favorite') {
@@ -138,6 +141,7 @@ export default function HomePage() {
         />
       );
     }
+
     if (activeNav === 'history') {
       const items = filterItems(HISTORY, searchQuery);
       return (
@@ -148,33 +152,46 @@ export default function HomePage() {
         />
       );
     }
-    if (activeNav === 'library')   return <LibraryContent navigate={navigate} searchQuery={searchQuery} />;
-    if (activeGenre)               return <GenreView genreId={activeGenre} query={searchQuery} />;
+
+    if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery={searchQuery} />;
+    if (activeGenre) return <GenreView genreId={activeGenre} query={searchQuery} />;
     return <HomeMainContent navigate={navigate} searchQuery={searchQuery} />;
   }
 
   return (
-    <AppLayout
-      topbar={(
-        <Topbar
+    <div className={`home-page${showContinue ? '' : ' home-page--no-continue'}`}>
+      <Sidebar
+        activeItem={activeNav}
+        onNavChange={handleNavChange}
+        activeGenre={activeGenre}
+        onGenreSelect={handleGenreSelect}
+      />
+
+      <div className="home-page__main">
+        <HomeHeader
           activeGenre={activeGenre}
           onGenreSelect={handleGenreSelect}
-          onFavoriteClick={() => handleNavChange('favorite')}
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
         />
-      )}
-      sidebar={<Sidebar activeItem={activeNav} onNavChange={handleNavChange} activeGenre={activeGenre} onGenreSelect={handleGenreSelect} />}
-      rightPanel={showTrending ? (
-        <TrendingPanel items={TRENDING} onCardClick={() => navigate('/reader')} onViewAll={() => handleNavChange('history')} />
-      ) : null}
-      bottomBar={showContinue ? (
-        <ContinueReadingBar items={CONTINUE_READING} onCardClick={() => navigate('/reader')} onViewAll={() => handleNavChange('history')} />
-      ) : null}
-    >
-      <div className="home-content homemainContent">
-        {renderContent()}
+
+        <div className={`home-page__body${showTrending ? '' : ' home-page__body--full'}`}>
+          <main className="home-page__content">{renderContent()}</main>
+          {showTrending && (
+            <TrendingSidebar
+              items={TRENDING}
+              onViewAll={() => handleNavChange('history')}
+            />
+          )}
+        </div>
       </div>
-    </AppLayout>
+
+      {showContinue && (
+        <ContinueReading
+          items={CONTINUE_READING}
+          onViewAll={() => handleNavChange('history')}
+        />
+      )}
+    </div>
   );
 }

@@ -27,9 +27,10 @@ export const TRENDING = [
 ];
 
 export const CONTINUE_READING = [
-  { id: 17, title: 'Kan Kg Loh', chapter: 'Chapter 12', progress: 75, color: '#3a2060' },
-  { id: 18, title: 'Weikzar',    chapter: 'Chapter 8',  progress: 35, color: '#2e1848' },
-  { id: 19, title: 'Noragami',   chapter: 'Chapter 22', progress: 85, color: '#341e50' },
+  { id: 17, title: 'Kan Kg Loh',  chapter: 'Chapter 12', progress: 75, color: '#3a2060' },
+  { id: 18, title: 'Weikzar',     chapter: 'Chapter 8',  progress: 35, color: '#2e1848' },
+  { id: 19, title: 'Noragami',    chapter: 'Chapter 22', progress: 85, color: '#341e50' },
+  { id: 36, title: 'Solo Leveling', chapter: 'Chapter 45', progress: 60, color: '#2d1b4e' },
 ];
 
 export const FAVORITES = [

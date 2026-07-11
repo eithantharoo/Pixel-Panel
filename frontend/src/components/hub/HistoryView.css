@@ -14,13 +14,13 @@
 .hist-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--color-text-primary);
+  color: #3d114b;
 }
 
 .hist-view__clear {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--text-yellow);
+  color: #9b59b6;
   background: none;
   border: none;
   cursor: pointer;
@@ -31,8 +31,8 @@
 }
 
 .hist-view__clear:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
+  background: rgba(155, 89, 182, 0.1);
+  color: #6b3480;
 }
 
 .hist-view__list {
@@ -48,15 +48,15 @@
   align-items: flex-start;
   padding: 0.75rem;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(130, 74, 147, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(78, 45, 88, 0.14);
   transition: background 0.2s ease, transform 0.2s ease;
   cursor: pointer;
 }
 
 .hist-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(130, 74, 147, 0.18);
   transform: translateX(3px);
 }
 
@@ -71,7 +71,7 @@
 
 /* "Read Now" overlay */
 .hist-item__cover::after {
-  content: 'Read';
+  content: '▶';
   position: absolute;
   inset: 0;
   display: flex;
@@ -79,8 +79,7 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.52);
   color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 1rem;
   border-radius: inherit;
   opacity: 0;
   transition: opacity 0.22s ease;
@@ -110,7 +109,7 @@
   min-width: 0;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #3d114b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -120,7 +119,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(61, 17, 75, 0.3);
   padding: 0;
   flex-shrink: 0;
   display: flex;
@@ -134,7 +133,7 @@
 
 .hist-item__chapter {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: rgba(61, 17, 75, 0.6);
   font-weight: 500;
 }
 
@@ -150,14 +149,14 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.6875rem;
-  color: var(--color-text-secondary);
+  color: rgba(61, 17, 75, 0.45);
 }
 
 .hist-item__badge {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--text-yellow);
-  background: rgba(254, 225, 43, 0.12);
+  color: #9b59b6;
+  background: rgba(155, 89, 182, 0.12);
   padding: 0.1rem 0.45rem;
   border-radius: 4px;
 }
@@ -171,14 +170,14 @@
   margin-top: 0.4rem;
   height: 3px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(61, 17, 75, 0.12);
   overflow: hidden;
 }
 
 .hist-item__progress-bar {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #fee12b, #f3b82f);
+  background: linear-gradient(90deg, #9b59b6, #6b3480);
   transition: width 0.4s ease;
 }
 
@@ -198,21 +197,21 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(61, 17, 75, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-yellow);
+  color: #9b59b6;
   margin-bottom: 0.5rem;
 }
 
 .hist-empty__text {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #3d114b;
 }
 
 .hist-empty__sub {
   font-size: 0.8125rem;
-  color: var(--color-text-secondary);
+  color: rgba(61, 17, 75, 0.5);
 }
