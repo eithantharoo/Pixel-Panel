@@ -1,8 +1,10 @@
 .trending {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.75rem;
   width: 260px;
+  height: 100%;
+  min-height: 0;
   flex-shrink: 0;
   margin-right: 0.5rem;
   box-sizing: border-box;
@@ -10,17 +12,23 @@
 
 .trending__panel {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.875rem;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   padding: 1rem;
   border-radius: 12px;
-  background: #683b76;
+  background: var(--home-panel);
+  border: 1px solid var(--home-border);
 }
 
 .trending__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #cac606;
+  color: var(--home-accent);
   text-align: center;
 }
 
@@ -36,8 +44,8 @@
   gap: 0.25rem;
 }
 
-.trending__featured-rank  { font-size: 0.75rem; font-weight: 700; color: #fcf807; }
-.trending__featured-title { font-size: 0.8125rem; font-weight: 600; color: #fff; line-height: 1.3; }
+.trending__featured-rank  { font-size: 0.75rem; font-weight: 700; color: var(--home-accent); }
+.trending__featured-title { font-size: 0.8125rem; font-weight: 600; color: var(--home-text); line-height: 1.3; }
 
 .trending__featured-rating {
   display: flex;
@@ -45,7 +53,7 @@
   gap: 0.25rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--home-text);
 }
 
 .trending__list {
@@ -61,9 +69,9 @@
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  background: #fcf807;
-  border: 2px solid #ad63c4;
-  color: #000;
+  background: var(--home-accent);
+  border: 2px solid var(--home-panel);
+  color: var(--home-ink);
   font-size: 0.8125rem;
   font-weight: 600;
   transition: filter 0.2s ease;
@@ -75,7 +83,7 @@
 
 /* Clickable card wrapper */
 .trending__card-btn {
-  background: rgba(42, 21, 53, 0.28);
+  background: rgba(56, 35, 66, 0.46);
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 0.35rem;
@@ -86,9 +94,13 @@
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
+.trending__panel::-webkit-scrollbar {
+  display: none;
+}
+
 .trending__card-btn:hover {
-  background: rgba(173, 99, 196, 0.24);
-  border-color: rgba(230, 207, 237, 0.2);
+  background: var(--home-panel-hover);
+  border-color: var(--home-border);
 }
 
 /* "Read Now" overlay for trending cards */

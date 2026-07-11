@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AppLayout from '../components/layout/AppLayout';
-import Topbar from '../components/layout/Topbar';
-import Sidebar from '../components/layout/Sidebar';
-import TrendingPanel from '../components/layout/TrendingPanel';
-import ContinueReadingBar from '../components/layout/ContinueReadingBar';
+import HomeHeader from '../components/hub/HomeHeader';
+import Sidebar from '../components/hub/Sidebar';
+import TrendingSidebar from '../components/hub/TrendingSidebar';
+import ContinueReading from '../components/hub/ContinueReading';
 import HeroCard from '../components/reader/HeroCard';
 import ChapterSidebar from '../components/reader/ChapterSidebar';
+import { CONTINUE_READING, TRENDING } from '../data/home_data';
+import './ReaderPage.css';
 
 export default function ReaderPage() {
   const navigate = useNavigate();
   const [showChapters, setShowChapters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   function handleNavChange(navId) {
     if (navId === 'home') {
@@ -33,17 +35,43 @@ export default function ReaderPage() {
   }
 
   return (
-    <AppLayout
-      topbar={<Topbar onFavoriteClick={() => handleNavChange('favorite')} onGenreSelect={handleGenreSelect} />}
-      sidebar={<Sidebar activeItem="home" onNavChange={handleNavChange} onGenreSelect={handleGenreSelect} />}
-      rightPanel={showChapters ? <ChapterSidebar /> : <TrendingPanel />}
-      bottomBar={!showChapters ? <ContinueReadingBar /> : null}
-    >
-      <HeroCard
-        isReading={showChapters}
-        onReadNow={() => setShowChapters(true)}
-        onClose={handleClose}
+    <div className="reader-page">
+      <HomeHeader
+        onGenreSelect={handleGenreSelect}
+        onFavoriteClick={() => handleNavChange('favorite')}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
       />
-    </AppLayout>
+
+      <Sidebar activeItem="home" onNavChange={handleNavChange} />
+
+      <div className="reader-page__main">
+        <div className="reader-page__body">
+          <main className="reader-page__content">
+            <HeroCard
+              isReading={showChapters}
+              onReadNow={() => setShowChapters(true)}
+              onClose={handleClose}
+            />
+          </main>
+
+          <aside className="reader-page__right">
+            {showChapters ? (
+              <ChapterSidebar />
+            ) : (
+              <TrendingSidebar
+                items={TRENDING}
+                onViewAll={() => handleNavChange('history')}
+              />
+            )}
+          </aside>
+        </div>
+
+        <ContinueReading
+          items={CONTINUE_READING}
+          onViewAll={() => handleNavChange('history')}
+        />
+      </div>
+    </div>
   );
 }

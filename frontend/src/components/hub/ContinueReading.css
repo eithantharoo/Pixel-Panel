@@ -4,21 +4,25 @@
   align-items: center;
   gap: 0;
   padding: 0.875rem 1.5rem;
-  background: linear-gradient(135deg, #3d2345 0%, #2a1535 100%);
+  background: transparent;
   border-radius: 0 16px 0 0;           /* left flush, right top rounded */
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
-  border-top: 1px solid rgba(173, 99, 196, 0.28);
+  box-shadow: none;
+  border-top: 1px solid transparent;
   flex-shrink: 0;
   overflow: hidden;                     /* clip items as they slide in */
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  pointer-events: none;
 }
 
-/* ── Hidden checkbox — drives the open/close state ──────────────── */
-.continue-reading__checkbox {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
+.continue-reading button {
+  pointer-events: auto;
+}
+
+.continue-reading--open {
+  background: rgba(56, 35, 66, 0.5);
+  border-top-color: rgba(255, 244, 61, 0.34);
+  box-shadow: inset 0 2px 0 rgba(255, 244, 61, 0.12), 0 -6px 28px rgba(47, 28, 56, 0.32);
+  backdrop-filter: blur(6px);
 }
 
 /* ── Toggle label (the "Continue Reading" button) ───────────────── */
@@ -26,30 +30,33 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+  min-height: 42px;
+  padding: 0.45rem 0.9rem 0.45rem 0.65rem;
   border-radius: 8px;
-  background: rgba(130, 74, 147, 0.2);
-  border: 1px solid rgba(173, 99, 196, 0.28);
-  color: #e3d060;
+  background: rgba(56, 35, 66, 0.94);
+  border: 1px solid rgba(255, 244, 61, 0.58);
+  color: var(--home-accent);
   font-size: 0.9375rem;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
   user-select: none;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  box-shadow: 0 5px 16px rgba(42, 21, 53, 0.32);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .continue-reading__toggle:hover {
-  background: rgba(173, 99, 196, 0.32);
-  border-color: rgba(230, 207, 237, 0.34);
+  background: var(--home-panel);
+  border-color: rgba(255, 244, 61, 0.82);
+  box-shadow: 0 7px 20px rgba(42, 21, 53, 0.4);
 }
 
 /* Active state when the strip is expanded */
 .continue-reading--open .continue-reading__toggle {
-  background: rgba(252, 248, 7, 0.15);
-  border-color: rgba(252, 248, 7, 0.35);
-  color: #fcf807;
+  background: var(--home-panel-hover);
+  border-color: rgba(255, 244, 61, 0.76);
+  color: var(--home-accent);
 }
 
 .continue-reading__toggle-icon {
@@ -110,7 +117,7 @@
 }
 
 .continue-reading__item-btn:hover {
-  background: rgba(173, 99, 196, 0.18);
+  background: rgba(234, 219, 238, 0.14);
   transform: translateY(-2px);
 }
 
@@ -119,8 +126,8 @@
   flex-shrink: 0;
   padding: 0.45rem 1.25rem;
   border-radius: 999px;
-  background: #fcf807;
-  color: #000;
+  background: var(--home-accent);
+  color: var(--home-ink);
   font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;

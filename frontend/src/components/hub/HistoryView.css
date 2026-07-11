@@ -14,13 +14,13 @@
 .hist-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #3d114b;
+  color: var(--home-text);
 }
 
 .hist-view__clear {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #9b59b6;
+  color: var(--home-accent);
   background: none;
   border: none;
   cursor: pointer;
@@ -31,8 +31,8 @@
 }
 
 .hist-view__clear:hover {
-  background: rgba(155, 89, 182, 0.1);
-  color: #6b3480;
+  background: rgba(234, 219, 238, 0.12);
+  color: var(--home-text);
 }
 
 .hist-view__list {
@@ -48,15 +48,15 @@
   align-items: flex-start;
   padding: 0.75rem;
   border-radius: 14px;
-  background: rgba(130, 74, 147, 0.1);
+  background: var(--home-panel-deep);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(78, 45, 88, 0.14);
+  border: 1px solid var(--home-border);
   transition: background 0.2s ease, transform 0.2s ease;
   cursor: pointer;
 }
 
 .hist-item:hover {
-  background: rgba(130, 74, 147, 0.18);
+  background: var(--home-panel-hover);
   transform: translateX(3px);
 }
 
@@ -109,7 +109,7 @@
   min-width: 0;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #3d114b;
+  color: var(--home-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -119,7 +119,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: rgba(61, 17, 75, 0.3);
+  color: var(--home-text-muted);
   padding: 0;
   flex-shrink: 0;
   display: flex;
@@ -133,7 +133,7 @@
 
 .hist-item__chapter {
   font-size: 0.75rem;
-  color: rgba(61, 17, 75, 0.6);
+  color: var(--home-text-muted);
   font-weight: 500;
 }
 
@@ -149,14 +149,14 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.6875rem;
-  color: rgba(61, 17, 75, 0.45);
+  color: var(--home-text-muted);
 }
 
 .hist-item__badge {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #9b59b6;
-  background: rgba(155, 89, 182, 0.12);
+  color: var(--home-accent);
+  background: rgba(255, 244, 61, 0.12);
   padding: 0.1rem 0.45rem;
   border-radius: 4px;
 }
@@ -170,14 +170,14 @@
   margin-top: 0.4rem;
   height: 3px;
   border-radius: 999px;
-  background: rgba(61, 17, 75, 0.12);
+  background: rgba(234, 219, 238, 0.18);
   overflow: hidden;
 }
 
 .hist-item__progress-bar {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #9b59b6, #6b3480);
+  background: var(--home-accent);
   transition: width 0.4s ease;
 }
 
@@ -197,21 +197,21 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(61, 17, 75, 0.08);
+  background: var(--home-panel-deep);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9b59b6;
+  color: var(--home-accent);
   margin-bottom: 0.5rem;
 }
 
 .hist-empty__text {
   font-size: 1rem;
   font-weight: 700;
-  color: #3d114b;
+  color: var(--home-text);
 }
 
 .hist-empty__sub {
   font-size: 0.8125rem;
-  color: rgba(61, 17, 75, 0.5);
+  color: var(--home-text-muted);
 }

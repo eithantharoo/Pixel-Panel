@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Bell, Check, ChevronDown, Grid3X3, Search, X } from 'lucide-react';
+import { Bell, Check, ChevronDown, Grid3X3, Headphones, Heart, Search, X } from 'lucide-react';
+import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
 import './HomeHeader.css';
 
-function HomeHeader({ activeGenre, onGenreSelect, searchValue = '', onSearchChange }) {
+function HomeHeader({ activeGenre, onGenreSelect, onFavoriteClick, searchValue = '', onSearchChange }) {
   const [genreOpen, setGenreOpen] = useState(false);
 
   function handleGenrePick(genreId) {
@@ -14,6 +15,13 @@ function HomeHeader({ activeGenre, onGenreSelect, searchValue = '', onSearchChan
 
   return (
     <header className="home-header">
+      <div className="home-header__brand">
+        <div className="home-header__logo">
+          <img src={images.logoBook} alt="" aria-hidden="true" />
+        </div>
+        <span className="home-header__brand-name">Pixel Panel</span>
+      </div>
+
       <div className="home-header__search-row">
         <label className="home-header__search">
           <Search className="home-header__search-icon" size={18} aria-hidden="true" />
@@ -81,10 +89,28 @@ function HomeHeader({ activeGenre, onGenreSelect, searchValue = '', onSearchChan
         <button type="button" className="home-header__icon-btn" aria-label="Notifications" title="Notifications">
           <Bell size={20} aria-hidden="true" />
         </button>
-        <div className="home-header__profile">
-          <span className="home-header__name">User Name</span>
-          <div className="home-header__avatar" aria-hidden="true" />
-        </div>
+
+        <button type="button" className="home-header__profile" aria-label="Open profile menu">
+          <span className="home-header__avatar">
+            <img src={images.profile} alt="Hsu Myat" />
+          </span>
+          <span className="home-header__name">Hsu Myat</span>
+          <ChevronDown className="home-header__profile-arrow" size={15} aria-hidden="true" />
+        </button>
+
+        <button
+          type="button"
+          className="home-header__icon-btn"
+          aria-label="Favorites"
+          title="Favorites"
+          onClick={onFavoriteClick}
+        >
+          <Heart size={20} aria-hidden="true" />
+        </button>
+
+        <button type="button" className="home-header__icon-btn home-header__support" aria-label="Support" title="Support">
+          <Headphones size={20} aria-hidden="true" />
+        </button>
       </div>
     </header>
   );

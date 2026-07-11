@@ -128,7 +128,6 @@ export default function HomePage() {
   }
 
   const showTrending = activeNav === 'home' && !activeGenre;
-  const showContinue = activeNav !== 'history';
 
   function renderContent() {
     if (activeNav === 'favorite') {
@@ -159,7 +158,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className={`home-page${showContinue ? '' : ' home-page--no-continue'}`}>
+    <div className="home-page">
+      <HomeHeader
+        activeGenre={activeGenre}
+        onGenreSelect={handleGenreSelect}
+        onFavoriteClick={() => handleNavChange('favorite')}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+
       <Sidebar
         activeItem={activeNav}
         onNavChange={handleNavChange}
@@ -168,13 +175,6 @@ export default function HomePage() {
       />
 
       <div className="home-page__main">
-        <HomeHeader
-          activeGenre={activeGenre}
-          onGenreSelect={handleGenreSelect}
-          searchValue={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-
         <div className={`home-page__body${showTrending ? '' : ' home-page__body--full'}`}>
           <main className="home-page__content">{renderContent()}</main>
           {showTrending && (
@@ -184,14 +184,13 @@ export default function HomePage() {
             />
           )}
         </div>
-      </div>
 
-      {showContinue && (
         <ContinueReading
           items={CONTINUE_READING}
           onViewAll={() => handleNavChange('history')}
         />
-      )}
+      </div>
+
     </div>
   );
 }

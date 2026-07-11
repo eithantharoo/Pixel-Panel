@@ -12,8 +12,8 @@
   gap: 1rem;
   padding: 1rem 1.25rem;
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(78, 45, 88, 0.15), rgba(124, 58, 237, 0.1));
-  border: 1px solid rgba(78, 45, 88, 0.12);
+  background: var(--home-panel-deep);
+  border: 1px solid var(--home-border);
   backdrop-filter: blur(4px);
   animation: bannerSlide 0.3s ease;
 }
@@ -31,21 +31,21 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(130, 74, 147, 0.14);
-  color: #683b76;
+  background: rgba(255, 244, 61, 0.12);
+  color: var(--home-accent);
 }
 
 .genre-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #3d114b;
+  color: var(--home-text);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
 .genre-view__subtitle {
   font-size: 0.8rem;
-  color: rgba(61, 17, 75, 0.55);
+  color: var(--home-text-muted);
   margin: 0.15rem 0 0;
   font-weight: 500;
 }
@@ -127,8 +127,8 @@
 .genre-view__read-btn {
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  background: #e6cfed;
-  color: #3d114b;
+  background: var(--home-control);
+  color: var(--home-ink);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -144,9 +144,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  border: 1px dashed rgba(78, 45, 88, 0.24);
+  border: 1px dashed rgba(234, 219, 238, 0.28);
   border-radius: 12px;
-  background: rgba(130, 74, 147, 0.08);
+  background: var(--home-panel-deep);
   padding: 2rem;
   text-align: center;
 }
@@ -154,19 +154,19 @@
 .genre-view__empty p {
   font-size: 1rem;
   font-weight: 800;
-  color: #3d114b;
+  color: var(--home-text);
 }
 
 .genre-view__empty span {
   font-size: 0.82rem;
-  color: rgba(61, 17, 75, 0.6);
+  color: var(--home-text-muted);
 }
 
 /* Book title */
 .genre-view__book-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #3d114b;
+  color: var(--home-text);
   line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
