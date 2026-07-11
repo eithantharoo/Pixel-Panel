@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import './MangaCard.css';
 
 function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, chapter, progress, rank }) {
@@ -13,9 +14,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
         <h3 className="manga-card__title">{title}</h3>
         {rating != null && (
           <div className="manga-card__rating manga-card__rating--inline">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fcf807" aria-hidden="true">
-              <path d="M12 2l2.9 6.9H22l-5.8 4.2 2.2 6.9L12 17.8l-6.4 4.2 2.2-6.9L2 8.9h7.1z" />
-            </svg>
+            <Star size={12} className="manga-card__star" aria-hidden="true" />
             <span>{rating.toFixed(1)}</span>
           </div>
         )}
@@ -54,9 +53,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
         )}
         {variant === 'popular' && rating != null && (
           <div className="manga-card__rating">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fcf807" aria-hidden="true">
-              <path d="M12 2l2.9 6.9H22l-5.8 4.2 2.2 6.9L12 17.8l-6.4 4.2 2.2-6.9L2 8.9h7.1z" />
-            </svg>
+            <Star size={12} className="manga-card__star" aria-hidden="true" />
             <span>{rating.toFixed(1)}</span>
           </div>
         )}

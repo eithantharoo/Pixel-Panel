@@ -1,32 +1,76 @@
 import { useState } from 'react';
-import Sidebar from '../components/reader/Sidebar';
-import Topbar from '../components/reader/Topbar';
+import { useNavigate } from 'react-router-dom';
+import HomeHeader from '../components/hub/HomeHeader';
+import Sidebar from '../components/hub/Sidebar';
+import TrendingSidebar from '../components/hub/TrendingSidebar';
+import ContinueReading from '../components/hub/ContinueReading';
 import HeroCard from '../components/reader/HeroCard';
-import Trending from '../components/reader/Trending';
-import ContinueReading from '../components/reader/ContinueReading';
 import ChapterSidebar from '../components/reader/ChapterSidebar';
+import { CONTINUE_READING, TRENDING } from '../data/home_data';
+import './ReaderPage.css';
 
 export default function ReaderPage() {
+  const navigate = useNavigate();
   const [showChapters, setShowChapters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  function handleNavChange(navId) {
+    if (navId === 'home') {
+      navigate('/home');
+      return;
+    }
+    navigate('/home', { state: { activeNav: navId } });
+  }
+
+  function handleGenreSelect(genreId) {
+    navigate('/home', { state: { genreId } });
+  }
+
+  function handleClose() {
+    if (showChapters) {
+      setShowChapters(false);
+      return;
+    }
+    navigate('/home');
+  }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-[var(--bg-main)] overflow-hidden">
-      <Topbar />
+    <div className="reader-page">
+      <HomeHeader
+        onGenreSelect={handleGenreSelect}
+        onFavoriteClick={() => handleNavChange('favorite')}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
-      <div className="flex flex-1 overflow-hidden min-h-0 px-3 py-3 gap-1">
-        <Sidebar />
+      <Sidebar activeItem="home" onNavChange={handleNavChange} />
 
-        <main className="flex-1 flex flex-col gap-5 p-5 overflow-hidden min-h-0">
-          <div className="flex gap-5 items-stretch flex-1 min-h-0">
+      <div className="reader-page__main">
+        <div className="reader-page__body">
+          <main className="reader-page__content">
             <HeroCard
               isReading={showChapters}
               onReadNow={() => setShowChapters(true)}
-              onClose={() => setShowChapters(false)}
+              onClose={handleClose}
             />
-            {showChapters ? <ChapterSidebar /> : <Trending />}
-          </div>
-          {!showChapters && <ContinueReading />}
-        </main>
+          </main>
+
+          <aside className="reader-page__right">
+            {showChapters ? (
+              <ChapterSidebar />
+            ) : (
+              <TrendingSidebar
+                items={TRENDING}
+                onViewAll={() => handleNavChange('history')}
+              />
+            )}
+          </aside>
+        </div>
+
+        <ContinueReading
+          items={CONTINUE_READING}
+          onViewAll={() => handleNavChange('history')}
+        />
       </div>
     </div>
   );

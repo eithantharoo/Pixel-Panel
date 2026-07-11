@@ -1,24 +1,40 @@
+/* ── Base layout ─────────────────────────────────────────────────── */
 .home-page {
+  --home-canvas: #a661c3;
+  --home-panel: #4c3159;
+  --home-panel-deep: #382342;
+  --home-panel-hover: #60406d;
+  --home-accent: #fff43d;
+  --home-accent-hover: #e9df2e;
+  --home-control: #eadbee;
+  --home-control-hover: #dcc7e3;
+  --home-text: #ffffff;
+  --home-text-muted: #d8c8dd;
+  --home-ink: #2f1c38;
+  --home-border: rgba(234, 219, 238, 0.18);
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
-    "nav main"
-    "continue continue";
+    "header header"
+    "nav    main";
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #e6cfed;
+  background: var(--home-canvas);
 }
 
-/* When ContinueReading strip is hidden (Favorites / History views) */
-.home-page--no-continue {
-  grid-template-rows: 1fr;
-  grid-template-areas: "nav main";
+.home-page > .home-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: 300;
 }
 
 .home-page > .sidebar {
   grid-area: nav;
+  position: sticky;
+  top: 0;
   align-self: stretch;
   margin: 0;
   min-height: 0;
@@ -26,23 +42,32 @@
 
 .home-page__main {
   grid-area: main;
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  background: #e6cfed;
+  background: var(--home-canvas);
+  overflow: hidden;
 }
 
-.home-page > .continue-reading {
-  grid-area: continue;
+.home-page__main > .continue-reading {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  width: 100%;
 }
 
+/* ── Body (content + trending sidebar) ──────────────────────────── */
 .home-page__body {
   display: flex;
   flex: 1;
   gap: 0.75rem;
-  padding: 0 1rem 1rem 1.5rem;
+  padding: 1rem 1rem 1rem 1.5rem;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* Full-width body when TrendingSidebar is hidden */
@@ -57,12 +82,24 @@
   flex: 1;
   min-width: 0;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 1.25rem;
+  border: 1px solid var(--home-border);
+  border-radius: 16px;
+  background: var(--home-panel);
+  box-shadow: 0 12px 28px rgba(47, 28, 56, 0.18);
 }
 
+.home-page__content::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Manga sections ──────────────────────────────────────────────── */
 .home-section__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #3d114b;
+  color: var(--home-accent);
   margin-bottom: 0.625rem;
 }
 
@@ -71,12 +108,13 @@
   gap: 0.875rem;
   overflow-x: auto;
   padding-bottom: 0.25rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(78, 45, 88, 0.3) transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.home-section__row::-webkit-scrollbar { height: 4px; }
-.home-section__row::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(78,45,88,0.3); }
+.home-section__row::-webkit-scrollbar {
+  display: none;
+}
 
 /* Wrapper so manga cards are clickable without layout side-effects */
 .home-manga-btn {
@@ -88,12 +126,157 @@
   flex-shrink: 0;
 }
 
+.home-manga-btn:focus-visible {
+  outline: 2px solid var(--home-accent);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.home-library {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.home-library__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-library__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--home-text);
+}
+
+.home-library__subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--home-text-muted);
+}
+
+.home-library__count,
+.home-empty__query {
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--home-panel-deep);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--home-accent);
+}
+
+.home-library__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.home-library__grid .home-manga-btn,
+.home-library__grid .manga-card--popular .manga-card__cover {
+  width: 120px;
+}
+
+.home-empty {
+  display: flex;
+  min-height: 220px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px dashed rgba(234, 219, 238, 0.28);
+  border-radius: 12px;
+  background: var(--home-panel-deep);
+  padding: 2rem;
+  text-align: center;
+}
+
+.home-empty__title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--home-text);
+}
+
+.home-empty__text {
+  font-size: 0.82rem;
+  color: var(--home-text-muted);
+}
+
+/* ── Responsive: Tablet (≤ 1024px) ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .home-page__body {
+    padding: 1rem 0.75rem 1rem 1rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 1rem;
+  }
+}
+
+/* ── Responsive: No sidebar (≤ 900px) ───────────────────────────── */
 @media (max-width: 900px) {
   .home-page {
     grid-template-columns: 1fr;
-    grid-template-areas: "main" "continue";
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header"
+      "main";
   }
 
-  .home-page > .sidebar { display: none; }
-  .home-page__body { padding: 0 1rem 1rem; }
+  .home-page > .sidebar {
+    display: none;
+  }
+
+  .home-page__body {
+    padding: 1rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-library__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-library__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-library__grid .home-manga-btn,
+  .home-library__grid .manga-card--popular .manga-card__cover {
+    width: 100%;
+  }
+}
+
+/* ── Responsive: Mobile (≤ 600px) ───────────────────────────────── */
+@media (max-width: 600px) {
+  .home-page__body {
+    padding: 1rem 0.75rem;
+  }
+
+  .home-page__body--full {
+    padding-right: 0.75rem;
+  }
+
+  .home-section__title {
+    font-size: 0.9375rem;
+  }
+
+  .home-section__row {
+    gap: 0.625rem;
+  }
+}
+
+/* ── Responsive: Small mobile (≤ 400px) ─────────────────────────── */
+@media (max-width: 400px) {
+  .home-page__body {
+    padding: 1rem 0.5rem;
+  }
 }

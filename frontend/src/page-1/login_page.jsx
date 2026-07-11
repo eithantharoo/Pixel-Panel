@@ -1,5 +1,6 @@
 import React, { useState } from 'react';//useNavigate from react-router-dom
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 import BrandSidebar from './components/brandsidebar';
 import './login_page.css';
 
@@ -71,7 +72,7 @@ if (!value) {
           <label className="auth-field">
             <span>Email/Username</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">👤</span>
+              <span className="auth-input-icon" aria-hidden="true"><User size={18} /></span>
               <input type="text" name="email" placeholder="Enter your email or username" 
               value={form.email}
               onChange={handleChange}/>
@@ -84,12 +85,20 @@ if (!value) {
           <label className="auth-field">
             <span>Password</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">🔒</span>
+              <span className="auth-input-icon" aria-hidden="true"><LockKeyhole size={18} /></span>
               <input type={showPassword ? "text" : "password"} name="password" 
               placeholder="Enter your password" value={form.password}
               onChange={handleChange} 
               />
-              <button type="button" className="auth-eye" onClick={() => setShowPassword(!showPassword)}>👁</button>
+              <button
+                type="button"
+                className="auth-eye"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
               {errors.password && (
               <p className="auth-error">{errors.password}</p>
               )}

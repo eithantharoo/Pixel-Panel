@@ -1,19 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import { Heart, Star } from 'lucide-react';
 import './FavoritesView.css';
 
 function StarIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="#fcf807" aria-hidden="true">
-      <path d="M12 2l2.9 6.9H22l-5.8 4.2 2.2 6.9L12 17.8l-6.4 4.2 2.2-6.9L2 8.9h7.1z" />
-    </svg>
-  );
+  return <Star size={12} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />;
 }
 
 function HeartIcon({ filled }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill={filled ? '#e85d8a' : 'none'} stroke={filled ? '#e85d8a' : 'currentColor'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 20.5s-6.5-4.2-6.5-9.1a3.6 3.6 0 0 1 6.4-2.2A3.6 3.6 0 0 1 18.5 11.4c0 4.9-6.5 9.1-6.5 9.1z" />
-    </svg>
+    <Heart size={16} fill={filled ? '#e85d8a' : 'none'} strokeWidth={1.9} aria-hidden="true" />
   );
 }
 
@@ -52,15 +47,15 @@ function FavoriteCard({ title, color, rating, genre }) {
   );
 }
 
-function FavoritesView({ items }) {
+function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle = 'Saved titles will appear here.' }) {
   if (!items || items.length === 0) {
     return (
       <div className="fav-empty">
         <div className="fav-empty__icon">
           <HeartIcon />
         </div>
-        <p className="fav-empty__text">No favorites yet</p>
-        <p className="fav-empty__sub">Books you heart will appear here</p>
+        <p className="fav-empty__text">{emptyTitle}</p>
+        <p className="fav-empty__sub">{emptySubtitle}</p>
       </div>
     );
   }

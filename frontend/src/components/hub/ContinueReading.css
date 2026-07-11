@@ -1,29 +1,108 @@
+/* ── Footer bar — full width, rounded top corners ───────────────── */
 .continue-reading {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0;
   padding: 0.875rem 1.5rem;
-  background: #3d2345;
+  background: transparent;
+  border-radius: 0 16px 0 0;           /* left flush, right top rounded */
+  box-shadow: none;
+  border-top: 1px solid transparent;
+  flex-shrink: 0;
+  overflow: hidden;                     /* clip items as they slide in */
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  pointer-events: none;
 }
 
-.continue-reading__title {
-  flex-shrink: 0;
+.continue-reading button {
+  pointer-events: auto;
+}
+
+.continue-reading--open {
+  background: rgba(56, 35, 66, 0.5);
+  border-top-color: rgba(255, 244, 61, 0.34);
+  box-shadow: inset 0 2px 0 rgba(255, 244, 61, 0.12), 0 -6px 28px rgba(47, 28, 56, 0.32);
+  backdrop-filter: blur(6px);
+}
+
+/* ── Toggle label (the "Continue Reading" button) ───────────────── */
+.continue-reading__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0.45rem 0.9rem 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(56, 35, 66, 0.94);
+  border: 1px solid rgba(255, 244, 61, 0.58);
+  color: var(--home-accent);
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #e3d060;
   white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  box-shadow: 0 5px 16px rgba(42, 21, 53, 0.32);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
+.continue-reading__toggle:hover {
+  background: var(--home-panel);
+  border-color: rgba(255, 244, 61, 0.82);
+  box-shadow: 0 7px 20px rgba(42, 21, 53, 0.4);
+}
+
+/* Active state when the strip is expanded */
+.continue-reading--open .continue-reading__toggle {
+  background: var(--home-panel-hover);
+  border-color: rgba(255, 244, 61, 0.76);
+  color: var(--home-accent);
+}
+
+.continue-reading__toggle-icon {
+  flex-shrink: 0;
+}
+
+.continue-reading__toggle-arrow {
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when open */
+.continue-reading--open .continue-reading__toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* ── Book strip — hidden by default, slides in on open ──────────── */
 .continue-reading__items {
   display: flex;
-  flex: 1;
   gap: 1rem;
-  min-width: 0;
+  align-items: center;
+  flex: 1;                              /* take all remaining space */
+
+  /* Collapsed state */
+  max-width: 0;
+  opacity: 0;
   overflow: hidden;
+  margin-left: 0;
+
+  /* Smooth slide transition */
+  transition:
+    max-width   0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity     0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Clickable wrapper for each book card */
-.continue-reading__btn {
+/* Expanded state when checkbox is checked */
+.continue-reading--open .continue-reading__items {
+  max-width: 2000px;                    /* large enough for 4 books */
+  opacity: 1;
+  margin-left: 1.25rem;
+}
+
+/* ── Each book button in the strip ──────────────────────────────── */
+.continue-reading__item-btn {
   background: none;
   border: none;
   padding: 0;
@@ -33,31 +112,77 @@
   flex: 1;
   min-width: 0;
   border-radius: 8px;
-  transition: transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
 }
 
-.continue-reading__btn:hover {
+.continue-reading__item-btn:hover {
+  background: rgba(234, 219, 238, 0.14);
   transform: translateY(-2px);
 }
 
+/* ── View All button — hidden by default, slides in with books ───── */
 .continue-reading__view-all {
   flex-shrink: 0;
   padding: 0.45rem 1.25rem;
   border-radius: 999px;
-  background: #fcf807;
-  color: #000;
+  background: var(--home-accent);
+  color: var(--home-ink);
   font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;
-  transition: filter 0.2s ease;
   border: none;
   cursor: pointer;
   font: inherit;
+
+  /* Collapsed state */
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+
+  /* Smooth slide transition — slightly delayed so books appear first */
+  transition:
+    max-width   0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    opacity     0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.08s,
+    padding     0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    filter      0.2s ease;
 }
 
-.continue-reading__view-all:hover { filter: brightness(1.05); }
+/* Expanded state */
+.continue-reading--open .continue-reading__view-all {
+  max-width: 160px;
+  opacity: 1;
+  padding: 0.45rem 1.25rem;
+  margin-left: 1rem;
+}
 
+.continue-reading__view-all:hover { filter: brightness(1.08); }
+
+/* ── Responsive: Tablet ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .continue-reading { flex-wrap: wrap; gap: 0.75rem; }
-  .continue-reading__items { width: 100%; }
+  .continue-reading {
+    padding: 0.75rem 1rem;
+    border-radius: 0 12px 0 0;
+  }
+
+  .continue-reading__items {
+    gap: 0.75rem;
+  }
+}
+
+/* ── Responsive: Mobile ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .continue-reading {
+    padding: 0.625rem 0.875rem;
+    border-radius: 0 10px 0 0;
+  }
+
+  .continue-reading__toggle {
+    font-size: 0.8125rem;
+    padding: 0.3rem 0.625rem 0.3rem 0.4rem;
+  }
 }

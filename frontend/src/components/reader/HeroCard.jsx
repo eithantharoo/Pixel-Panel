@@ -1,148 +1,191 @@
+import React from 'react';
+import { BookOpen, Heart, Star, X } from 'lucide-react';
 import { images } from '../../assets/images';
+
+const genres = ['Action', 'Dark Fantasy', 'Supernatural', 'School', 'Adventure'];
+const metadata = [
+  ['Author', 'Gege Akutami'],
+  ['Illustrator', 'Gege Akutami'],
+  ['Type', 'Manga / Anime'],
+  ['Chapters', '300+'],
+  ['Volumes', '30'],
+  ['Status', 'Completed'],
+];
+const reviewCopy = `Jujutsu Kaisen follows Yuji Itadori, a high school student whose life changes after he
+consumes a cursed object and becomes the host of Ryomen Sukuna, the King of Curses.
+Thrown into the dangerous world of Jujutsu Sorcerers, Yuji must fight powerful curses
+while searching for Sukuna's remaining fingers.`;
+
+function Surface({ className = '', children }) {
+  return (
+    <section className={`rounded-lg border border-[var(--home-border)] bg-[var(--home-panel-deep)] p-4 shadow-[0_10px_24px_rgba(47,28,56,0.18)] sm:p-5 ${className}`}>
+      {children}
+    </section>
+  );
+}
+
+function RatingBadge({ compact = false }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-md bg-black/[0.45] font-bold text-white backdrop-blur-sm ${compact ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm'}`}>
+      <Star size={compact ? 12 : 14} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />
+      9.3
+    </span>
+  );
+}
+
+function IconButton({ label, onClick, className = '' }) {
+  return (
+    <button
+      type="button"
+      className={`flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--home-border)] bg-[var(--home-panel-hover)] text-[var(--home-text)] transition-colors hover:bg-[var(--home-panel)] ${className}`}
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+    >
+      <X size={18} strokeWidth={2.4} />
+    </button>
+  );
+}
+
+function MetaTable() {
+  return (
+    <dl className="grid grid-cols-1 gap-2 text-sm text-[var(--home-text-muted)] sm:grid-cols-2">
+      {metadata.map(([label, value]) => (
+        <div key={label} className="min-w-0 rounded-lg border border-[var(--home-border)] bg-black/[0.12] px-3 py-2">
+          <dt className="text-[11px] font-bold uppercase text-[var(--home-text-muted)]">{label}</dt>
+          <dd className="mt-0.5 truncate font-semibold text-[var(--home-text)]">{value}</dd>
+        </div>
+      ))}
+      <div className="min-w-0 rounded-lg border border-[var(--home-border)] bg-black/[0.12] px-3 py-2">
+        <dt className="text-[11px] font-bold uppercase text-[var(--home-text-muted)]">Rating</dt>
+        <dd className="mt-0.5 flex min-w-0 items-center gap-1.5 font-bold text-[var(--home-accent)]">
+          <Star size={13} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />
+          9.3/10
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function GenreList() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {genres.map((genre) => (
+        <span
+          key={genre}
+          className="rounded-md border border-[var(--home-control-hover)] bg-[var(--home-control)] px-3 py-1.5 text-xs font-bold text-[var(--home-ink)]"
+        >
+          {genre}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function Poster() {
+  return (
+    <div className="relative overflow-hidden rounded-lg border border-[var(--home-border)] bg-[var(--home-panel-deep)] shadow-lg">
+      <img src={images.hero} alt="Jujutsu Kaisen" className="aspect-[3/4] w-full object-cover" />
+      <div className="absolute left-3 top-3">
+        <RatingBadge compact />
+      </div>
+    </div>
+  );
+}
 
 export default function HeroCard({ isReading, onReadNow, onClose }) {
   if (isReading) {
     return (
-      <div className="flex-1 flex flex-col gap-3 relative" style={{ maxHeight: '100%', height: '100%' }}>
-        <button
-          type="button"
-          className="absolute top-5 right-5 bg-[var(--purple-normal-hover)] w-7 h-7 rounded-md flex items-center justify-center text-white text-sm hover:bg-[var(--purple-normal-active)] z-10"
-          onClick={onClose}
-        >
-          ✕
-        </button>
-
-        {/* Banner – 25% */}
-        <div className="bg-[var(--bg-card)] rounded-[1.5rem] p-4 flex flex-col relative shadow-md border border-white/5 overflow-hidden" style={{ flex: '0 0 25%' }}>
-          <div className="relative rounded-xl overflow-hidden shadow-lg flex-1">
-            <img src={images.heroBanner} alt="Jujutsu Kaisen Banner" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 flex flex-col justify-center p-4">
-              <div className="flex flex-col gap-2 items-start">
-                <div className="bg-[var(--text-yellow)] px-3 py-1 rounded-md shadow">
-                  <h1 className="text-[20px] font-bold text-black">Jujutsu Kaisen</h1>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="bg-black/90 px-2 py-1 rounded-md flex items-center gap-1 shadow">
-                    <span className="text-[var(--text-yellow)] text-xs">★</span>
-                    <span className="text-xs font-bold text-white">9.3</span>
-                  </div>
-                  <button type="button" className="btn-yellow py-1.5 px-4 rounded-xl font-bold text-xs flex items-center gap-1 shadow">
-                    <span className="text-[8px]">▶</span> Read Now
-                  </button>
-                </div>
+      <div className="flex h-full min-h-0 flex-col gap-5">
+        <section className="relative min-h-[210px] shrink-0 overflow-hidden rounded-lg border border-[var(--home-border)]">
+          <img src={images.heroBanner} alt="Jujutsu Kaisen Banner" className="h-full min-h-[210px] w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/[0.78] via-black/[0.38] to-transparent" />
+          <IconButton label="Close reading mode" onClick={onClose} className="absolute right-4 top-4 bg-black/[0.35] hover:bg-black/[0.55]" />
+          <div className="absolute inset-0 flex flex-col justify-end gap-3 p-5 sm:p-6">
+            <span className="w-fit rounded-md bg-[var(--home-accent)] px-3 py-1.5 text-xs font-extrabold text-[var(--home-ink)]">Now Reading</span>
+            <div>
+              <h1 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl">Jujutsu Kaisen</h1>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <RatingBadge />
+                <button type="button" className="btn-yellow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold" onClick={onClose}>
+                  <BookOpen size={16} strokeWidth={2.3} />
+                  Details
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Details – 50% */}
-        <div className="bg-[var(--bg-card)] rounded-[1.5rem] p-4 flex flex-col shadow-md border border-white/5 overflow-hidden" style={{ flex: '0 0 50%' }}>
-          <div className="flex gap-3 items-start flex-1 overflow-y-auto">
-            <div className="flex flex-col gap-2 shrink-0 w-[220px]">
-              <div className="relative border-[2px] border-white rounded-xl overflow-hidden shadow-lg w-[160px] h-[227px] bg-[var(--purple-darker)]">
-                <img src={images.hero} alt="Jujutsu Kaisen" className="w-full h-full object-cover" />
-              </div>
-            </div>
-            <div className="flex flex-col flex-1 pt-0">
-              <h1 className="text-[28px] font-bold text-white mb-2 pr-6 leading-tight">Jujutsu Kaisen</h1>
-              <table className="text-[15px] text-white font-medium">
-                <tbody>
-                  <tr><td className="py-0.5 w-[95px]">Author</td><td>: Gege Akutami</td></tr>
-                  <tr><td className="py-0.5">Illustrator</td><td>: Gege Akutami</td></tr>
-                  <tr><td className="py-0.5">Type</td><td>: Manga / Anime</td></tr>
-                  <tr><td className="py-0.5">Chapters</td><td>: 300+</td></tr>
-                  <tr><td className="py-0.5">Volumes</td><td>: 30</td></tr>
-                  <tr><td className="py-0.5">Status</td><td>: Completed</td></tr>
-                  <tr><td className="py-0.5">Rating</td><td>: <span className="text-[var(--text-yellow)]">★ 9.3/10</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-[var(--text-yellow)] font-bold text-[16px] mb-2">Genres</h3>
-            <div className="flex flex-wrap gap-2">
-              {['Action', 'Dark Fantasy', 'Supernatural', 'School', 'Adventure'].map((genre) => (
-                <span key={genre} className="bg-[var(--genre-pill)] text-[var(--purple-darker)] px-4 py-1.5 rounded-full text-[16px] font-semibold">{genre}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Review – 25% */}
-        <div className="bg-[var(--bg-card)] rounded-[1.5rem] p-4 flex flex-col shadow-md border border-white/5 overflow-hidden" style={{ flex: '0 0 25%' }}>
-          <h3 className="text-[var(--text-yellow)] font-bold text-[20px] mb-2">Review</h3>
-          <div className="flex-1 overflow-y-auto">
-            <p className="text-white/90 text-[15px] font-medium leading-relaxed">
-              Jujutsu Kaisen follows Yuji Itadori, a high school student whose life changes after he
-              consumes a cursed object and becomes the host of Ryomen Sukuna, the King of Curses.
-              Thrown into the dangerous world of Jujutsu Sorcerers, Yuji must fight powerful curses
-              while searching for Sukuna&apos;s remaining fingers.
+        <Surface className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
+          <Poster />
+          <div className="min-w-0">
+            <h2 className="text-2xl font-extrabold text-[var(--home-text)]">Jujutsu Kaisen</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--home-text-muted)]">
+              Curse-energy battles, sharp pacing, and a clear chapter list sit in one stable reading workspace.
             </p>
+            <div className="mt-5">
+              <MetaTable />
+            </div>
+            <div className="mt-5">
+              <h3 className="mb-3 text-xs font-bold uppercase text-[var(--home-accent)]">Genres</h3>
+              <GenreList />
+            </div>
           </div>
-        </div>
+        </Surface>
+
+        <Surface>
+          <h3 className="mb-2 text-base font-bold text-[var(--home-accent)]">Review</h3>
+          <p className="max-w-3xl text-sm leading-7 text-[var(--home-text-muted)]">{reviewCopy}</p>
+        </Surface>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 bg-[var(--bg-card)] rounded-[2rem] p-6 flex flex-col relative shadow-md min-h-0 overflow-y-auto border border-white/5">
-      <button
-        type="button"
-        className="absolute top-5 right-5 bg-[var(--purple-normal-hover)] w-7 h-7 rounded-md flex items-center justify-center text-white text-sm hover:bg-[var(--purple-normal-active)]"
-      >
-        ✕
-      </button>
+    <div className="flex h-full min-h-0 flex-col gap-5">
+      <Surface className="relative">
+        <IconButton label="Close details" onClick={onClose} className="absolute right-4 top-4" />
 
-      <div className="flex gap-4 items-start">
-        <div className="flex flex-col gap-3 shrink-0 w-[300px]">
-          <div className="relative border-[3px] border-white rounded-2xl overflow-hidden shadow-lg w-[240px] h-[340px] bg-[var(--purple-darker)]">
-            <img src={images.hero} alt="Jujutsu Kaisen" className="w-full h-full object-cover" />
-            <div className="absolute top-2 left-2 bg-black/85 px-2 py-0.5 rounded-md flex items-center gap-1 shadow">
-              <span className="text-[var(--text-yellow)] text-[10px]">★</span>
-              <span className="text-[11px] font-bold text-white">9.3</span>
+        <div className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]">
+          <div className="flex flex-col gap-3">
+            <Poster />
+            <div className="grid grid-cols-2 gap-2.5">
+              <button type="button" className="btn-yellow inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold" onClick={onReadNow}>
+                <BookOpen size={17} strokeWidth={2.3} />
+                Read
+              </button>
+              <button type="button" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--home-control-hover)] bg-[var(--home-control)] px-3 py-2.5 text-sm font-bold text-[var(--home-ink)] transition-colors hover:bg-[var(--home-control-hover)]">
+                <Heart size={17} strokeWidth={2.3} />
+                Favorite
+              </button>
             </div>
           </div>
-          <div className="flex gap-2 w-full">
-            <button type="button" className="btn-yellow flex-1 py-2.5 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 whitespace-nowrap" onClick={onReadNow}>
-              <span className="text-[10px]">▶</span> Read Now
-            </button>
-            <button type="button" className="btn-purple flex-1 py-2.5 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 whitespace-nowrap px-2">
-              <span className="text-xs">♡</span> Add To Favorites
-            </button>
+
+          <div className="min-w-0 pr-11">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="text-2xl font-extrabold leading-tight text-[var(--home-text)] sm:text-3xl">Jujutsu Kaisen</h1>
+                <p className="mt-1 text-sm font-medium text-[var(--home-text-muted)]">Manga / Anime</p>
+              </div>
+              <RatingBadge />
+            </div>
+
+            <div className="mt-5">
+              <MetaTable />
+            </div>
+
+            <div className="mt-5">
+              <h3 className="mb-3 text-xs font-bold uppercase text-[var(--home-accent)]">Genres</h3>
+              <GenreList />
+            </div>
+
+            <div className="mt-5">
+              <h3 className="mb-2 text-base font-bold text-[var(--home-accent)]">Review</h3>
+              <p className="max-w-4xl text-sm leading-7 text-[var(--home-text-muted)]">{reviewCopy}</p>
+            </div>
           </div>
         </div>
-
-        <div className="flex flex-col flex-1 pt-0">
-          <h1 className="text-[28px] font-bold text-white mb-2 pr-10 leading-tight">Jujutsu Kaisen</h1>
-          <table className="text-[18px] text-white font-medium">
-            <tbody>
-              <tr><td className="py-0.5 w-[95px]">Author</td><td>: Gege Akutami</td></tr>
-              <tr><td className="py-0.5">Illustrator</td><td>: Gege Akutami</td></tr>
-              <tr><td className="py-0.5">Type</td><td>: Manga / Anime</td></tr>
-              <tr><td className="py-0.5">Chapters</td><td>: 300+</td></tr>
-              <tr><td className="py-0.5">Volumes</td><td>: 30</td></tr>
-              <tr><td className="py-0.5">Status</td><td>: Completed</td></tr>
-              <tr><td className="py-0.5">Rating</td><td>: <span className="text-[var(--text-yellow)]">★ 9.3/10</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <h3 className="text-[var(--text-yellow)] font-bold text-[18px] mb-2">Genres</h3>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {['Action', 'Dark Fantasy', 'Supernatural', 'School', 'Adventure'].map((genre) => (
-            <span key={genre} className="bg-[var(--genre-pill)] text-[var(--purple-darker)] px-4 py-1.5 rounded-full text-[16px] font-semibold">{genre}</span>
-          ))}
-        </div>
-        <h3 className="text-[var(--text-yellow)] font-bold text-[20px] mb-1.5">Review</h3>
-        <p className="text-white/90 text-[17px] font-medium leading-relaxed">
-          Jujutsu Kaisen follows Yuji Itadori, a high school student whose life changes after he
-          consumes a cursed object and becomes the host of Ryomen Sukuna, the King of Curses.
-          Thrown into the dangerous world of Jujutsu Sorcerers, Yuji must fight powerful curses
-          while searching for Sukuna&apos;s remaining fingers.
-        </p>
-      </div>
+      </Surface>
     </div>
   );
 }

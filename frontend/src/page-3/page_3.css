@@ -7,17 +7,18 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: #f2d1fe;
-  overflow: hidden;
+  /* overflow is NOT set here — let the container handle it */
 }
 
 .landing-container {
   display: flex;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   background: linear-gradient(135deg, #c815ff 0%, #e681ff 45%, #fcf3fe 75%, #ffffff 100%);
   color: #ffffff;
-  overflow: hidden;
+  overflow: hidden;  /* clipping belongs on the container, not body */
 }
 
 /* --- LEFT SIDE: CONTENT --- */
@@ -34,7 +35,7 @@ body {
 
 /* sizing heading */
 .main-heading {
-  font-size: 3.8rem;
+  font-size: clamp(2rem, 5vw, 3.8rem);
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
@@ -45,9 +46,9 @@ body {
 
 /* Darker tone for typography legibility against pale-purple areas */
 .sub-heading {
-  font-size: 1.2rem;
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
   line-height: 1.6;
-  color: #4e2d58; /* Using Dark:active palette color for flawless text contrast */
+  color: #4e2d58;
   margin-bottom: 2.5rem;
   max-width: 440px;
   font-weight: 500;
@@ -58,11 +59,11 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background-color: #fcf807; /* Palette yellow */
-  color: #4e2d58; 
+  background-color: #fcf807;
+  color: #4e2d58;
   border: none;
   padding: 0.9rem 2.2rem;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
   font-weight: 700;
   border-radius: 20px;
   cursor: pointer;
@@ -128,21 +129,26 @@ body {
   object-fit: cover;
 }
 
-/* Responsive Handling */
+/* ── Responsive: Small desktop ─────────────────────────────────── */
 @media (max-width: 1024px) {
-  .main-heading {
-    font-size: 3rem;
+  .content-side {
+    padding: 0 4% 0 7%;
+  }
+
+  .grid-column {
+    width: 190px;
   }
 }
 
+/* ── Responsive: Tablet — hide art, center content ─────────────── */
 @media (max-width: 768px) {
   .landing-container {
     flex-direction: column;
     background: linear-gradient(180deg, #9c59b0 0%, #f3e8f6 70%, #ffffff 100%);
   }
-  
+
   .content-side {
-    padding: 15% 5% 5% 5%;
+    padding: 10% 6% 6%;
     max-width: 100%;
     align-items: center;
     text-align: center;
@@ -150,9 +156,42 @@ body {
 
   .sub-heading {
     color: #4e2d58;
+    max-width: 100%;
   }
-  
+
   .art-side {
     display: none;
+  }
+}
+
+/* ── Responsive: Large phone ───────────────────────────────────── */
+@media (max-width: 480px) {
+  .content-side {
+    padding: 8% 5% 5%;
+  }
+
+  .main-heading {
+    margin-bottom: 1rem;
+  }
+
+  .sub-heading {
+    margin-bottom: 2rem;
+    font-size: 0.9375rem;
+  }
+
+  .get-started-btn {
+    padding: 0.8rem 1.8rem;
+    border-radius: 16px;
+  }
+}
+
+/* ── Responsive: Very small phone ──────────────────────────────── */
+@media (max-width: 375px) {
+  .content-side {
+    padding: 6% 4% 4%;
+  }
+
+  .main-heading {
+    font-size: 1.75rem;
   }
 }

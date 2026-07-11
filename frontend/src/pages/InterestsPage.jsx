@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 import InterestCard from '../components/hub/InterestCard';
 import './InterestsPage.css';
 
@@ -34,9 +35,7 @@ function SelectedTag({ label, onRemove }) {
         onClick={onRemove}
         aria-label={`Remove ${label}`}
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-          <path d="M2 2l8 8M10 2L2 10" stroke="#000" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <X size={12} strokeWidth={2.4} aria-hidden="true" />
       </button>
     </span>
   );
