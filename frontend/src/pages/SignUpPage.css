@@ -66,13 +66,26 @@
 
 .auth-input-icon,
 .auth-eye {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
   opacity: 0.55;
 }
 
 .auth-eye {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   border: none;
   background: transparent;
   cursor: pointer;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.auth-eye:hover {
+  background: rgba(63, 52, 40, 0.08);
+  opacity: 0.82;
 }
 
 .auth-submit {

@@ -1,5 +1,11 @@
 @import './variables.css';
 
+/* Tailwind utilities only (no preflight) — the reader page components use
+   Tailwind utility classes, but preflight's base reset would override the
+   hand-written CSS the rest of the app already relies on. */
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/utilities' layer(utilities);
+
 *,
 *::before,
 *::after {
@@ -16,7 +22,8 @@ body,
 
 body {
   font-family: var(--font-sans);
-  background: var(--purple-light);
+  background: var(--bg-app);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -28,4 +35,82 @@ input {
 img {
   display: block;
   max-width: 100%;
+}
+
+/* Buttons */
+.btn-yellow {
+  background: var(--yellow-normal);
+  color: #17101f;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn-yellow:hover {
+  background: var(--yellow-normal-hover);
+  transform: translateY(-1px);
+}
+
+.btn-purple {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn-purple:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+/* Sidebar */
+.sidebar-gradient {
+  background: linear-gradient(180deg, var(--bg-card-secondary) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--color-panel-border);
+  box-shadow: var(--shadow-card);
+}
+
+.sidebar-item {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  background: var(--color-panel-hover);
+}
+
+/* Reading progress bar */
+.progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-progress-track);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--yellow-normal);
+  border-radius: var(--radius-pill);
+}
+
+.panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+.panel-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 import BrandSidebar from '../components/auth/BrandSidebar';
+import './SignUpPage.css';
 import './LoginPage.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="auth-page">
@@ -19,7 +23,7 @@ export default function LoginPage() {
           <label className="auth-field">
             <span>Email/Username</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">👤</span>
+              <span className="auth-input-icon" aria-hidden="true"><User size={18} /></span>
               <input type="text" name="email" placeholder="Enter your email or username" />
             </div>
           </label>
@@ -27,9 +31,17 @@ export default function LoginPage() {
           <label className="auth-field">
             <span>Password</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">🔒</span>
-              <input type="password" name="password" placeholder="Enter your password" />
-              <button type="button" className="auth-eye" aria-label="Show password">👁</button>
+              <span className="auth-input-icon" aria-hidden="true"><LockKeyhole size={18} /></span>
+              <input type={showPassword ? 'text' : 'password'} name="password" placeholder="Enter your password" />
+              <button
+                type="button"
+                className="auth-eye"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </label>
 

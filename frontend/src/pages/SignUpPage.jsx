@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 import BrandSidebar from '../components/auth/BrandSidebar';
 import './SignUpPage.css';
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="auth-page">
@@ -15,11 +18,11 @@ export default function SignUpPage() {
           <p>Enter endless worlds and begin your journey.</p>
         </header>
 
-        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); navigate('/login'); }}>
+        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); navigate('/'); }}>
           <label className="auth-field">
             <span>Email/Username</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">👤</span>
+              <span className="auth-input-icon" aria-hidden="true"><User size={18} /></span>
               <input type="text" name="email" placeholder="Enter your email or username" />
             </div>
           </label>
@@ -27,18 +30,34 @@ export default function SignUpPage() {
           <label className="auth-field">
             <span>Password</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">🔒</span>
-              <input type="password" name="password" placeholder="Enter your password" />
-              <button type="button" className="auth-eye" aria-label="Show password">👁</button>
+              <span className="auth-input-icon" aria-hidden="true"><LockKeyhole size={18} /></span>
+              <input type={showPassword ? 'text' : 'password'} name="password" placeholder="Enter your password" />
+              <button
+                type="button"
+                className="auth-eye"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </label>
 
           <label className="auth-field">
             <span>Confirm Password</span>
             <div className="auth-input-wrap">
-              <span className="auth-input-icon" aria-hidden="true">🔒</span>
-              <input type="password" name="confirmPassword" placeholder="Confirm your password" />
-              <button type="button" className="auth-eye" aria-label="Show password">👁</button>
+              <span className="auth-input-icon" aria-hidden="true"><LockKeyhole size={18} /></span>
+              <input type={showPassword ? 'text' : 'password'} name="confirmPassword" placeholder="Confirm your password" />
+              <button
+                type="button"
+                className="auth-eye"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </label>
 
@@ -54,7 +73,7 @@ export default function SignUpPage() {
 
         <p className="auth-footer">
           Already have an account?{' '}
-          <button type="button" className="auth-text-link" onClick={() => navigate('/login')}>
+          <button type="button" className="auth-text-link" onClick={() => navigate('/')}>
             Log In
           </button>
         </p>

@@ -1,84 +1,40 @@
-.home-page {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    "nav main"
-    "continue continue";
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  background: #e6cfed;
-}
-
-/* When ContinueReading strip is hidden (Favorites / History views) */
-.home-page--no-continue {
-  grid-template-rows: 1fr;
-  grid-template-areas: "nav main";
-}
-
-.home-page > .sidebar {
-  grid-area: nav;
-  align-self: stretch;
-  margin: 0;
-  min-height: 0;
-}
-
-.home-page__main {
-  grid-area: main;
+.home-content {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   min-width: 0;
-  min-height: 0;
-  background: #e6cfed;
+  min-height: 100%;
 }
 
-.home-page > .continue-reading {
-  grid-area: continue;
+.homemainContent {
+  padding-left: 1rem;
 }
 
-.home-page__body {
-  display: flex;
-  flex: 1;
-  gap: 0.75rem;
-  padding: 0 1rem 1rem 1.5rem;
-  min-height: 0;
-}
-
-/* Full-width body when TrendingSidebar is hidden */
-.home-page__body--full {
-  padding-right: 1.5rem;
-}
-
-.home-page__content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
+@media (max-width: 640px) {
+  .homemainContent {
+    padding-left: 0.5rem;
+  }
 }
 
 .home-section__title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #3d114b;
-  margin-bottom: 0.625rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.65rem;
 }
 
 .home-section__row {
   display: flex;
-  gap: 0.875rem;
+  gap: 0.9rem;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.35rem;
   scrollbar-width: thin;
-  scrollbar-color: rgba(78, 45, 88, 0.3) transparent;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
 
 .home-section__row::-webkit-scrollbar { height: 4px; }
-.home-section__row::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(78,45,88,0.3); }
+.home-section__row::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(255,255,255,0.2); }
 
-/* Wrapper so manga cards are clickable without layout side-effects */
 .home-manga-btn {
   background: none;
   border: none;
@@ -88,12 +44,103 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 900px) {
-  .home-page {
-    grid-template-columns: 1fr;
-    grid-template-areas: "main" "continue";
+.home-manga-btn:focus-visible {
+  outline: 2px solid var(--text-yellow);
+  outline-offset: 4px;
+  border-radius: 18px;
+}
+
+.home-library {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.home-library__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-library__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.home-library__subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.home-library__count {
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-yellow);
+}
+
+.home-library__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 1rem;
+}
+
+.home-library__grid .home-manga-btn {
+  width: 132px;
+}
+
+.home-empty {
+  display: flex;
+  min-height: 220px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2rem;
+  text-align: center;
+}
+
+.home-empty__title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.home-empty__text,
+.home-empty__query {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.home-empty__query {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.35rem 0.6rem;
+  color: var(--text-yellow);
+}
+
+@media (max-width: 640px) {
+  .home-library__header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
-  .home-page > .sidebar { display: none; }
-  .home-page__body { padding: 0 1rem 1rem; }
+  .home-library__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-library__grid .home-manga-btn,
+  .home-library__grid .manga-card--popular .manga-card__cover {
+    width: 100%;
+  }
 }
