@@ -64,6 +64,7 @@
   gap: 0.75rem;
   padding: 1rem 1rem 1rem 1.5rem;
   overflow: hidden;
+  position: relative;  /* contains the .trending-expanded absolute overlay */
 }
 
 .reader-page__content {

@@ -68,6 +68,7 @@
   padding: 1rem 1rem 1rem 1.5rem;
   min-height: 0;
   overflow: hidden;
+  position: relative;  /* so .trending-expanded is contained here, not over ContinueReading */
 }
 
 /* Full-width body when TrendingSidebar is hidden */

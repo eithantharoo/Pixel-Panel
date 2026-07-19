@@ -1,20 +1,34 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import HomeHeader from '../components/hub/HomeHeader';
 import Sidebar from '../components/hub/Sidebar';
 import TrendingSidebar from '../components/hub/TrendingSidebar';
 import ContinueReading from '../components/hub/ContinueReading';
 import HeroCard from '../components/reader/HeroCard';
 import ChapterSidebar from '../components/reader/ChapterSidebar';
+import SettingsPanel from '../components/hub/SettingsPanel';
+import HelpPanel from '../components/hub/HelpPanel';
 import { CONTINUE_READING, TRENDING } from '../data/home_data';
 import './ReaderPage.css';
 
 export default function ReaderPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showChapters, setShowChapters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [trendingExpanded, setTrendingExpanded] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(location.state?.book ?? null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+
+  function handleBookSelect(book) {
+    setSelectedBook(book);
+    setShowChapters(false);    // switch back to detail view
+    setTrendingExpanded(false); // collapse the expanded trending panel
+  }
 
   function handleNavChange(navId) {
+    setTrendingExpanded(false);
     if (navId === 'home') {
       navigate('/home');
       return;
@@ -31,6 +45,7 @@ export default function ReaderPage() {
       setShowChapters(false);
       return;
     }
+    setSelectedBook(null);
     navigate('/home');
   }
 
@@ -43,7 +58,15 @@ export default function ReaderPage() {
         onSearchChange={setSearchQuery}
       />
 
-      <Sidebar activeItem="home" onNavChange={handleNavChange} />
+      <Sidebar
+        activeItem="home"
+        onNavChange={handleNavChange}
+        onSettingsClick={() => setShowSettings(true)}
+        onHelpClick={() => setShowHelp(true)}
+      />
+
+      <SettingsPanel open={showSettings} onClose={() => setShowSettings(false)} />
+      <HelpPanel open={showHelp} onClose={() => setShowHelp(false)} />
 
       <div className="reader-page__main">
         <div className="reader-page__body">
@@ -52,19 +75,23 @@ export default function ReaderPage() {
               isReading={showChapters}
               onReadNow={() => setShowChapters(true)}
               onClose={handleClose}
+              book={selectedBook}
             />
           </main>
 
-          <aside className="reader-page__right">
-            {showChapters ? (
+          {showChapters ? (
+            <aside className="reader-page__right">
               <ChapterSidebar />
-            ) : (
-              <TrendingSidebar
-                items={TRENDING}
-                onViewAll={() => handleNavChange('history')}
-              />
-            )}
-          </aside>
+            </aside>
+          ) : (
+            <TrendingSidebar
+              items={TRENDING}
+              onViewAll={() => setTrendingExpanded(true)}
+              expanded={trendingExpanded}
+              onCollapse={() => setTrendingExpanded(false)}
+              onCardClick={handleBookSelect}
+            />
+          )}
         </div>
 
         <ContinueReading
