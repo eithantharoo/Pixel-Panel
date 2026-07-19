@@ -5,7 +5,7 @@ import './TrendingSidebar.css';
 /* ── Compact sidebar (normal mode) ─────────────────────────────── */
 function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
   const featured = items.find((item) => item.featured);
-  const list = items.filter((item) => !item.featured);
+  const list = items.filter((item) => !item.featured).slice(0, 3);
 
   return (
     <aside className="trending" aria-label="Trending manga">
@@ -87,7 +87,7 @@ function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
         </button>
       </div>
 
-      {/* 7-book grid */}
+      {/* 5-book grid — uses same MangaCard as home page */}
       <div className="trending-expanded__grid">
         {allItems.map((item, idx) => (
           <button
@@ -98,32 +98,18 @@ function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
             onClick={() => onCardClick?.(item)}
             tabIndex={expanded ? 0 : -1}
           >
-            <div className="trending-expanded__cover-wrap">
-              <div
-                className="trending-expanded__cover"
-                style={{ background: `linear-gradient(160deg, ${item.color || '#3a2858'}, ${(item.color || '#3a2858')}88)` }}
-              >
-                <span className="trending-expanded__rank">{item.rank ?? idx + 1}</span>
-                {item.featured && (
-                  <span className="trending-expanded__hot">🔥 Hot</span>
-                )}
-              </div>
-            </div>
-            <div className="trending-expanded__info">
-              <p className="trending-expanded__item-title">{item.title}</p>
-              {item.rating != null && (
-                <div className="trending-expanded__rating">
-                  <Star size={11} className="manga-card__star" aria-hidden="true" />
-                  <span>{item.rating.toFixed(1)}</span>
-                </div>
-              )}
-            </div>
+            <MangaCard
+              {...item}
+              variant="popular"
+              rank={item.rank ?? idx + 1}
+            />
           </button>
         ))}
       </div>
     </div>
   );
 }
+
 
 /* ── Public component — renders both; expanded panel is always in DOM ─ */
 function TrendingSidebar({ items = [], onViewAll, expanded = false, onCollapse, onCardClick }) {

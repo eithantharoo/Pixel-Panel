@@ -20,11 +20,32 @@ export const POPULAR = [
 ];
 
 export const TRENDING = [
-  { id: 13, title: 'The Beginning After The End', rating: 9.2, rank: 1, color: '#1e1040', featured: true },
-  { id: 14, title: 'One Piece',                   rating: 9.0, rank: 2, color: '#2a1850' },
-  { id: 15, title: 'Dandadan',                    rating: 8.8, rank: 3, color: '#321e58' },
-  { id: 16, title: 'Lookism',                     rating: 8.5, rank: 4, color: '#281848' },
+  // Row 1
+  { id: 13, title: 'The Beginning After The End', rating: 9.2, rank: 1,  color: '#1e1040', featured: true },
+  { id: 14, title: 'One Piece',                   rating: 9.4, rank: 2,  color: '#2a1850' },
+  { id: 15, title: 'Dandadan',                    rating: 8.8, rank: 3,  color: '#321e58' },
+  { id: 16, title: 'Lookism',                     rating: 8.5, rank: 4,  color: '#281848' },
+  { id: 37, title: 'Solo Leveling',               rating: 9.5, rank: 5,  color: '#2d1b4e' },
+  { id: 38, title: 'Tower Of God',                rating: 8.7, rank: 6,  color: '#2e3850' },
+  { id: 39, title: 'Sweet Home',                  rating: 9.0, rank: 7,  color: '#2a2040' },
+  // Row 2
+  { id: 40, title: 'Eleceed',                     rating: 8.7, rank: 8,  color: '#3b2060' },
+  { id: 41, title: 'Hunter x Hunter',             rating: 9.3, rank: 9,  color: '#5c3478' },
+  { id: 42, title: 'Bleach',                      rating: 8.0, rank: 10, color: '#3a3058' },
+  { id: 43, title: 'Fullmetal Alchemist',         rating: 9.5, rank: 11, color: '#2e2040' },
+  { id: 44, title: 'Kagurabachi',                 rating: 8.6, rank: 12, color: '#1a3a5c' },
+  { id: 45, title: 'Vagabond',                    rating: 9.4, rank: 13, color: '#4a3520' },
+  { id: 46, title: 'Vinland Saga',                rating: 9.3, rank: 14, color: '#3a2818' },
+  // Row 3
+  { id: 47, title: 'Berserk',                     rating: 9.5, rank: 15, color: '#2a1c10' },
+  { id: 48, title: 'Demon Slayer',                rating: 8.9, rank: 16, color: '#1c1440' },
+  { id: 49, title: 'Jujutsu Kaisen',              rating: 9.0, rank: 17, color: '#201440' },
+  { id: 50, title: 'Attack on Titan',             rating: 9.4, rank: 18, color: '#2c1a10' },
+  { id: 51, title: 'Chainsaw Man',                rating: 8.8, rank: 19, color: '#3a1020' },
+  { id: 52, title: 'Spy x Family',                rating: 8.8, rank: 20, color: '#1e3040' },
+  { id: 53, title: 'Blue Lock',                   rating: 8.7, rank: 21, color: '#102040' },
 ];
+
 
 export const CONTINUE_READING = [
   { id: 17, title: 'Kan Kg Loh',  chapter: 'Chapter 12', progress: 75, color: '#3a2060' },

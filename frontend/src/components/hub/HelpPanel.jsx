@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import {
   AlertCircle,
   BookOpen,
+  Check,
   ChevronDown,
-  ExternalLink,
   HelpCircle,
   Keyboard,
   Lightbulb,
   MessageSquare,
   Plus,
   Search,
+  Send,
   X,
 } from 'lucide-react';
 import './HelpPanel.css';
@@ -70,24 +71,14 @@ const FAQ_ITEMS = [
 
 /* ── Keyboard shortcuts ──────────────────────────────────────────── */
 const SHORTCUTS = [
-  { keys: ['R'],      action: 'Start reading selected book'   },
-  { keys: ['F'],      action: 'Toggle favorite'               },
-  { keys: ['Esc'],    action: 'Close panel / go back'         },
-  { keys: ['⌘', 'K'], action: 'Open search'                   },
-  { keys: ['←', '→'], action: 'Previous / next chapter page'  },
+  { keys: ['R'],      action: 'Start reading selected book'  },
+  { keys: ['F'],      action: 'Toggle favorite'              },
+  { keys: ['Esc'],    action: 'Close panel / go back'        },
+  { keys: ['←', '→'], action: 'Previous / next chapter page' },
 ];
 
-/* ── Quick links ─────────────────────────────────────────────────── */
-const QUICK_LINKS = [
-  { icon: AlertCircle, label: 'Report a Bug',    desc: 'Something broken? Let us know.',        color: '#ff6b9d' },
-  { icon: BookOpen,    label: 'Request a Title', desc: 'Suggest a manga to be added.',           color: 'var(--home-accent, #fff43d)' },
-  { icon: MessageSquare, label: 'Contact Support', desc: 'Chat with the Pixel Panel team.',     color: '#4df5ff' },
-];
-
-/* ── Accordion item ──────────────────────────────────────────────── */
+/* ── Accordion item — uses a fixed large max-height for animation ── */
 function FaqItem({ item, open, onToggle }) {
-  const bodyRef = useRef(null);
-
   return (
     <div className={`hp-faq-item${open ? ' hp-faq-item--open' : ''}`}>
       <button
@@ -99,12 +90,70 @@ function FaqItem({ item, open, onToggle }) {
         <span>{item.q}</span>
         <ChevronDown size={16} className="hp-faq-item__arrow" aria-hidden="true" />
       </button>
+      {/* Use a large fixed max-height so the CSS transition works reliably
+          (measuring scrollHeight during render gives 0 because the div is hidden) */}
       <div
-        ref={bodyRef}
         className="hp-faq-item__body"
-        style={{ maxHeight: open ? bodyRef.current?.scrollHeight + 'px' : '0px' }}
+        style={{ maxHeight: open ? '400px' : '0px' }}
       >
         <p className="hp-faq-item__answer">{item.a}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ── Inline form modal (Report / Request) ────────────────────────── */
+function FormModal({ title, placeholder, onClose, onSubmit }) {
+  const [value, setValue] = useState('');
+  const [sent, setSent] = useState(false);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!value.trim()) return;
+    setSent(true);
+    setTimeout(() => { onSubmit?.(); onClose(); }, 1400);
+  }
+
+  return (
+    <div className="hp-modal-backdrop" onClick={onClose}>
+      <div
+        className="hp-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+      >
+        <div className="hp-modal__header">
+          <h3 className="hp-modal__title">{title}</h3>
+          <button type="button" className="hp-panel__close" onClick={onClose} aria-label="Close">
+            <X size={16} />
+          </button>
+        </div>
+
+        {sent ? (
+          <div className="hp-modal__success">
+            <Check size={28} className="hp-modal__check" aria-hidden="true" />
+            <p>Submitted! We'll review it soon.</p>
+          </div>
+        ) : (
+          <form className="hp-modal__form" onSubmit={handleSubmit}>
+            <textarea
+              className="hp-modal__textarea"
+              placeholder={placeholder}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              rows={4}
+              autoFocus
+            />
+            <div className="hp-modal__actions">
+              <button type="button" className="hp-modal__cancel" onClick={onClose}>Cancel</button>
+              <button type="submit" className="hp-modal__submit" disabled={!value.trim()}>
+                <Send size={14} aria-hidden="true" />
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
@@ -114,16 +163,19 @@ function FaqItem({ item, open, onToggle }) {
 export default function HelpPanel({ open, onClose }) {
   const [query, setQuery] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
+  const [activeModal, setActiveModal] = useState(null); // 'bug' | 'request' | 'support'
   const panelRef = useRef(null);
   const searchRef = useRef(null);
 
-  /* Close on Escape */
+  /* Close on Escape (but not when a modal is open) */
   useEffect(() => {
     if (!open) return;
-    function onKey(e) { if (e.key === 'Escape') onClose?.(); }
+    function onKey(e) {
+      if (e.key === 'Escape' && !activeModal) onClose?.();
+    }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [open, onClose, activeModal]);
 
   /* Focus search when panel opens */
   useEffect(() => {
@@ -137,6 +189,14 @@ export default function HelpPanel({ open, onClose }) {
           item.a.toLowerCase().includes(query.toLowerCase()),
       )
     : FAQ_ITEMS;
+
+  function handleQuickLink(key) {
+    if (key === 'support') {
+      window.location.href = 'mailto:support@pixelpanel.io?subject=Support%20Request';
+    } else {
+      setActiveModal(key);
+    }
+  }
 
   return (
     <>
@@ -246,18 +306,53 @@ export default function HelpPanel({ open, onClose }) {
               Quick Links
             </h3>
             <div className="hp-quicklinks">
-              {QUICK_LINKS.map(({ icon: Icon, label, desc, color }) => (
-                <button key={label} type="button" className="hp-quicklink" aria-label={label}>
-                  <span className="hp-quicklink__icon" style={{ color }}>
-                    <Icon size={18} aria-hidden="true" />
-                  </span>
-                  <div className="hp-quicklink__text">
-                    <span className="hp-quicklink__label">{label}</span>
-                    <span className="hp-quicklink__desc">{desc}</span>
-                  </div>
-                  <ExternalLink size={14} className="hp-quicklink__arrow" aria-hidden="true" />
-                </button>
-              ))}
+              <button
+                type="button"
+                className="hp-quicklink"
+                aria-label="Report a Bug"
+                onClick={() => handleQuickLink('bug')}
+              >
+                <span className="hp-quicklink__icon" style={{ color: '#ff6b9d' }}>
+                  <AlertCircle size={18} aria-hidden="true" />
+                </span>
+                <div className="hp-quicklink__text">
+                  <span className="hp-quicklink__label">Report a Bug</span>
+                  <span className="hp-quicklink__desc">Something broken? Let us know.</span>
+                </div>
+                <span className="hp-quicklink__arrow">→</span>
+              </button>
+
+              <button
+                type="button"
+                className="hp-quicklink"
+                aria-label="Request a Title"
+                onClick={() => handleQuickLink('request')}
+              >
+                <span className="hp-quicklink__icon" style={{ color: 'var(--home-accent, #fff43d)' }}>
+                  <BookOpen size={18} aria-hidden="true" />
+                </span>
+                <div className="hp-quicklink__text">
+                  <span className="hp-quicklink__label">Request a Title</span>
+                  <span className="hp-quicklink__desc">Suggest a manga to be added.</span>
+                </div>
+                <span className="hp-quicklink__arrow">→</span>
+              </button>
+
+              <button
+                type="button"
+                className="hp-quicklink"
+                aria-label="Contact Support"
+                onClick={() => handleQuickLink('support')}
+              >
+                <span className="hp-quicklink__icon" style={{ color: '#4df5ff' }}>
+                  <MessageSquare size={18} aria-hidden="true" />
+                </span>
+                <div className="hp-quicklink__text">
+                  <span className="hp-quicklink__label">Contact Support</span>
+                  <span className="hp-quicklink__desc">Opens your email client.</span>
+                </div>
+                <span className="hp-quicklink__arrow">→</span>
+              </button>
             </div>
           </section>
 
@@ -284,7 +379,11 @@ export default function HelpPanel({ open, onClose }) {
           {/* ─ Footer ─ */}
           <div className="hp-footer">
             <p>Still need help?</p>
-            <button type="button" className="hp-footer__btn">
+            <button
+              type="button"
+              className="hp-footer__btn"
+              onClick={() => handleQuickLink('support')}
+            >
               <MessageSquare size={14} aria-hidden="true" />
               Contact Support
             </button>
@@ -292,6 +391,22 @@ export default function HelpPanel({ open, onClose }) {
 
         </div>
       </aside>
+
+      {/* ── Inline modals ── */}
+      {activeModal === 'bug' && (
+        <FormModal
+          title="Report a Bug"
+          placeholder="Describe the issue — which page, what happened, and what you expected…"
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'request' && (
+        <FormModal
+          title="Request a Title"
+          placeholder="Enter the manga/manhwa title you'd like to see added…"
+          onClose={() => setActiveModal(null)}
+        />
+      )}
     </>
   );
 }

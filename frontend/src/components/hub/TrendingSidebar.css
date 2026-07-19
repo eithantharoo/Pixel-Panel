@@ -224,12 +224,13 @@
   border-color: var(--home-accent);
 }
 
-/* ── 7-column Book Grid ────────────────────────────────────────── */
+/* ── 6-column Book Grid ────────────────────────────────────────── */
 .trending-expanded__grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.875rem;
-  padding: 1.25rem;
+  grid-template-columns: repeat(6, 120px);
+  justify-content: space-between;
+  gap: 1rem 0;
+  padding: 1.25rem 1.5rem;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
@@ -251,16 +252,15 @@
   border-radius: 3px;
 }
 
-/* ── Individual Book Card ──────────────────────────────────────── */
+/* ── Individual Book Card — wraps MangaCard like home-manga-btn ── */
 .trending-expanded__item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  text-align: left;
   border-radius: 10px;
   transition: transform 0.2s ease;
 }
@@ -269,103 +269,3 @@
   transform: translateY(-4px);
 }
 
-.trending-expanded__cover-wrap {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-}
-
-.trending-expanded__cover {
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  position: relative;
-  transition: filter 0.22s ease;
-}
-
-.trending-expanded__item:hover .trending-expanded__cover {
-  filter: brightness(1.12);
-}
-
-/* "Read Now" hover overlay */
-.trending-expanded__cover::after {
-  content: 'Read Now';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  font-family: inherit;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.22s ease;
-  pointer-events: none;
-}
-
-.trending-expanded__item:hover .trending-expanded__cover::after {
-  opacity: 1;
-}
-
-.trending-expanded__rank {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: var(--home-accent);
-  color: var(--home-ink);
-  font-size: 0.6875rem;
-  font-weight: 800;
-  z-index: 1;
-}
-
-.trending-expanded__hot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 0.55rem;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.6);
-  color: var(--home-accent);
-  padding: 0.15rem 0.35rem;
-  border-radius: 4px;
-  z-index: 1;
-  white-space: nowrap;
-}
-
-.trending-expanded__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.trending-expanded__item-title {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--home-text);
-  line-height: 1.3;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.trending-expanded__rating {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--home-text-muted);
-}
