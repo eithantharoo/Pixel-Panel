@@ -171,7 +171,14 @@ export default function HelpPanel({ open, onClose }) {
   useEffect(() => {
     if (!open) return;
     function onKey(e) {
-      if (e.key === 'Escape' && !activeModal) onClose?.();
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopImmediatePropagation?.();
+      if (activeModal) {
+        setActiveModal(null);
+        return;
+      }
+      onClose?.();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

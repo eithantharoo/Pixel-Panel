@@ -95,16 +95,20 @@ function Poster({ book }) {
         className="relative overflow-hidden rounded-lg border border-[var(--home-border)] shadow-lg"
         style={{ background: `linear-gradient(160deg, ${book.color || '#3a2858'}, ${(book.color || '#3a2858')}88)` }}
       >
-        <div className="aspect-[3/4] w-full flex items-center justify-center">
+        {book.cover ? (
+          <img src={book.cover} alt={book.title} className="aspect-[3/4] w-full object-cover" />
+        ) : (
+          <div className="aspect-[3/4] w-full flex items-center justify-center">
+            <span className="text-6xl font-black text-white/10 select-none">
+              {book.title?.[0] ?? '?'}
+            </span>
+          </div>
+        )}
           {book.rank != null && (
             <span className="absolute top-3 left-3 flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--home-accent)] text-[var(--home-ink)] text-sm font-extrabold shadow">
               {book.rank}
             </span>
           )}
-          <span className="text-6xl font-black text-white/10 select-none">
-            {book.title?.[0] ?? '?'}
-          </span>
-        </div>
       </div>
     );
   }
@@ -118,7 +122,7 @@ function Poster({ book }) {
   );
 }
 
-export default function HeroCard({ isReading, onReadNow, onClose, book }) {
+export default function HeroCard({ isReading, onReadNow, onClose, book, isFavorite = false, onToggleFavorite }) {
   // Derive display values — use book data if provided, else hardcoded defaults
   const title    = book?.title    ?? DEFAULT_TITLE;
   const rating   = book?.rating   ?? DEFAULT_RATING;
@@ -192,9 +196,14 @@ export default function HeroCard({ isReading, onReadNow, onClose, book }) {
                 <BookOpen size={17} strokeWidth={2.3} />
                 Read
               </button>
-              <button type="button" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--home-control-hover)] bg-[var(--home-control)] px-3 py-2.5 text-sm font-bold text-[var(--home-ink)] transition-colors hover:bg-[var(--home-control-hover)]">
-                <Heart size={17} strokeWidth={2.3} />
-                Favorite
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--home-control-hover)] bg-[var(--home-control)] px-3 py-2.5 text-sm font-bold text-[var(--home-ink)] transition-colors hover:bg-[var(--home-control-hover)]"
+                onClick={onToggleFavorite}
+                aria-pressed={isFavorite}
+              >
+                <Heart size={17} strokeWidth={2.3} fill={isFavorite ? 'currentColor' : 'none'} />
+                {isFavorite ? 'Favorited' : 'Favorite'}
               </button>
             </div>
           </div>

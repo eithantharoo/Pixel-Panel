@@ -18,7 +18,7 @@ export default function AppLayout({ topbar, sidebar, rightPanel, bottomBar, chil
 
         <div className="flex min-w-0 min-h-0 flex-1 flex-col gap-5">
           <div className="flex-1 min-h-0 overflow-hidden">
-            <div className="panel-scroll h-full min-h-0 overflow-y-auto rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4 shadow-lg sm:p-5 lg:p-6">
+            <div className="panel-scroll h-full min-h-0 overflow-y-auto rounded-2xl border border-white/5 bg-gradient-to-b from-[#ad63c4] to-[#824a93] p-4 shadow-lg sm:p-5 lg:p-6">
               {children}
             </div>
           </div>

@@ -43,13 +43,14 @@ export default function GenreView({ genreId, query = '' }) {
               key={book.id}
               type="button"
               className="genre-view__book-btn"
-              onClick={() => navigate('/reader')}
+              onClick={() => navigate('/reader', { state: { book } })}
               aria-label={`Read ${book.title}`}
             >
               <div
                 className="genre-view__cover"
                 style={{ background: `linear-gradient(160deg, ${book.color}, ${book.color}88)` }}
               >
+                {book.cover && <img src={book.cover} alt={book.title} />}
                 <div className="genre-view__hover-overlay">
                   <span className="genre-view__read-btn">Read Now</span>
                 </div>

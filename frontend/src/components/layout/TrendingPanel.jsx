@@ -38,7 +38,7 @@ export default function TrendingPanel({ items, onCardClick, onViewAll }) {
   const otherTrends = list.filter((item) => item !== featured);
 
   return (
-    <aside className="flex h-full min-h-0 w-full shrink-0 flex-col justify-between rounded-lg border border-[var(--panel-control-border)] bg-[var(--bg-card)] p-5 shadow-lg">
+    <aside className="flex h-full min-h-0 w-full shrink-0 flex-col justify-between rounded-lg border border-[var(--panel-control-border)] bg-gradient-to-b from-[#ad63c4] to-[#824a93] p-5 shadow-lg">
       <div className="flex min-h-0 flex-col">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="inline-flex items-center gap-2 text-lg font-bold text-[var(--text-yellow)]">

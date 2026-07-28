@@ -12,9 +12,10 @@ function HeartIcon({ filled }) {
   );
 }
 
-function FavoriteCard({ title, color, rating, genre }) {
+function FavoriteCard({ title, color, cover, rating, genre }) {
   const navigate = useNavigate();
   const style = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
+  const book = { title, color, cover, rating, genre };
 
   return (
     <article
@@ -22,10 +23,11 @@ function FavoriteCard({ title, color, rating, genre }) {
       role="button"
       tabIndex={0}
       aria-label={`Read ${title}`}
-      onClick={() => navigate('/reader')}
-      onKeyDown={(e) => e.key === 'Enter' && navigate('/reader')}
+      onClick={() => navigate('/reader', { state: { book } })}
+      onKeyDown={(e) => e.key === 'Enter' && navigate('/reader', { state: { book } })}
     >
       <div className="fav-card__cover" style={style}>
+        {cover && <img src={cover} alt={title} />}
         <span className="fav-card__genre">{genre}</span>
         <button
           type="button"

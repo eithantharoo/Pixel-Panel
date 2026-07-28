@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/hub/Sidebar';
 import HomeHeader from '../components/hub/HomeHeader';
@@ -25,6 +25,11 @@ const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
 const LIBRARY_ITEMS = Array.from(
   new Map([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...FAVORITES].map((item) => [item.title, item])).values(),
 );
+
+function isEditableTarget(target) {
+  const tagName = target?.tagName?.toLowerCase();
+  return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
+}
 
 function normalise(value) {
   return String(value || '').trim().toLowerCase();
@@ -61,7 +66,7 @@ function SectionRow({ title, children }) {
 function MangaButton({ manga, navigate, variant }) {
   return (
     <button type="button" className="home-manga-btn" onClick={() => navigate('/reader', { state: { book: manga } })}>
-      <MangaCard title={manga.title} color={manga.color} variant={variant} rating={manga.rating} />
+      <MangaCard {...manga} variant={variant} />
     </button>
   );
 }
@@ -135,6 +140,58 @@ export default function HomePage() {
   }
 
   const showTrending = activeNav === 'home' && !activeGenre;
+
+  function getFirstVisibleBook() {
+    if (activeNav === 'favorite') return filterItems(FAVORITES, searchQuery)[0];
+    if (activeNav === 'history') return filterItems(HISTORY, searchQuery)[0];
+    if (activeNav === 'library') return filterItems(LIBRARY_ITEMS, searchQuery)[0];
+    return filterItems([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR], searchQuery)[0];
+  }
+
+  useEffect(() => {
+    function handleShortcut(event) {
+      if (isEditableTarget(event.target) && event.key !== 'Escape') return;
+
+      if (event.key === 'Escape') {
+        if (showHelp) {
+          setShowHelp(false);
+          return;
+        }
+        if (showSettings) {
+          setShowSettings(false);
+          return;
+        }
+        if (trendingExpanded) {
+          setTrendingExpanded(false);
+          return;
+        }
+        if (activeGenre) {
+          setActiveGenre(null);
+          return;
+        }
+        if (activeNav !== 'home') {
+          setActiveNav('home');
+        }
+        return;
+      }
+
+      if (event.key.toLowerCase() === 'r') {
+        const book = getFirstVisibleBook();
+        if (!book) return;
+        event.preventDefault();
+        navigate('/reader', { state: { book } });
+        return;
+      }
+
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        handleNavChange('favorite');
+      }
+    }
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [activeGenre, activeNav, navigate, searchQuery, showHelp, showSettings, trendingExpanded]);
 
   function renderContent() {
     if (activeNav === 'favorite') {

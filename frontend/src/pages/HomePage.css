@@ -1,6 +1,6 @@
 /* ── Base layout ─────────────────────────────────────────────────── */
 .home-page {
-  --home-canvas: #9b4dca;
+  --home-canvas: #e6cfed;
   --home-panel: #5a2d82;
   --home-panel-deep: #3d1d5e;
   --home-panel-hover: #6e3a9a;
@@ -8,8 +8,8 @@
   --home-accent-hover: #f0ce00;
   --home-control: #e8d5f5;
   --home-control-hover: #d8bfee;
-  --home-text: #ffffff;
-  --home-text-muted: #d4b8e8;
+  --home-text: #EBE5D0;
+  --home-text-muted: #ead9ee;
   --home-ink: #2a1040;
   --home-border: rgba(220, 190, 255, 0.2);
   display: grid;
@@ -22,7 +22,7 @@
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: linear-gradient(160deg, #a855d4 0%, #8b35b8 50%, #7a2aaa 100%);
+  background: #e6cfed;
 }
 
 .home-page>.home-header {
