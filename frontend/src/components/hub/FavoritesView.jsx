@@ -35,12 +35,17 @@ function FavoriteCard({ title, color, rating, genre }) {
         >
           <HeartIcon filled />
         </button>
-      </div>
-      <div className="fav-card__info">
-        <h3 className="fav-card__title">{title}</h3>
-        <div className="fav-card__rating">
-          <StarIcon />
-          <span>{rating.toFixed(1)}</span>
+        {/* Book footer overlay */}
+        <div className="fav-card__book-footer">
+          <p className="fav-card__book-footer-name">{title}</p>
+          <div className="fav-card__book-footer-rating">
+            <StarIcon />
+            <span>{rating.toFixed(1)}</span>
+          </div>
+        </div>
+        {/* Genres-style hover overlay */}
+        <div className="fav-card__hover-overlay">
+          <span className="fav-card__read-btn">Read Now</span>
         </div>
       </div>
     </article>

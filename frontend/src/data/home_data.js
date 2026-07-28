@@ -1,16 +1,17 @@
 export const FOR_YOU = [
-  { id: 1, title: 'Solo Leveling',   color: '#2d1b4e' },
-  { id: 2, title: 'Lookism',         color: '#4a2c6a' },
-  { id: 3, title: 'Eleceed',         color: '#3b2060' },
-  { id: 4, title: 'Hunter x Hunter', color: '#5c3478' },
+  { id: 1, title: 'Solo Leveling',   rating: 9.5, color: '#2d1b4e' },
+  { id: 2, title: 'Lookism',         rating: 8.5, color: '#4a2c6a' },
+  { id: 3, title: 'Eleceed',         rating: 8.7, color: '#3b2060' },
+  { id: 4, title: 'Hunter x Hunter', rating: 9.3, color: '#5c3478' },
 ];
 
 export const NEWLY_RELEASED = [
-  { id: 5, title: 'Kagurabachi', color: '#1a3a5c' },
-  { id: 6, title: 'BoBo',        color: '#2e4a3a' },
-  { id: 7, title: 'Dandadan',    color: '#4a3050' },
-  { id: 8, title: 'One Piece',   color: '#3a2858' },
+  { id: 5, title: 'Kagurabachi', rating: 8.6, color: '#1a3a5c' },
+  { id: 6, title: 'BoBo',        rating: 7.9, color: '#2e4a3a' },
+  { id: 7, title: 'Dandadan',    rating: 8.8, color: '#4a3050' },
+  { id: 8, title: 'One Piece',   rating: 9.4, color: '#3a2858' },
 ];
+
 
 export const POPULAR = [
   { id: 9,  title: 'Sweet Home',   rating: 9.0, color: '#2a2040' },

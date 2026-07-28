@@ -202,7 +202,9 @@ export default function HomePage() {
             />
           )}
         </div>
+      </div>
 
+      <div className="home-page__footer">
         <ContinueReading
           items={CONTINUE_READING}
           onViewAll={() => handleNavChange('history')}

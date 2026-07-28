@@ -25,21 +25,6 @@
   height: 190px;
 }
 
-.manga-card__overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 55%);
-  padding: 0.75rem;
-}
-
-.manga-card__overlay-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #fff;
-  line-height: 1.3;
-}
 
 /* Newly released */
 .manga-card--new .manga-card__cover {
@@ -210,8 +195,32 @@
   transition: width 0.3s ease;
 }
 
-/* ── "Read Now" hover overlay (shared across all card variants) ── */
-.manga-card__cover::after {
+/* ── Genre-style "Read Now" hover overlay ── */
+.manga-card__hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Show pill hover on hovered button parent — main card variants only */
+button:hover > .manga-card .manga-card__hover-overlay,
+button:hover > article.manga-card .manga-card__hover-overlay,
+.home-manga-btn:hover .manga-card__hover-overlay,
+.trending-expanded__item:hover .manga-card__hover-overlay {
+  opacity: 1;
+}
+
+/* ── Favorites-style "Read Now" hover — for trending + continue covers ── */
+.manga-card--trending .manga-card__cover::after,
+.manga-card--continue .manga-card__cover::after {
   content: 'Read Now';
   position: absolute;
   inset: 0;
@@ -228,17 +237,70 @@
   opacity: 0;
   transition: opacity 0.22s ease;
   pointer-events: none;
+  z-index: 2;
 }
 
-/* Apply only when inside a hovered clickable button */
-button:hover > .manga-card .manga-card__cover::after,
-button:hover > article.manga-card .manga-card__cover::after,
-.home-manga-btn:hover .manga-card__cover::after {
+.trending__card-btn:hover .manga-card--trending .manga-card__cover::after,
+.continue-reading__item-btn:hover .manga-card--continue .manga-card__cover::after,
+button:hover > .manga-card--continue .manga-card__cover::after {
   opacity: 1;
+}
+
+.manga-card__read-btn {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: #eadbee;
+  color: #2f1c38;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .manga-card__star {
   fill: var(--home-accent);
   color: var(--home-accent);
   flex-shrink: 0;
+}
+
+/* ── Book info footer — transparent black 30% band at bottom of cover ── */
+.manga-card__book-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
+  pointer-events: none;
+  text-align: left;
+  z-index: 1;
+}
+
+.manga-card__book-footer-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.manga-card__book-footer-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #fff43d;
 }

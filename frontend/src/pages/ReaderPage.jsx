@@ -93,7 +93,9 @@ export default function ReaderPage() {
             />
           )}
         </div>
+      </div>
 
+      <div className="reader-page__footer">
         <ContinueReading
           items={CONTINUE_READING}
           onViewAll={() => handleNavChange('history')}

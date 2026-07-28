@@ -1,40 +1,40 @@
 /* ── Base layout ─────────────────────────────────────────────────── */
 .home-page {
-  --home-canvas: #a661c3;
-  --home-panel: #4c3159;
-  --home-panel-deep: #382342;
-  --home-panel-hover: #60406d;
-  --home-accent: #fff43d;
-  --home-accent-hover: #e9df2e;
-  --home-control: #eadbee;
-  --home-control-hover: #dcc7e3;
+  --home-canvas: #9b4dca;
+  --home-panel: #5a2d82;
+  --home-panel-deep: #3d1d5e;
+  --home-panel-hover: #6e3a9a;
+  --home-accent: #ffdd00;
+  --home-accent-hover: #f0ce00;
+  --home-control: #e8d5f5;
+  --home-control-hover: #d8bfee;
   --home-text: #ffffff;
-  --home-text-muted: #d8c8dd;
-  --home-ink: #2f1c38;
-  --home-border: rgba(234, 219, 238, 0.18);
+  --home-text-muted: #d4b8e8;
+  --home-ink: #2a1040;
+  --home-border: rgba(220, 190, 255, 0.2);
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "header header"
-    "nav    main";
+    "header  header"
+    "nav     main"
+    "footer  footer";
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: var(--home-canvas);
+  background: linear-gradient(160deg, #a855d4 0%, #8b35b8 50%, #7a2aaa 100%);
 }
 
-.home-page > .home-header {
+.home-page>.home-header {
   grid-area: header;
   position: sticky;
   top: 0;
   z-index: 300;
 }
 
-.home-page > .sidebar {
+/* Sidebar sits in the nav area — spans both body + footer rows */
+.home-page>.sidebar {
   grid-area: nav;
-  position: sticky;
-  top: 0;
   align-self: stretch;
   margin: 0;
   min-height: 0;
@@ -47,17 +47,20 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  background: var(--home-canvas);
+  background: transparent;
   overflow: hidden;
 }
 
-.home-page__main > .continue-reading {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+/* ── Footer bar (ContinueReading) — full width from sidebar right edge ── */
+.home-page__footer {
+  grid-area: footer;
+  background: #4e2d58;
+  display: flex;
+  align-items: center;
+  min-height: 0;
   z-index: 20;
-  width: 100%;
+  box-shadow: 0 -4px 24px rgba(30, 10, 45, 0.35);
+  border-top: 1px solid rgba(255, 244, 61, 0.18);
 }
 
 /* ── Body (content + trending sidebar) ──────────────────────────── */
@@ -68,7 +71,8 @@
   padding: 1rem 1rem 1rem 1.5rem;
   min-height: 0;
   overflow: hidden;
-  position: relative;  /* so .trending-expanded is contained here, not over ContinueReading */
+  position: relative;
+  /* so .trending-expanded is contained here, not over ContinueReading */
 }
 
 /* Full-width body when TrendingSidebar is hidden */
@@ -86,10 +90,10 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 1.25rem;
-  border: 1px solid var(--home-border);
-  border-radius: 16px;
-  background: var(--home-panel);
-  box-shadow: 0 12px 28px rgba(47, 28, 56, 0.18);
+  /* Step 2: No panel background — books show directly on canvas */
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .home-page__content::-webkit-scrollbar {
@@ -98,9 +102,9 @@
 
 /* ── Manga sections ──────────────────────────────────────────────── */
 .home-section__title {
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--home-accent);
+  color: white;
   margin-bottom: 0.625rem;
 }
 
@@ -221,13 +225,14 @@
 @media (max-width: 900px) {
   .home-page {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     grid-template-areas:
       "header"
-      "main";
+      "main"
+      "footer";
   }
 
-  .home-page > .sidebar {
+  .home-page>.sidebar {
     display: none;
   }
 

@@ -22,14 +22,6 @@ function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
             >
               <MangaCard {...featured} variant="featured" />
             </button>
-            <div className="trending__featured-info">
-              <span className="trending__featured-rank">#{featured.rank}</span>
-              <p className="trending__featured-title">{featured.title}</p>
-              <div className="trending__featured-rating">
-                <Star size={12} className="manga-card__star" aria-hidden="true" />
-                <span>{featured.rating.toFixed(1)}</span>
-              </div>
-            </div>
           </div>
         )}
 
