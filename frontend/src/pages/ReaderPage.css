@@ -11,6 +11,7 @@
   --home-text-muted: #d8c8dd;
   --home-ink: #2f1c38;
   --home-border: rgba(234, 219, 238, 0.18);
+  --continue-reading-height: calc(0.875rem * 2 + 42px);
   --text-yellow: var(--home-accent);
   --yellow-normal: var(--home-accent);
   --yellow-normal-hover: var(--home-accent-hover);
@@ -62,7 +63,7 @@
   min-width: 0;
   min-height: 0;
   gap: 0.75rem;
-  padding: 1rem 1rem 1rem 1.5rem;
+  padding: 1rem 1rem 0 1.5rem;
   overflow: hidden;
 }
 
@@ -71,17 +72,26 @@
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
-  padding: 1.25rem;
+  padding: 1.25rem 1.25rem var(--continue-reading-height);
   border: 1px solid var(--home-border);
-  border-radius: 16px;
-  background: var(--home-panel);
+  border-radius: 24px;
+  background: var(--home-panel-deep);
   box-shadow: 0 12px 28px rgba(47, 28, 56, 0.2);
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .reader-page__content::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+}
+
+.reader-page__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.reader-page__content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .reader-page__right {
