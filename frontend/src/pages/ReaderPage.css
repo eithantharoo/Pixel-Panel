@@ -12,6 +12,7 @@
   --home-ink: #2f1c38;
   --home-border: rgba(234, 219, 238, 0.18);
   --continue-reading-height: calc(0.875rem * 2 + 42px);
+  --continue-reading-offset: calc(var(--continue-reading-height) + 0.75rem);
   --text-yellow: var(--home-accent);
   --yellow-normal: var(--home-accent);
   --yellow-normal-hover: var(--home-accent-hover);
@@ -59,12 +60,16 @@
 .reader-page__body {
   display: flex;
   width: 100%;
-  height: 100%;
+  height: calc(100% - var(--continue-reading-offset));
   min-width: 0;
   min-height: 0;
   gap: 0.75rem;
   padding: 1rem 1rem 0 1.5rem;
   overflow: hidden;
+}
+
+.reader-page__body--reading {
+  gap: 1rem;
 }
 
 .reader-page__content {
@@ -79,6 +84,11 @@
   box-shadow: 0 12px 28px rgba(47, 28, 56, 0.2);
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.reader-page__content--reading {
+  padding: 1rem 1rem 1.1rem;
+  border-radius: 22px;
 }
 
 .reader-page__content::-webkit-scrollbar {
@@ -99,6 +109,10 @@
   height: 100%;
   min-height: 0;
   flex-shrink: 0;
+}
+
+.reader-page__right--chapters {
+  width: 284px;
 }
 
 .reader-page__right > * {

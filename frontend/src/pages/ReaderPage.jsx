@@ -46,8 +46,8 @@ export default function ReaderPage() {
       <Sidebar activeItem="home" onNavChange={handleNavChange} />
 
       <div className="reader-page__main">
-        <div className="reader-page__body">
-          <main className="reader-page__content">
+        <div className={`reader-page__body${showChapters ? ' reader-page__body--reading' : ''}`}>
+          <main className={`reader-page__content${showChapters ? ' reader-page__content--reading' : ''}`}>
             <HeroCard
               isReading={showChapters}
               onReadNow={() => setShowChapters(true)}
@@ -55,7 +55,7 @@ export default function ReaderPage() {
             />
           </main>
 
-          <aside className="reader-page__right">
+          <aside className={`reader-page__right${showChapters ? ' reader-page__right--chapters' : ''}`}>
             {showChapters ? (
               <ChapterSidebar />
             ) : (
