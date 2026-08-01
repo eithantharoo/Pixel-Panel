@@ -80,6 +80,10 @@
   position: relative;  /* contains the .trending-expanded absolute overlay */
 }
 
+.reader-page__body--reading {
+  gap: 1rem;
+}
+
 .reader-page__content {
   flex: 1;
   min-width: 0;
@@ -92,6 +96,11 @@
   box-shadow: 0 12px 28px rgba(47, 28, 56, 0.2);
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.reader-page__content--reading {
+  padding: 1rem 1rem 1.1rem;
+  border-radius: 22px;
 }
 
 .reader-page__content::-webkit-scrollbar {
@@ -112,6 +121,10 @@
   height: 100%;
   min-height: 0;
   flex-shrink: 0;
+}
+
+.reader-page__right--chapters {
+  width: 284px;
 }
 
 .reader-page__right > * {

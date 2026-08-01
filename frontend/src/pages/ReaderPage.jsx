@@ -134,8 +134,8 @@ export default function ReaderPage() {
       <HelpPanel open={showHelp} onClose={() => setShowHelp(false)} />
 
       <div className="reader-page__main">
-        <div className="reader-page__body">
-          <main className="reader-page__content">
+        <div className={`reader-page__body${showChapters ? ' reader-page__body--reading' : ''}`}>
+          <main className={`reader-page__content${showChapters ? ' reader-page__content--reading' : ''}`}>
             <HeroCard
               isReading={showChapters}
               onReadNow={handleReadNow}
@@ -147,7 +147,7 @@ export default function ReaderPage() {
           </main>
 
           {showChapters ? (
-            <aside className="reader-page__right">
+            <aside className="reader-page__right reader-page__right--chapters">
               <ChapterSidebar currentChapter={currentChapter} onChapterSelect={setCurrentChapter} />
             </aside>
           ) : (

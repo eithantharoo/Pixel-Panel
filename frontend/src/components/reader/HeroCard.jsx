@@ -94,7 +94,7 @@ function MetaList({ metadata, rating }) {
   );
 }
 
-function GenreList({ genres, light = false }) {
+function GenreList({ genres, light = false, reading = false }) {
   const list = genres ?? DEFAULT_GENRES;
 
   return (
@@ -104,8 +104,10 @@ function GenreList({ genres, light = false }) {
           key={genre}
           className={
             light
-              ? 'rounded-full bg-[var(--home-control)] px-5 py-2.5 text-sm font-semibold text-[var(--home-ink)] sm:text-base'
-              : 'rounded-md border border-[var(--home-control-hover)] bg-[var(--home-control)] px-3 py-1.5 text-xs font-bold text-[var(--home-ink)]'
+              ? 'inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-[var(--home-control)] px-6 py-3 text-center text-sm font-semibold text-[var(--home-ink)] sm:text-base'
+              : reading
+                ? 'inline-flex min-w-[6rem] items-center justify-center rounded-full border border-[var(--home-control-hover)] bg-[var(--home-control)] px-4 py-2 text-center text-sm font-semibold text-[var(--home-ink)]'
+                : 'inline-flex min-w-[7.5rem] items-center justify-center rounded-md border border-[var(--home-control-hover)] bg-[var(--home-control)] px-4 py-2 text-center text-xs font-bold text-[var(--home-ink)]'
           }
         >
           {genre}
@@ -115,7 +117,7 @@ function GenreList({ genres, light = false }) {
   );
 }
 
-function Poster({ book, accentBorder = false }) {
+function Poster({ book, accentBorder = false, showRating = true, className = '' }) {
   const borderClass = accentBorder
     ? 'border border-white/70'
     : 'border border-[var(--home-border)]';
@@ -123,7 +125,7 @@ function Poster({ book, accentBorder = false }) {
   if (book) {
     return (
       <div
-        className={`relative overflow-hidden rounded-2xl bg-[var(--home-panel-deep)] shadow-lg ${borderClass}`}
+        className={`relative overflow-hidden rounded-2xl bg-[var(--home-panel-deep)] shadow-lg ${className} ${borderClass}`}
         style={{ background: `linear-gradient(160deg, ${book.color || '#3a2858'}, ${(book.color || '#3a2858')}88)` }}
       >
         {book.cover ? (
@@ -145,11 +147,13 @@ function Poster({ book, accentBorder = false }) {
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl bg-[var(--home-panel-deep)] shadow-lg ${borderClass}`}>
+    <div className={`relative overflow-hidden rounded-2xl bg-[var(--home-panel-deep)] shadow-lg ${className} ${borderClass}`}>
       <img src={images.hero} alt="Jujutsu Kaisen" className="aspect-[3/4] w-full object-cover" />
-      <div className="absolute left-2.5 top-2.5">
-        <RatingBadge compact />
-      </div>
+      {showRating ? (
+        <div className="absolute left-2.5 top-2.5">
+          <RatingBadge compact />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -170,46 +174,42 @@ export default function HeroCard({ isReading, onReadNow, onClose, book, isFavori
 
   if (isReading) {
     return (
-      <div key={title} className="flex h-full min-h-0 flex-col gap-5" style={{ animation: 'heroFadeIn 0.35s ease' }}>
-        <section className="relative min-h-[210px] shrink-0 overflow-hidden rounded-lg border border-[var(--home-border)]" style={bannerStyle}>
-          {!color && <img src={images.heroBanner} alt={`${title} Banner`} className="h-full min-h-[210px] w-full object-cover" />}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/[0.78] via-black/[0.38] to-transparent" />
+      <div key={title} className="flex h-full min-h-0 flex-col gap-4" style={{ animation: 'heroFadeIn 0.35s ease' }}>
+        <section className="relative min-h-0 flex-[1_1_0%] overflow-hidden rounded-[1.75rem] border border-[var(--home-border)]" style={bannerStyle}>
+          {!color && <img src={images.heroBanner} alt={`${title} Banner`} className="h-full w-full object-cover" />}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/[0.3] via-black/[0.14] to-transparent" />
           <IconButton label="Close reading mode" onClick={onClose} className="absolute right-4 top-4 bg-black/[0.35] hover:bg-black/[0.55]" />
-          <div className="absolute inset-0 flex flex-col justify-end gap-3 p-5 sm:p-6">
-            <span className="w-fit rounded-md bg-[var(--home-accent)] px-3 py-1.5 text-xs font-extrabold text-[var(--home-ink)]">Now Reading</span>
-            <div>
-              <h1 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl">{title}</h1>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <RatingBadge rating={rating} />
-                <button type="button" className="btn-yellow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold" onClick={onClose}>
-                  <BookOpen size={16} strokeWidth={2.3} />
-                  Details
-                </button>
-              </div>
+          <div className="absolute bottom-4 left-4 flex flex-col gap-2 sm:bottom-5 sm:left-5">
+            <span className="w-fit rounded-xl bg-[var(--home-accent)] px-4 py-2 text-xl font-extrabold leading-none text-[var(--home-ink)] sm:text-2xl">
+              {title}
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <RatingBadge rating={rating} compact />
+              <button type="button" className="btn-yellow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold" onClick={onClose}>
+                <BookOpen size={15} strokeWidth={2.3} />
+                Details
+              </button>
             </div>
           </div>
         </section>
 
-        <Surface className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <Poster book={book} />
-          <div className="min-w-0">
-            <h2 className="text-2xl font-extrabold text-[var(--home-text)]">{title}</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--home-text-muted)]">
-              Curse-energy battles, sharp pacing, and a clear chapter list sit in one stable reading workspace.
-            </p>
-            <div className="mt-5">
-              <MetaTable metadata={meta} />
-            </div>
-            <div className="mt-5">
-              <h3 className="mb-3 text-xs font-bold uppercase text-[var(--home-accent)]">Genres</h3>
-              <GenreList genres={genres} />
+        <Surface className="min-h-0 flex-[2_2_0%] overflow-hidden rounded-[1.75rem] p-4">
+          <div className="panel-scroll grid h-full min-h-0 gap-5 overflow-y-auto pr-2 lg:grid-cols-[150px_minmax(0,1fr)]">
+            <Poster book={book} showRating={false} className="self-start" />
+            <div className="min-w-0 self-start">
+              <h2 className="text-2xl font-extrabold text-[var(--home-text)] sm:text-[2rem]">{title}</h2>
+              <MetaList metadata={meta} rating={rating} />
+              <div className="mt-5">
+                <h3 className="mb-3 text-base font-bold text-[var(--home-accent)]">Genres</h3>
+                <GenreList genres={genres} reading />
+              </div>
             </div>
           </div>
         </Surface>
 
-        <Surface>
-          <h3 className="mb-2 text-base font-bold text-[var(--home-accent)]">Review</h3>
-          <p className="max-w-3xl text-sm leading-7 text-[var(--home-text-muted)]">{review}</p>
+        <Surface className="min-h-0 flex-[1_1_0%] rounded-[1.75rem] px-5 py-4">
+          <h3 className="mb-3 text-2xl font-bold text-[var(--home-accent)]">Review</h3>
+          <p className="max-w-3xl text-base leading-[1.8] text-[var(--home-text)]">{review}</p>
         </Surface>
       </div>
     );
