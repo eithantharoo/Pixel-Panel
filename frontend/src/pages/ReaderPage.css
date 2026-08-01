@@ -87,15 +87,24 @@
   overflow-y: auto;
   padding: 1.25rem;
   border: 1px solid var(--home-border);
-  border-radius: 16px;
-  background: var(--home-panel);
+  border-radius: 24px;
+  background: var(--home-panel-deep);
   box-shadow: 0 12px 28px rgba(47, 28, 56, 0.2);
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .reader-page__content::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+}
+
+.reader-page__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.reader-page__content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .reader-page__right {
