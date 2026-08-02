@@ -43,23 +43,26 @@ export default function GenreView({ genreId, query = '' }) {
               key={book.id}
               type="button"
               className="genre-view__book-btn"
-              onClick={() => navigate('/reader')}
+              onClick={() => navigate('/reader', { state: { book } })}
               aria-label={`Read ${book.title}`}
             >
               <div
                 className="genre-view__cover"
                 style={{ background: `linear-gradient(160deg, ${book.color}, ${book.color}88)` }}
               >
-                <div className="genre-view__rating">
-                  <Star size={11} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />
-                  <span>{book.rating.toFixed(1)}</span>
-                </div>
-
+                {book.cover && <img src={book.cover} alt={book.title} />}
                 <div className="genre-view__hover-overlay">
                   <span className="genre-view__read-btn">Read Now</span>
                 </div>
+                {/* Book footer overlay */}
+                <div className="genre-view__book-footer">
+                  <p className="genre-view__book-footer-name">{book.title}</p>
+                  <div className="genre-view__book-footer-rating">
+                    <Star size={10} className="fill-[var(--text-yellow)] text-[var(--text-yellow)]" aria-hidden="true" />
+                    <span>{book.rating.toFixed(1)}</span>
+                  </div>
+                </div>
               </div>
-              <p className="genre-view__book-title">{book.title}</p>
             </button>
           ))}
         </div>

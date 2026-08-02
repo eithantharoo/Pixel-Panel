@@ -29,7 +29,12 @@ function SidebarLink({ item, active, onClick }) {
   );
 }
 
-function Sidebar({ activeItem = 'home', onNavChange }) {
+function Sidebar({ activeItem = 'home', onNavChange, onSettingsClick, onHelpClick }) {
+  function handleBottomClick(id) {
+    if (id === 'setting') onSettingsClick?.();
+    else if (id === 'help') onHelpClick?.();
+  }
+
   return (
     <>
       <aside className="sidebar">
@@ -45,7 +50,13 @@ function Sidebar({ activeItem = 'home', onNavChange }) {
         </nav>
 
         <div className="sidebar__bottom">
-          {BOTTOM_ITEMS.map((item) => <SidebarLink key={item.id} item={item} />)}
+          {BOTTOM_ITEMS.map((item) => (
+            <SidebarLink
+              key={item.id}
+              item={item}
+              onClick={() => handleBottomClick(item.id)}
+            />
+          ))}
         </div>
       </aside>
 

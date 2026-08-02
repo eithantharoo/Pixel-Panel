@@ -28,7 +28,7 @@ function ContinueReading({ items = [], onViewAll }) {
             type="button"
             className="continue-reading__item-btn"
             aria-label={`Continue reading ${item.title}`}
-            onClick={() => navigate('/reader')}
+            onClick={() => navigate('/reader', { state: { book: item } })}
           >
             <MangaCard {...item} variant="continue" />
           </button>

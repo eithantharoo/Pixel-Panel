@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/hub/Sidebar';
 import HomeHeader from '../components/hub/HomeHeader';
@@ -8,6 +8,8 @@ import ContinueReading from '../components/hub/ContinueReading';
 import FavoritesView from '../components/hub/FavoritesView';
 import HistoryView from '../components/hub/HistoryView';
 import GenreView from '../components/hub/GenreView';
+import SettingsPanel from '../components/hub/SettingsPanel';
+import HelpPanel from '../components/hub/HelpPanel';
 import {
   FOR_YOU,
   NEWLY_RELEASED,
@@ -23,6 +25,11 @@ const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
 const LIBRARY_ITEMS = Array.from(
   new Map([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...FAVORITES].map((item) => [item.title, item])).values(),
 );
+
+function isEditableTarget(target) {
+  const tagName = target?.tagName?.toLowerCase();
+  return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
+}
 
 function normalise(value) {
   return String(value || '').trim().toLowerCase();
@@ -58,8 +65,8 @@ function SectionRow({ title, children }) {
 
 function MangaButton({ manga, navigate, variant }) {
   return (
-    <button type="button" className="home-manga-btn" onClick={() => navigate('/reader')}>
-      <MangaCard title={manga.title} color={manga.color} variant={variant} rating={manga.rating} />
+    <button type="button" className="home-manga-btn" onClick={() => navigate('/reader', { state: { book: manga } })}>
+      <MangaCard {...manga} variant={variant} />
     </button>
   );
 }
@@ -116,10 +123,15 @@ export default function HomePage() {
   const [activeNav, setActiveNav] = useState(initialNav);
   const [activeGenre, setActiveGenre] = useState(initialGenre);
   const [searchQuery, setSearchQuery] = useState('');
+  const [trendingExpanded, setTrendingExpanded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   function handleNavChange(nav) {
     setActiveNav(nav);
     setActiveGenre(null);
+    // Collapse trending panel whenever user navigates (especially Home)
+    setTrendingExpanded(false);
   }
 
   function handleGenreSelect(genreId) {
@@ -128,6 +140,58 @@ export default function HomePage() {
   }
 
   const showTrending = activeNav === 'home' && !activeGenre;
+
+  function getFirstVisibleBook() {
+    if (activeNav === 'favorite') return filterItems(FAVORITES, searchQuery)[0];
+    if (activeNav === 'history') return filterItems(HISTORY, searchQuery)[0];
+    if (activeNav === 'library') return filterItems(LIBRARY_ITEMS, searchQuery)[0];
+    return filterItems([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR], searchQuery)[0];
+  }
+
+  useEffect(() => {
+    function handleShortcut(event) {
+      if (isEditableTarget(event.target) && event.key !== 'Escape') return;
+
+      if (event.key === 'Escape') {
+        if (showHelp) {
+          setShowHelp(false);
+          return;
+        }
+        if (showSettings) {
+          setShowSettings(false);
+          return;
+        }
+        if (trendingExpanded) {
+          setTrendingExpanded(false);
+          return;
+        }
+        if (activeGenre) {
+          setActiveGenre(null);
+          return;
+        }
+        if (activeNav !== 'home') {
+          setActiveNav('home');
+        }
+        return;
+      }
+
+      if (event.key.toLowerCase() === 'r') {
+        const book = getFirstVisibleBook();
+        if (!book) return;
+        event.preventDefault();
+        navigate('/reader', { state: { book } });
+        return;
+      }
+
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        handleNavChange('favorite');
+      }
+    }
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [activeGenre, activeNav, navigate, searchQuery, showHelp, showSettings, trendingExpanded]);
 
   function renderContent() {
     if (activeNav === 'favorite') {
@@ -172,7 +236,12 @@ export default function HomePage() {
         onNavChange={handleNavChange}
         activeGenre={activeGenre}
         onGenreSelect={handleGenreSelect}
+        onSettingsClick={() => setShowSettings(true)}
+        onHelpClick={() => setShowHelp(true)}
       />
+
+      <SettingsPanel open={showSettings} onClose={() => setShowSettings(false)} />
+      <HelpPanel open={showHelp} onClose={() => setShowHelp(false)} />
 
       <div className="home-page__main">
         <div className={`home-page__body${showTrending ? '' : ' home-page__body--full'}`}>
@@ -180,11 +249,19 @@ export default function HomePage() {
           {showTrending && (
             <TrendingSidebar
               items={TRENDING}
-              onViewAll={() => handleNavChange('history')}
+              onViewAll={() => setTrendingExpanded(true)}
+              expanded={trendingExpanded}
+              onCollapse={() => setTrendingExpanded(false)}
+              onCardClick={(book) => {
+                setTrendingExpanded(false);
+                navigate('/reader', { state: { book } });
+              }}
             />
           )}
         </div>
+      </div>
 
+      <div className="home-page__footer">
         <ContinueReading
           items={CONTINUE_READING}
           onViewAll={() => handleNavChange('history')}

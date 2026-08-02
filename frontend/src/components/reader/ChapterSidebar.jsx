@@ -2,7 +2,7 @@ import { BookOpen, List } from 'lucide-react';
 
 const chapters = Array.from({ length: 20 }, (_, i) => i + 1);
 
-export default function ChapterSidebar() {
+export default function ChapterSidebar({ currentChapter = 1, onChapterSelect }) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col rounded-lg border border-[var(--home-border)] bg-[var(--home-panel)] p-5 shadow-[0_12px_28px_rgba(47,28,56,0.2)]">
       <div className="mb-5 flex items-center justify-between gap-3">
@@ -20,10 +20,11 @@ export default function ChapterSidebar() {
             type="button"
             aria-label={`Open chapter ${chapter}`}
             className={`aspect-square w-full rounded-lg border border-[var(--home-border)] text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--home-accent)] ${
-              chapter === 1
+              chapter === currentChapter
                 ? 'bg-[var(--home-accent)] text-[var(--home-ink)]'
                 : 'bg-[var(--home-panel-deep)] text-[var(--home-text)] hover:bg-[var(--home-accent)] hover:text-[var(--home-ink)]'
             }`}
+            onClick={() => onChapterSelect?.(chapter)}
           >
             {chapter}
           </button>

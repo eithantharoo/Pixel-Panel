@@ -3,14 +3,14 @@ import { ArrowRight, BookOpen } from 'lucide-react';
 import { images } from '../../assets/images';
 
 const DEFAULT_ITEMS = [
-  { id: 1, title: 'Kan Kg Loh', chapter: 'Chapter 45', progress: 75, img: images.continueReading.kanKgLoh },
-  { id: 2, title: 'Weikzar', chapter: 'Chapter 25', progress: 35, img: images.continueReading.weikzar },
+  { id: 1, title: 'Dandadan', chapter: 'Chapter 12', progress: 75, img: images.continueReading.dandadan },
+  { id: 2, title: 'One Piece', chapter: 'Chapter 110', progress: 35, img: images.continueReading.onePiece },
   { id: 3, title: 'Noragami', chapter: 'Chapter 95', progress: 85, img: images.continueReading.noragami },
 ];
 
 const fallbackCovers = [
-  images.continueReading.kanKgLoh,
-  images.continueReading.weikzar,
+  images.continueReading.dandadan,
+  images.continueReading.onePiece,
   images.continueReading.noragami,
 ];
 

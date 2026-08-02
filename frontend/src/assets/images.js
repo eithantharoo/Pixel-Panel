@@ -28,8 +28,8 @@ export const images = {
   },
 
   continueReading: {
-    kanKgLoh: '/images/photo_5_2026-06-24_15-49-22.jpg',
-    weikzar:  '/images/photo_7_2026-06-24_15-49-22.jpg',
-    noragami: '/images/photo_8_2026-06-24_15-49-22.jpg',
+    dandadan: '/images/Dandadan.jpeg',
+    onePiece: '/images/One%20Piece.jpeg',
+    noragami: '/images/Noragami.webp',
   },
 };

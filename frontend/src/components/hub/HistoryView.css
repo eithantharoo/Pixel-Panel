@@ -69,6 +69,13 @@
   overflow: hidden;
 }
 
+.hist-item__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* "Read Now" overlay */
 .hist-item__cover::after {
   content: '▶';

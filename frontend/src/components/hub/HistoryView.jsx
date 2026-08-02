@@ -10,9 +10,10 @@ function TrashIcon() {
   return <Trash2 size={14} strokeWidth={1.9} aria-hidden="true" />;
 }
 
-function HistoryItem({ title, color, chapter, readAt, progress }) {
+function HistoryItem({ title, color, cover, chapter, readAt, progress, ...rest }) {
   const navigate = useNavigate();
   const coverStyle = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
+  const book = { title, color, cover, chapter, readAt, progress, ...rest };
   const isFinished = progress === 100;
 
   return (
@@ -21,10 +22,12 @@ function HistoryItem({ title, color, chapter, readAt, progress }) {
       role="button"
       tabIndex={0}
       aria-label={`Continue reading ${title}`}
-      onClick={() => navigate('/reader')}
-      onKeyDown={(e) => e.key === 'Enter' && navigate('/reader')}
+      onClick={() => navigate('/reader', { state: { book } })}
+      onKeyDown={(e) => e.key === 'Enter' && navigate('/reader', { state: { book } })}
     >
-      <div className="hist-item__cover" style={coverStyle} />
+      <div className="hist-item__cover" style={coverStyle}>
+        {cover && <img src={cover} alt={title} />}
+      </div>
 
       <div className="hist-item__body">
         <div className="hist-item__top">

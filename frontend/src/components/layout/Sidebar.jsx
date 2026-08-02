@@ -32,7 +32,7 @@ export default function Sidebar({ activeItem, onNavChange, activeGenre, onGenreS
   }
 
   return (
-    <aside className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-[var(--panel-control-border)] bg-gradient-to-b from-[#3f2666] to-[#2f1a50] px-4 py-5 shadow-[0_22px_44px_rgba(34,16,62,0.3)]">
+    <aside className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-[var(--panel-control-border)] bg-[#8a4f9d] px-4 py-5 shadow-[0_22px_44px_rgba(34,16,62,0.3)]">
       <div className="flex flex-1 flex-col gap-1">
         <nav className="flex w-full flex-col gap-1.5">
           {menuItems.map((item) => {

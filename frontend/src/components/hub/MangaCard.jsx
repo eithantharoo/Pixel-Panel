@@ -46,23 +46,31 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
       <div className="manga-card__cover" style={style}>
         {cover && <img src={cover} alt={title} />}
         {variant === 'new' && <span className="manga-card__badge">New</span>}
-        {variant === 'overlay' && (
-          <div className="manga-card__overlay">
-            <h3 className="manga-card__overlay-title">{title}</h3>
-          </div>
-        )}
-        {variant === 'popular' && rating != null && (
-          <div className="manga-card__rating">
-            <Star size={12} className="manga-card__star" aria-hidden="true" />
-            <span>{rating.toFixed(1)}</span>
-          </div>
-        )}
+
         {variant === 'featured' && rank != null && (
           <span className="manga-card__rank manga-card__rank--featured">{rank}</span>
         )}
+
+        {/* Book info footer — shown on overlay/new/popular/featured variants */}
+        {(variant === 'overlay' || variant === 'new' || variant === 'popular' || variant === 'featured') && (
+          <div className="manga-card__book-footer">
+            <p className="manga-card__book-footer-name">{title}</p>
+            {rating != null && (
+              <div className="manga-card__book-footer-rating">
+                <Star size={10} className="manga-card__star" aria-hidden="true" />
+                <span>{rating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Hover overlay — genre-style pill button */}
+        <div className="manga-card__hover-overlay">
+          <span className="manga-card__read-btn">Read Now</span>
+        </div>
       </div>
 
-      {variant !== 'overlay' && variant !== 'featured' && (
+      {variant !== 'overlay' && variant !== 'featured' && variant !== 'new' && variant !== 'popular' && (
         <h3 className="manga-card__title">{title}</h3>
       )}
     </article>

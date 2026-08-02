@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, Check, ChevronDown, Grid3X3, Headphones, Heart, Search, X } from 'lucide-react';
+import { Bell, Check, ChevronDown, Grid3X3, Heart, Search, X } from 'lucide-react';
 import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
@@ -106,10 +106,6 @@ function HomeHeader({ activeGenre, onGenreSelect, onFavoriteClick, searchValue =
           onClick={onFavoriteClick}
         >
           <Heart size={20} aria-hidden="true" />
-        </button>
-
-        <button type="button" className="home-header__icon-btn home-header__support" aria-label="Support" title="Support">
-          <Headphones size={20} aria-hidden="true" />
         </button>
       </div>
     </header>
