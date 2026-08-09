@@ -1,38 +1,209 @@
 import { BookOpen } from 'lucide-react';
 
-const chapters = Array.from({ length: 20 }, (_, i) => i + 1);
+const soloLevelingChapters = [
+  { number: 1, title: 'The Hunter of Hunters' },
+  { number: 2, title: 'The Double Dungeon' },
+  { number: 3, title: 'Three Rules' },
+  { number: 4, title: 'The Trial' },
+  { number: 5, title: 'The Daily Quest' },
+  { number: 6, title: 'The Instance Dungeon' },
+  { number: 7, title: 'Level Up' },
+  { number: 8, title: 'A Grim Warning' },
+  { number: 9, title: 'The C-Rank Dungeon' },
+  { number: 10, title: 'Betrayal' },
+];
 
-export default function ChapterSidebar({ currentChapter = 1, onChapterSelect }) {
+export default function ChapterSidebar({
+  currentChapter = 1,
+  onChapterSelect,
+}) {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col rounded-[1.75rem] border border-[var(--home-border)] bg-[var(--home-panel)] px-5 py-6 shadow-[0_12px_28px_rgba(47,28,56,0.2)]">
-      <div className="mb-5 flex items-center justify-center gap-3">
-        <h2 className="text-center text-[1.75rem] font-extrabold text-[var(--home-text)]">
+    <aside
+      className="
+        flex
+        h-full
+        min-h-0
+        w-full
+        min-w-[280px]
+        max-w-[360px]
+        flex-col
+        rounded-2xl
+        border
+        border-white/10
+        bg-[var(--home-panel)]
+        p-4
+      "
+    >
+      {/* HEADER */}
+      <div className="mb-4">
+        <h2 className="text-center text-3xl font-extrabold text-white">
           Chapters
         </h2>
       </div>
 
-      <div className="panel-scroll grid flex-1 grid-cols-4 auto-rows-[3.4rem] content-start gap-4 overflow-y-auto px-1">
-        {chapters.map((chapter) => (
-          <button
-            key={chapter}
-            type="button"
-            aria-label={`Open chapter ${chapter}`}
-            className={`w-full rounded-xl border border-[rgba(255,244,61,0.28)] text-sm font-extrabold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--home-accent)] ${
-              chapter === currentChapter
-                ? 'bg-[var(--home-accent)] text-[var(--home-ink)]'
-                : 'bg-[var(--home-panel-deep)] text-[var(--home-text)] hover:bg-[var(--home-accent)] hover:text-[var(--home-ink)]'
-            }`}
-            onClick={() => onChapterSelect?.(chapter)}
-          >
-            {chapter}
-          </button>
-        ))}
+      {/* SCROLLABLE CHAPTER LIST */}
+      <div
+        className="
+          panel-scroll
+          min-h-0
+          flex-1
+          overflow-y-auto
+          pr-1
+        "
+      >
+        <div className="flex flex-col gap-2">
+          {soloLevelingChapters.map((chapter) => {
+            const isActive =
+              chapter.number === currentChapter;
+
+            return (
+              <button
+                key={chapter.number}
+                type="button"
+                aria-label={`Open chapter ${chapter.number}: ${chapter.title}`}
+                onClick={() =>
+                  onChapterSelect?.(chapter.number)
+                }
+                className={`
+                  group
+                  flex
+                  min-h-[54px]
+                  w-full
+                  items-center
+                  gap-3
+                  rounded-xl
+                  border
+                  px-3
+                  py-2
+                  text-left
+                  transition-all
+                  duration-200
+
+                  focus-visible:outline
+                  focus-visible:outline-2
+                  focus-visible:outline-[var(--home-accent)]
+
+                  ${
+                    isActive
+                      ? `
+                        border-[var(--home-accent)]
+                        bg-[var(--home-accent)]
+                        text-[var(--home-ink)]
+                      `
+                      : `
+                        border-white/10
+                        bg-[var(--home-panel-deep)]
+                        text-[var(--home-text)]
+
+                        hover:border-[var(--home-accent)]
+                        hover:bg-[var(--home-accent)]
+                        hover:text-[var(--home-ink)]
+                      `
+                  }
+                `}
+              >
+                {/* NUMBER */}
+                <span
+                  className={`
+                    flex
+                    h-9
+                    w-9
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-sm
+                    font-extrabold
+                    transition-colors
+
+                    ${
+                      isActive
+                        ? `
+                          bg-[var(--home-ink)]
+                          text-[var(--home-accent)]
+                        `
+                        : `
+                          bg-white/10
+                          text-white
+
+                          group-hover:bg-[var(--home-ink)]
+                          group-hover:text-[var(--home-accent)]
+                        `
+                    }
+                  `}
+                >
+                  {chapter.number}
+                </span>
+
+                {/* CHAPTER INFO */}
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`
+                      text-[10px]
+                      font-semibold
+                      uppercase
+                      tracking-wide
+
+                      ${
+                        isActive
+                          ? 'text-black/60'
+                          : 'text-white/50 group-hover:text-black/60'
+                      }
+                    `}
+                  >
+                    Chapter {chapter.number}
+                  </p>
+
+                  <p
+                    className="
+                      mt-0.5
+                      truncate
+                      text-sm
+                      font-bold
+                    "
+                    title={chapter.title}
+                  >
+                    {chapter.title}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <button type="button" className="mt-6 inline-flex min-h-[4.5rem] w-full items-center justify-center gap-2 rounded-2xl bg-[var(--home-accent)] px-4 py-5 text-base font-bold text-[var(--home-ink)] transition-all hover:-translate-y-0.5 hover:bg-[var(--home-accent-hover)]">
-        <BookOpen size={16} strokeWidth={2.4} />
+      {/* VIEW ALL CHAPTERS */}
+      <button
+        type="button"
+        className="
+          mt-4
+          inline-flex
+          min-h-[52px]
+          w-full
+          shrink-0
+          items-center
+          justify-center
+          gap-2
+          rounded-xl
+          bg-[var(--home-accent)]
+          px-4
+          text-sm
+          font-extrabold
+          text-[var(--home-ink)]
+          transition-all
+          duration-200
+
+          hover:-translate-y-0.5
+          hover:bg-[var(--home-accent-hover)]
+        "
+      >
+        <BookOpen
+          size={18}
+          strokeWidth={2.4}
+        />
+
         View all chapters
       </button>
-    </div>
+    </aside>
   );
 }
