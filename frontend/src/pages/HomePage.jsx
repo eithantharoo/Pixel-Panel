@@ -21,7 +21,7 @@ import {
   HISTORY,
 } from '../data/home_data';
 import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
-import { loadSettings } from '../utils/settingsState';
+import { loadSettings, applySettings } from '../utils/settingsState';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
@@ -196,7 +196,11 @@ export default function HomePage() {
   const [settings, setSettings] = useState(loadSettings);
   useEffect(() => {
     function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') setSettings(loadSettings());
+      if (e.key === 'pixel-panel-settings') {
+        const next = loadSettings();
+        applySettings(next);
+        setSettings(next);
+      }
     }
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);

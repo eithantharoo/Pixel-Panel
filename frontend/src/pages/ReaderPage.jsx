@@ -10,7 +10,7 @@ import SettingsPanel from '../components/hub/SettingsPanel';
 import HelpPanel from '../components/hub/HelpPanel';
 import { CONTINUE_READING, FAVORITES, HISTORY, NEWLY_RELEASED, TRENDING } from '../data/home_data';
 import { chapterToNumber, isFavoriteBook, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
-import { loadSettings } from '../utils/settingsState';
+import { loadSettings, applySettings } from '../utils/settingsState';
 import './ReaderPage.css';
 
 const CHAPTER_COUNT = 20;
@@ -39,7 +39,11 @@ export default function ReaderPage() {
   // Re-read settings whenever the panel saves (SettingsPanel fires a storage event)
   useEffect(() => {
     function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') setSettings(loadSettings());
+      if (e.key === 'pixel-panel-settings') {
+        const next = loadSettings();
+        applySettings(next);
+        setSettings(next);
+      }
     }
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
