@@ -1,7 +1,10 @@
 .logo {
   display: block;
-  width: clamp(280px, 32vw, 420px);
+  width: clamp(200px, 22vw, 340px);
   max-width: 100%;
   height: auto;
   object-fit: contain;
+  /* Removes off-white image background square */
+  mix-blend-mode: multiply; 
+  filter: contrast(105%);
 }
