@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   BookOpen,
@@ -7,87 +6,23 @@ import {
   ChevronRight,
   Eye,
   Globe,
-  LogOut,
   Monitor,
   Moon,
   Palette,
   Settings,
   Shield,
   Type,
-  User,
   X,
 } from 'lucide-react';
-import { images } from '../../assets/images';
+import {
+  ACCENT_MAP,
+  loadSettings,
+  saveSettings,
+  applySettings,
+  SETTINGS_DEFAULTS as DEFAULTS,
+} from '../../utils/settingsState';
 import './SettingsPanel.css';
 
-/* ── Persisted settings helpers ─────────────────────────────────── */
-const STORAGE_KEY = 'pixel-panel-settings';
-
-const DEFAULTS = {
-  accentColor: 'yellow',
-  fontSize: 'medium',
-  readDirection: 'ltr',
-  autoAdvance: false,
-  showChapterNumbers: true,
-  notifNewChapter: true,
-  notifRecommendations: true,
-  notifDigest: false,
-  saveHistory: true,
-  syncDevices: false,
-};
-
-const ACCENT_MAP = {
-  yellow: { accent: '#fff43d', accentHover: '#e9df2e' },
-  cyan:   { accent: '#4df5ff', accentHover: '#36dfe8' },
-  rose:   { accent: '#ff6b9d', accentHover: '#e8578a' },
-};
-
-const FONT_MAP = { small: '13px', medium: '15px', large: '18px' };
-
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
-  } catch {
-    return { ...DEFAULTS };
-  }
-}
-
-function saveSettings(settings) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch { /* noop */ }
-}
-
-/*
- * applySettings — injects a <style> tag so overrides win over the
- * scoped `.home-page { --home-accent }` declarations in HomePage.css.
- */
-function applySettings(settings) {
-  const { accent, accentHover } = ACCENT_MAP[settings.accentColor] ?? ACCENT_MAP.yellow;
-  const fontSize = FONT_MAP[settings.fontSize] ?? '15px';
-
-  let el = document.getElementById('pp-theme-override');
-  if (!el) {
-    el = document.createElement('style');
-    el.id = 'pp-theme-override';
-    document.head.appendChild(el);
-  }
-
-  el.textContent = `
-    .home-page, .reader-page {
-      --home-accent: ${accent} !important;
-      --home-accent-hover: ${accentHover} !important;
-    }
-    :root {
-      --text-yellow: ${accent};
-      --color-accent-yellow: ${accent};
-    }
-    html { font-size: ${fontSize}; }
-    .manga-card__star { fill: ${accent} !important; color: ${accent} !important; }
-    .btn-yellow { background: ${accent} !important; }
-    .sp-panel__title-icon, .hp-panel__title-icon,
-    .hp-hero__icon, .trending-expanded__flame { color: ${accent} !important; }
-  `;
-}
 
 /* ── Toast ───────────────────────────────────────────────────────── */
 function Toast({ message }) {
@@ -181,7 +116,6 @@ function ChipGroup({ options, value, onChange }) {
 
 /* ── Main component ──────────────────────────────────────────────── */
 export default function SettingsPanel({ open, onClose }) {
-  const navigate = useNavigate();
   const [settings, setSettings] = useState(loadSettings);
   const [toast, setToast] = useState(null);
   const [showPrivacy, setShowPrivacy] = useState(false);
@@ -217,12 +151,6 @@ export default function SettingsPanel({ open, onClose }) {
   function set(key, value) {
     setSettings((prev) => ({ ...prev, [key]: value }));
     showToast('Setting saved');
-  }
-
-  function handleSignOut() {
-    localStorage.removeItem(STORAGE_KEY);
-    onClose?.();
-    navigate('/');
   }
 
   return (
@@ -265,26 +193,6 @@ export default function SettingsPanel({ open, onClose }) {
           {/* Toast */}
           {toast && <Toast message={toast} />}
 
-          {/* ─ Account card ─ */}
-          <div className="sp-account">
-            <div className="sp-account__avatar">
-              <img src={images.profile} alt="Hsu Myat" />
-            </div>
-            <div className="sp-account__info">
-              <p className="sp-account__name">Hsu Myat</p>
-              <p className="sp-account__email">hsu.myat@pixelpanel.io</p>
-            </div>
-            <button
-              type="button"
-              className="sp-account__edit"
-              aria-label="Edit profile"
-              onClick={() => showToast('Profile editing coming soon!')}
-            >
-              <User size={15} />
-              <span>Edit</span>
-            </button>
-          </div>
-
           {/* ─ Appearance ─ */}
           <section className="sp-section">
             <SectionHeader icon={Palette} label="Appearance" />
@@ -310,8 +218,8 @@ export default function SettingsPanel({ open, onClose }) {
                 onChange={(v) => set('accentColor', v)}
                 options={[
                   { value: 'yellow', label: 'Yellow', color: '#fff43d', swatch: true },
-                  { value: 'cyan',   label: 'Cyan',   color: '#4df5ff', swatch: true },
-                  { value: 'rose',   label: 'Rose',   color: '#ff6b9d', swatch: true },
+                  { value: 'cyan', label: 'Cyan', color: '#4df5ff', swatch: true },
+                  { value: 'rose', label: 'Rose', color: '#ff6b9d', swatch: true },
                 ]}
               />
             </div>
@@ -325,9 +233,9 @@ export default function SettingsPanel({ open, onClose }) {
                 value={settings.fontSize}
                 onChange={(v) => set('fontSize', v)}
                 options={[
-                  { value: 'small',  label: 'Small'  },
+                  { value: 'small', label: 'Small' },
                   { value: 'medium', label: 'Medium' },
-                  { value: 'large',  label: 'Large'  },
+                  { value: 'large', label: 'Large' },
                 ]}
               />
             </div>
@@ -427,14 +335,6 @@ export default function SettingsPanel({ open, onClose }) {
               <Eye size={14} aria-hidden="true" />
               Privacy Policy
               <ChevronRight size={14} className="sp-link-row__arrow" aria-hidden="true" />
-            </button>
-          </section>
-
-          {/* ─ Sign out ─ */}
-          <section className="sp-section sp-section--danger">
-            <button type="button" className="sp-signout" onClick={handleSignOut}>
-              <LogOut size={16} aria-hidden="true" />
-              Sign out
             </button>
           </section>
 

@@ -14,12 +14,12 @@
 .fav-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--home-text);
+  color: #ffffff;
 }
 
 .fav-view__count {
   font-size: 0.8125rem;
-  color: var(--home-text-muted);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
 

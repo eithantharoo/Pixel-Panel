@@ -38,12 +38,32 @@ export const FOR_YOU = withBookCovers([
   { id: 2, title: 'Lookism',         rating: 8.5, color: '#4a2c6a' },
   { id: 3, title: 'Eleceed',         rating: 8.7, color: '#3b2060' },
   { id: 4, title: 'Hunter x Hunter', rating: 9.3, color: '#5c3478' },
+  { id: 54, title: 'The Beginning After The End', rating: 9.2, color: '#1e1040' },
+  { id: 55, title: 'Fullmetal Alchemist', rating: 9.5, color: '#2e2040' },
+  { id: 56, title: 'Jujutsu Kaisen', rating: 9.0, color: '#201440' },
+  { id: 57, title: 'Demon Slayer', rating: 8.9, color: '#1c1440' },
+  { id: 58, title: 'Attack on Titan', rating: 9.4, color: '#2c1a10' },
+  { id: 59, title: 'Chainsaw Man', rating: 8.8, color: '#3a1020' },
+  { id: 60, title: 'Spy x Family', rating: 8.8, color: '#1e3040' },
+  { id: 61, title: 'Blue Lock', rating: 8.7, color: '#102040' },
+  { id: 62, title: 'Vagabond', rating: 9.4, color: '#4a3520' },
+  { id: 63, title: 'Berserk', rating: 9.5, color: '#2a1c10' },
 ]);
 
 export const NEWLY_RELEASED = withBookCovers([
   { id: 5, title: 'Kagurabachi', rating: 8.6, color: '#1a3a5c' },
   { id: 7, title: 'Dandadan',    rating: 8.8, color: '#4a3050' },
   { id: 8, title: 'One Piece',   rating: 9.4, color: '#3a2858' },
+  { id: 64, title: 'Sakamoto Days', rating: 8.6, color: '#243850' },
+  { id: 65, title: 'Wind Breaker', rating: 8.4, color: '#254060' },
+  { id: 66, title: 'Kaiju No. 8', rating: 8.7, color: '#183c3a' },
+  { id: 67, title: 'Mashle', rating: 8.2, color: '#3b2858' },
+  { id: 68, title: 'Oshi no Ko', rating: 8.9, color: '#5c2c54' },
+  { id: 69, title: 'Frieren', rating: 9.4, color: '#284c46' },
+  { id: 70, title: 'My Hero Academia', rating: 8.5, color: '#244a6c' },
+  { id: 71, title: 'Black Clover', rating: 8.4, color: '#281e48' },
+  { id: 72, title: 'Dr. Stone', rating: 8.6, color: '#284a38' },
+  { id: 73, title: 'Tokyo Revengers', rating: 8.1, color: '#402858' },
 ]);
 
 
@@ -51,6 +71,16 @@ export const POPULAR = withBookCovers([
   { id: 9,  title: 'Sweet Home',   rating: 9.0, color: '#2a2040' },
   { id: 11, title: 'Tower Of God', rating: 8.5, color: '#2e3850' },
   { id: 12, title: 'Bleach',       rating: 8.0, color: '#3a3058' },
+  { id: 74, title: 'Noragami', rating: 8.4, color: '#341e50' },
+  { id: 75, title: 'Vinland Saga', rating: 9.3, color: '#3a2818' },
+  { id: 76, title: 'Demon Slayer', rating: 8.9, color: '#1c1440' },
+  { id: 77, title: 'Jujutsu Kaisen', rating: 9.0, color: '#201440' },
+  { id: 78, title: 'Attack on Titan', rating: 9.4, color: '#2c1a10' },
+  { id: 79, title: 'Chainsaw Man', rating: 8.8, color: '#3a1020' },
+  { id: 80, title: 'Spy x Family', rating: 8.8, color: '#1e3040' },
+  { id: 81, title: 'Blue Lock', rating: 8.7, color: '#102040' },
+  { id: 82, title: 'Fullmetal Alchemist', rating: 9.5, color: '#2e2040' },
+  { id: 83, title: 'Berserk', rating: 9.5, color: '#2a1c10' },
 ]);
 
 export const TRENDING = withBookCovers([

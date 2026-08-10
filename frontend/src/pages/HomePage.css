@@ -101,24 +101,94 @@
 }
 
 /* ── Manga sections ──────────────────────────────────────────────── */
+.home-section {
+  --home-section-gap: 0.875rem;
+  --home-section-card-max: 140px;
+  --home-section-row-max: calc((var(--home-section-card-max) * 5) + (var(--home-section-gap) * 4));
+}
+
+.home-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
+}
+
 .home-section__title {
   font-size: 1.5rem;
   font-weight: 700;
   color: white;
-  margin-bottom: 0.625rem;
+  margin: 0;
+}
+
+.home-section__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.home-section__show-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  background: rgba(90, 45, 130, 0.55);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.home-section__show-all {
+  padding: 0;
+}
+
+.home-section__show-all:hover {
+  border-color: var(--home-accent);
+  background: rgba(90, 45, 130, 0.85);
+  color: var(--home-accent);
+}
+
+.home-section__show-all svg {
+  transition: transform 0.2s ease;
+}
+
+.home-section__show-all--open svg {
+  transform: rotate(180deg);
 }
 
 .home-section__row {
   display: flex;
   gap: 0.875rem;
+  width: 100%;
+  max-width: var(--home-section-row-max);
   overflow-x: auto;
   padding-bottom: 0.25rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
 }
 
 .home-section__row::-webkit-scrollbar {
   display: none;
+}
+
+.home-section--expanded .home-section__row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, var(--home-section-card-max)));
+  overflow-x: visible;
+  padding-bottom: 0;
+  scroll-snap-type: none;
+}
+
+.home-section--expanded .home-manga-btn {
+  width: 100%;
 }
 
 /* Wrapper so manga cards are clickable without layout side-effects */
@@ -128,7 +198,10 @@
   padding: 0;
   cursor: pointer;
   display: block;
-  flex-shrink: 0;
+  flex: 0 0 calc((100% - (4 * var(--home-section-gap))) / 5);
+  min-width: 112px;
+  max-width: 140px;
+  scroll-snap-align: start;
 }
 
 .home-manga-btn:focus-visible {
@@ -153,13 +226,13 @@
 .home-library__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--home-text);
+  color: #ffffff;
 }
 
 .home-library__subtitle {
   margin-top: 0.25rem;
   font-size: 0.82rem;
-  color: var(--home-text-muted);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .home-library__count,
@@ -218,6 +291,12 @@
 
   .home-page__body--full {
     padding-right: 1rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-section--expanded .home-section__row {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
   }
 }
 

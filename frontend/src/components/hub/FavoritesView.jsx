@@ -12,7 +12,7 @@ function HeartIcon({ filled }) {
   );
 }
 
-function FavoriteCard({ title, color, cover, rating, genre }) {
+function FavoriteCard({ title, color, cover, rating, genre, onRemove }) {
   const navigate = useNavigate();
   const style = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
   const book = { title, color, cover, rating, genre };
@@ -33,7 +33,10 @@ function FavoriteCard({ title, color, cover, rating, genre }) {
           type="button"
           className="fav-card__heart"
           aria-label={`Remove ${title} from favorites`}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove?.(book);
+          }}
         >
           <HeartIcon filled />
         </button>
@@ -54,7 +57,7 @@ function FavoriteCard({ title, color, cover, rating, genre }) {
   );
 }
 
-function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle = 'Saved titles will appear here.' }) {
+function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle = 'Saved titles will appear here.', onRemove }) {
   if (!items || items.length === 0) {
     return (
       <div className="fav-empty">
@@ -75,7 +78,7 @@ function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle =
       </div>
       <div className="fav-view__grid">
         {items.map((book) => (
-          <FavoriteCard key={book.id} {...book} />
+          <FavoriteCard key={book.id} {...book} onRemove={onRemove} />
         ))}
       </div>
     </div>
