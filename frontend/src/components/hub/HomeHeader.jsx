@@ -206,7 +206,7 @@ function HomeHeader({
         <label className="home-header__search">
           <Search className="home-header__search-icon" size={18} aria-hidden="true" />
           <input
-            type="search"
+            type="text"
             className="home-header__search-input"
             placeholder="Search manga"
             aria-label="Search manga"
