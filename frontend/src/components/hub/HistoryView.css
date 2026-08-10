@@ -14,7 +14,7 @@
 .hist-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--home-text);
+  color: #ffffff;
 }
 
 .hist-view__clear {

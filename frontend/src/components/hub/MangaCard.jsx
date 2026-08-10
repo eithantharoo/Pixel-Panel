@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 import './MangaCard.css';
 
-function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, chapter, progress, rank }) {
+function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, chapter, progress, rank, showChapterNumbers = true }) {
   const style = cover ? undefined : { background: `linear-gradient(160deg, ${color}, ${color}88)` };
 
   if (variant === 'trending') {
@@ -30,7 +30,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
         </div>
         <div className="manga-card__continue-info">
           <p className="manga-card__continue-title">{title}</p>
-          {chapter && <p className="manga-card__continue-chapter">{chapter}</p>}
+          {showChapterNumbers && chapter && <p className="manga-card__continue-chapter">{chapter}</p>}
           {progress != null && (
             <div className="manga-card__progress">
               <div className="manga-card__progress-bar" style={{ width: `${progress}%` }} />
@@ -40,6 +40,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
       </article>
     );
   }
+
 
   return (
     <article className={`manga-card manga-card--${variant}`}>

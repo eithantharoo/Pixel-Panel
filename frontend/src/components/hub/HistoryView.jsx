@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { Clock3, Trash2 } from 'lucide-react';
 import './HistoryView.css';
 
@@ -10,11 +9,11 @@ function TrashIcon() {
   return <Trash2 size={14} strokeWidth={1.9} aria-hidden="true" />;
 }
 
-function HistoryItem({ title, color, cover, chapter, readAt, progress, ...rest }) {
-  const navigate = useNavigate();
+function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookClick, ...rest }) {
   const coverStyle = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
   const book = { title, color, cover, chapter, readAt, progress, ...rest };
   const isFinished = progress === 100;
+  const openBook = () => onBookClick?.(book);
 
   return (
     <article
@@ -22,8 +21,8 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, ...rest }
       role="button"
       tabIndex={0}
       aria-label={`Continue reading ${title}`}
-      onClick={() => navigate('/reader', { state: { book } })}
-      onKeyDown={(e) => e.key === 'Enter' && navigate('/reader', { state: { book } })}
+      onClick={openBook}
+      onKeyDown={(e) => e.key === 'Enter' && openBook()}
     >
       <div className="hist-item__cover" style={coverStyle}>
         {cover && <img src={cover} alt={title} />}
@@ -64,7 +63,7 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, ...rest }
   );
 }
 
-function HistoryView({ items, emptyTitle = 'No reading history', emptySubtitle = 'Books you read will appear here.' }) {
+function HistoryView({ items, emptyTitle = 'No reading history', emptySubtitle = 'Books you read will appear here.', onBookClick }) {
   if (!items || items.length === 0) {
     return (
       <div className="hist-empty">
@@ -85,7 +84,7 @@ function HistoryView({ items, emptyTitle = 'No reading history', emptySubtitle =
       </div>
       <div className="hist-view__list">
         {items.map((item) => (
-          <HistoryItem key={item.id} {...item} />
+          <HistoryItem key={item.id} {...item} onBookClick={onBookClick} />
         ))}
       </div>
     </div>
