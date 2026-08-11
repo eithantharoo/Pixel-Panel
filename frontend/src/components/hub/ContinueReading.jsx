@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { BookOpen, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import MangaCard from './MangaCard';
 import './ContinueReading.css';
 
-function ContinueReading({ items = [], onViewAll }) {
-  const navigate = useNavigate();
+function ContinueReading({ items = [], onViewAll, onCardClick, showChapterNumbers = true }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,9 +26,9 @@ function ContinueReading({ items = [], onViewAll }) {
             type="button"
             className="continue-reading__item-btn"
             aria-label={`Continue reading ${item.title}`}
-            onClick={() => navigate('/reader')}
+            onClick={() => onCardClick?.(item)}
           >
-            <MangaCard {...item} variant="continue" />
+            <MangaCard {...item} variant="continue" showChapterNumbers={showChapterNumbers} />
           </button>
         ))}
       </div>

@@ -3,7 +3,6 @@ import {
   Bell,
   ChevronDown,
   Heart,
-  Headphones,
   Menu,
   Search,
   SlidersHorizontal,
@@ -174,9 +173,6 @@ export default function Topbar({
 
         <TopbarIconButton label="Favorites" onClick={onFavoriteClick}>
           <Heart size={20} strokeWidth={2.1} />
-        </TopbarIconButton>
-        <TopbarIconButton label="Support" className="hidden sm:flex">
-          <Headphones size={20} strokeWidth={2.1} />
         </TopbarIconButton>
       </div>
     </header>

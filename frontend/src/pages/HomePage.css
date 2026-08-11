@@ -1,40 +1,40 @@
 /* ── Base layout ─────────────────────────────────────────────────── */
 .home-page {
-  --home-canvas: #a661c3;
-  --home-panel: #4c3159;
-  --home-panel-deep: #382342;
-  --home-panel-hover: #60406d;
-  --home-accent: #fff43d;
-  --home-accent-hover: #e9df2e;
-  --home-control: #eadbee;
-  --home-control-hover: #dcc7e3;
-  --home-text: #ffffff;
-  --home-text-muted: #d8c8dd;
-  --home-ink: #2f1c38;
-  --home-border: rgba(234, 219, 238, 0.18);
+  --home-canvas: #e6cfed;
+  --home-panel: #5a2d82;
+  --home-panel-deep: #3d1d5e;
+  --home-panel-hover: #6e3a9a;
+  --home-accent: #ffdd00;
+  --home-accent-hover: #f0ce00;
+  --home-control: #e8d5f5;
+  --home-control-hover: #d8bfee;
+  --home-text: #EBE5D0;
+  --home-text-muted: #ead9ee;
+  --home-ink: #2a1040;
+  --home-border: rgba(220, 190, 255, 0.2);
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "header header"
-    "nav    main";
+    "header  header"
+    "nav     main"
+    "footer  footer";
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: var(--home-canvas);
+  background: #e6cfed;
 }
 
-.home-page > .home-header {
+.home-page>.home-header {
   grid-area: header;
   position: sticky;
   top: 0;
   z-index: 300;
 }
 
-.home-page > .sidebar {
+/* Sidebar sits in the nav area — spans both body + footer rows */
+.home-page>.sidebar {
   grid-area: nav;
-  position: sticky;
-  top: 0;
   align-self: stretch;
   margin: 0;
   min-height: 0;
@@ -47,17 +47,20 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  background: var(--home-canvas);
+  background: transparent;
   overflow: hidden;
 }
 
-.home-page__main > .continue-reading {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+/* ── Footer bar (ContinueReading) — full width from sidebar right edge ── */
+.home-page__footer {
+  grid-area: footer;
+  background: #4e2d58;
+  display: flex;
+  align-items: center;
+  min-height: 0;
   z-index: 20;
-  width: 100%;
+  box-shadow: 0 -4px 24px rgba(30, 10, 45, 0.35);
+  border-top: 1px solid rgba(255, 244, 61, 0.18);
 }
 
 /* ── Body (content + trending sidebar) ──────────────────────────── */
@@ -68,6 +71,8 @@
   padding: 1rem 1rem 1rem 1.5rem;
   min-height: 0;
   overflow: hidden;
+  position: relative;
+  /* so .trending-expanded is contained here, not over ContinueReading */
 }
 
 /* Full-width body when TrendingSidebar is hidden */
@@ -85,10 +90,10 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 1.25rem;
-  border: 1px solid var(--home-border);
-  border-radius: 16px;
-  background: var(--home-panel);
-  box-shadow: 0 12px 28px rgba(47, 28, 56, 0.18);
+  /* Step 2: No panel background — books show directly on canvas */
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .home-page__content::-webkit-scrollbar {
@@ -96,24 +101,94 @@
 }
 
 /* ── Manga sections ──────────────────────────────────────────────── */
-.home-section__title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--home-accent);
+.home-section {
+  --home-section-gap: 0.875rem;
+  --home-section-card-max: 140px;
+  --home-section-row-max: calc((var(--home-section-card-max) * 5) + (var(--home-section-gap) * 4));
+}
+
+.home-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 0.625rem;
+}
+
+.home-section__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.home-section__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.home-section__show-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  background: rgba(90, 45, 130, 0.55);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.home-section__show-all {
+  padding: 0;
+}
+
+.home-section__show-all:hover {
+  border-color: var(--home-accent);
+  background: rgba(90, 45, 130, 0.85);
+  color: var(--home-accent);
+}
+
+.home-section__show-all svg {
+  transition: transform 0.2s ease;
+}
+
+.home-section__show-all--open svg {
+  transform: rotate(180deg);
 }
 
 .home-section__row {
   display: flex;
   gap: 0.875rem;
+  width: 100%;
+  max-width: var(--home-section-row-max);
   overflow-x: auto;
   padding-bottom: 0.25rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
 }
 
 .home-section__row::-webkit-scrollbar {
   display: none;
+}
+
+.home-section--expanded .home-section__row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, var(--home-section-card-max)));
+  overflow-x: visible;
+  padding-bottom: 0;
+  scroll-snap-type: none;
+}
+
+.home-section--expanded .home-manga-btn {
+  width: 100%;
 }
 
 /* Wrapper so manga cards are clickable without layout side-effects */
@@ -123,7 +198,10 @@
   padding: 0;
   cursor: pointer;
   display: block;
-  flex-shrink: 0;
+  flex: 0 0 calc((100% - (4 * var(--home-section-gap))) / 5);
+  min-width: 112px;
+  max-width: 140px;
+  scroll-snap-align: start;
 }
 
 .home-manga-btn:focus-visible {
@@ -148,13 +226,13 @@
 .home-library__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--home-text);
+  color: #ffffff;
 }
 
 .home-library__subtitle {
   margin-top: 0.25rem;
   font-size: 0.82rem;
-  color: var(--home-text-muted);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .home-library__count,
@@ -216,17 +294,24 @@
   }
 }
 
+@media (max-width: 760px) {
+  .home-section--expanded .home-section__row {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  }
+}
+
 /* ── Responsive: No sidebar (≤ 900px) ───────────────────────────── */
 @media (max-width: 900px) {
   .home-page {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     grid-template-areas:
       "header"
-      "main";
+      "main"
+      "footer";
   }
 
-  .home-page > .sidebar {
+  .home-page>.sidebar {
     display: none;
   }
 

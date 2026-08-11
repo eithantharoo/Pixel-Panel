@@ -14,12 +14,12 @@
 .fav-view__title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--home-text);
+  color: #ffffff;
 }
 
 .fav-view__count {
   font-size: 0.8125rem;
-  color: var(--home-text-muted);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
 
@@ -33,10 +33,10 @@
 .fav-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0;
   cursor: pointer;
   transition: transform 0.2s ease;
-  outline: none; /* handled via :focus-visible */
+  outline: none;
 }
 
 .fav-card:focus-visible .fav-card__cover {
@@ -56,28 +56,44 @@
   overflow: hidden;
 }
 
-/* "Read Now" overlay */
-.fav-card__cover::after {
-  content: 'Read Now';
+.fav-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Genres-style hover overlay */
+.fav-card__hover-overlay {
   position: absolute;
   inset: 0;
+  background: rgba(0, 0, 0, 0.52);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.48);
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  font-family: inherit;
-  border-radius: inherit;
   opacity: 0;
   transition: opacity 0.22s ease;
+  z-index: 3;
+  border-radius: inherit;
   pointer-events: none;
 }
 
-.fav-card:hover .fav-card__cover::after {
+.fav-card:hover .fav-card__hover-overlay {
   opacity: 1;
+}
+
+.fav-card__read-btn {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: #e8d5f5;
+  color: #2a1040;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .fav-card__genre {
@@ -140,6 +156,44 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--home-accent);
+}
+
+/* ── Book footer overlay ─────────────────────────────────────── */
+.fav-card__book-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
+  pointer-events: none;
+  text-align: left;
+}
+
+.fav-card__book-footer-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.fav-card__book-footer-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #fff43d;
 }
 
 /* Empty state */
