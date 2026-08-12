@@ -154,6 +154,13 @@
   font: inherit;
 }
 
+.interests-page__error {
+  flex-shrink: 0;
+  align-self: center;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
 .interests-page__continue:disabled { opacity: 0.4; transform: none; filter: grayscale(0.3); }
 
 .interests-page__continue--ready { opacity: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(202,198,6,0.45); }

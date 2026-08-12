@@ -15,6 +15,19 @@ const getContinueReading = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    Full reading history (all progress, finished or not)
+// @route   GET /api/progress/history
+// @access  Private
+const getReadingHistory = asyncHandler(async (req, res) => {
+  const progress = await ReadingProgress.find({ user: req.user.id })
+    .populate('story')
+    .sort({ lastReadAt: -1 })
+    .limit(50);
+
+  res.status(200).json(progress);
+});
+
+
 const saveProgress = asyncHandler(async (req, res) => {
   const { storyId, chapterNumber, progress } = req.body;
 
@@ -25,6 +38,11 @@ const saveProgress = asyncHandler(async (req, res) => {
   ) {
     res.status(400);
     throw new Error('Please provide storyId, chapterNumber and progress');
+  }
+
+  if (typeof chapterNumber !== 'number' || typeof progress !== 'number') {
+    res.status(400);
+    throw new Error('chapterNumber and progress must be numbers');
   }
 
   const updatedProgress = await ReadingProgress.findOneAndUpdate(
@@ -40,6 +58,8 @@ const saveProgress = asyncHandler(async (req, res) => {
     {
       upsert: true,
       new: true,
+      runValidators: true,
+      context: 'query',
     }
   );
 
@@ -65,6 +85,7 @@ const getProgressForStory = asyncHandler(async (req, res) => {
 
 module.exports = {
   getContinueReading,
+  getReadingHistory,
   saveProgress,
   getProgressForStory,
 };

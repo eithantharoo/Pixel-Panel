@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { GENRES } from '../../data/home_data';
+import { GENRE_ID_TO_LABEL } from '../../utils/genreMap';
+import { getStoriesByGenre } from '../../services/storyService';
+import { mapStoriesToBooks } from '../../utils/storyAdapter';
 import GenreIcon from './GenreIcon';
 import './GenreView.css';
 
@@ -11,13 +15,42 @@ function normalise(value) {
 export default function GenreView({ genreId, query = '' }) {
   const navigate = useNavigate();
   const genre = GENRES.find(g => g.id === genreId);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const label = GENRE_ID_TO_LABEL[genreId];
+
+    Promise.resolve()
+      .then(() => {
+        if (cancelled) return [];
+        setLoading(true);
+        return label ? getStoriesByGenre(label) : [];
+      })
+      .then((stories) => {
+        if (!cancelled) setBooks(mapStoriesToBooks(stories));
+      })
+      .catch(() => {
+        if (!cancelled) setBooks([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [genreId]);
 
   if (!genre) return null;
 
-  const filteredBooks = genre.books.filter((book) => normalise(book.title).includes(normalise(query)));
-  const subtitle = query
-    ? `${filteredBooks.length} of ${genre.books.length} titles match`
-    : `${genre.books.length} titles in this genre`;
+  const filteredBooks = books.filter((book) => normalise(book.title).includes(normalise(query)));
+  const subtitle = loading
+    ? 'Loading titles...'
+    : query
+      ? `${filteredBooks.length} of ${books.length} titles match`
+      : `${books.length} titles in this genre`;
 
   return (
     <div className="genre-view">
@@ -31,7 +64,7 @@ export default function GenreView({ genreId, query = '' }) {
         </div>
       </div>
 
-      {filteredBooks.length === 0 ? (
+      {!loading && filteredBooks.length === 0 ? (
         <div className="genre-view__empty">
           <p>No titles found</p>
           <span>Try another search in {genre.label}.</span>
@@ -46,10 +79,7 @@ export default function GenreView({ genreId, query = '' }) {
               onClick={() => navigate('/reader', { state: { book } })}
               aria-label={`Read ${book.title}`}
             >
-              <div
-                className="genre-view__cover"
-                style={{ background: `linear-gradient(160deg, ${book.color}, ${book.color}88)` }}
-              >
+              <div className="genre-view__cover">
                 {book.cover && <img src={book.cover} alt={book.title} />}
                 <div className="genre-view__hover-overlay">
                   <span className="genre-view__read-btn">Read Now</span>

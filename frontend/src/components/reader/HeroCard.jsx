@@ -39,6 +39,28 @@ const DEFAULT_TITLE = 'Jujutsu Kaisen';
 const DEFAULT_RATING = '9.3';
 
 
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+
+// Builds the meta table from the real book's fields (author/status/chapter
+// count from the backend) instead of always showing Jujutsu Kaisen's info.
+// Illustrator/Volumes aren't tracked by the backend, so they're just
+// omitted rather than faked.
+function buildMetadata(book) {
+  if (!book) return DEFAULT_METADATA;
+
+  const rows = [];
+  if (book.author) rows.push(['Author', book.author]);
+  rows.push(['Type', 'Manga']);
+  if (book.totalChapters) rows.push(['Chapters', String(book.totalChapters)]);
+  if (book.status) rows.push(['Status', capitalize(book.status)]);
+
+  return rows.length > 0 ? rows : DEFAULT_METADATA;
+}
+
+
 function Surface({
   className = '',
   children,
@@ -136,113 +158,6 @@ function IconButton({
         strokeWidth={2.4}
       />
     </button>
-  );
-}
-
-
-function MetaTable({ metadata }) {
-  const rows =
-    metadata ?? DEFAULT_METADATA;
-
-  return (
-    <dl
-      className="
-        grid
-        grid-cols-1
-        gap-2
-        text-sm
-        text-[var(--home-text-muted)]
-        sm:grid-cols-2
-      "
-    >
-      {rows.map(([label, value]) => (
-        <div
-          key={label}
-          className="
-            min-w-0
-            rounded-lg
-            border
-            border-[var(--home-border)]
-            bg-black/[0.12]
-            px-3
-            py-2
-          "
-        >
-          <dt
-            className="
-              text-[11px]
-              font-bold
-              uppercase
-              text-[var(--home-text-muted)]
-            "
-          >
-            {label}
-          </dt>
-
-          <dd
-            className="
-              mt-0.5
-              truncate
-              font-semibold
-              text-[var(--home-text)]
-            "
-          >
-            {value}
-          </dd>
-        </div>
-      ))}
-
-      <div
-        className="
-          min-w-0
-          rounded-lg
-          border
-          border-[var(--home-border)]
-          bg-black/[0.12]
-          px-3
-          py-2
-        "
-      >
-        <dt
-          className="
-            text-[11px]
-            font-bold
-            uppercase
-            text-[var(--home-text-muted)]
-          "
-        >
-          Rating
-        </dt>
-
-        <dd
-          className="
-            mt-0.5
-            flex
-            min-w-0
-            items-center
-            gap-1.5
-            font-bold
-            text-[var(--home-accent)]
-          "
-        >
-          <Star
-            size={13}
-            className="
-              fill-[var(--text-yellow)]
-              text-[var(--text-yellow)]
-            "
-            aria-hidden="true"
-          />
-
-          {metadata
-            ? rows[0]
-              ? 'N/A'
-              : '9.3'
-            : '9.3'}
-          /10
-        </dd>
-      </div>
-    </dl>
   );
 }
 
@@ -549,6 +464,8 @@ export default function HeroCard({
   book,
   isFavorite = false,
   onToggleFavorite,
+  chapterContent = null,
+  chapterLoading = false,
 }) {
   const title =
     book?.title ?? DEFAULT_TITLE;
@@ -560,35 +477,25 @@ export default function HeroCard({
     book?.color ?? null;
 
   const review =
-    DEFAULT_REVIEW;
+    book?.description || DEFAULT_REVIEW;
 
   const genres =
-    DEFAULT_GENRES;
+    book?.genres?.length ? book.genres : DEFAULT_GENRES;
 
   const meta =
-    DEFAULT_METADATA;
+    buildMetadata(book);
 
 
   /*
-    IMPORTANT FIX:
-
-    If the selected book provides its own banner,
-    use it.
-
-    If the selected title is Solo Leveling,
-    use solo_leveling_banner.webp.
-
-    Otherwise use the normal default hero banner.
+    Banner priority: the book's own banner image, if any → the
+    Solo Leveling special-case banner → the book's real cover (so the
+    reading banner actually matches the open book) → the generic default.
   */
 
   const bannerImage =
     book?.banner ||
-    (
-      title.toLowerCase() ===
-      'solo leveling'
-        ? images.banners.soloLeveling
-        : images.heroBanner
-    );
+    (title.toLowerCase() === 'solo leveling' ? images.banners.soloLeveling : book?.cover) ||
+    images.heroBanner;
 
 
   if (isReading) {
@@ -616,7 +523,8 @@ export default function HeroCard({
           className="
             relative
             min-h-0
-            flex-[1_1_0%]
+            flex-[0_0_auto]
+            h-40
             overflow-hidden
             rounded-[1.75rem]
             border
@@ -767,119 +675,54 @@ export default function HeroCard({
 
 
         {/* ==========================
-            DETAILS
+            CHAPTER READING PANE
+            The dominant area while reading — book metadata/genres are
+            one tap away via the "Details" button above, so this space
+            stays focused on the actual chapter text.
         =========================== */}
 
         <Surface
           className="
-            min-h-0
-            flex-[2_2_0%]
-            overflow-hidden
-            rounded-[1.75rem]
-            p-4
-          "
-        >
-          <div
-            className="
-              panel-scroll
-              grid
-              h-full
-              min-h-0
-              gap-5
-              overflow-y-auto
-              pr-2
-              lg:grid-cols-[150px_minmax(0,1fr)]
-            "
-          >
-
-            <Poster
-              book={book}
-              showRating={false}
-              className="self-start"
-            />
-
-
-            <div
-              className="
-                min-w-0
-                self-start
-              "
-            >
-              <h2
-                className="
-                  text-2xl
-                  font-extrabold
-                  text-[var(--home-text)]
-                  sm:text-[2rem]
-                "
-              >
-                {title}
-              </h2>
-
-
-              <MetaList
-                metadata={meta}
-                rating={rating}
-              />
-
-
-              <div className="mt-5">
-                <h3
-                  className="
-                    mb-3
-                    text-base
-                    font-bold
-                    text-[var(--home-accent)]
-                  "
-                >
-                  Genres
-                </h3>
-
-                <GenreList
-                  genres={genres}
-                  reading
-                />
-              </div>
-            </div>
-
-          </div>
-        </Surface>
-
-
-        {/* ==========================
-            REVIEW
-        =========================== */}
-
-        <Surface
-          className="
+            flex
             min-h-0
             flex-[1_1_0%]
+            flex-col
+            overflow-hidden
             rounded-[1.75rem]
-            px-5
-            py-4
+            p-0
           "
         >
-          <h3
-            className="
-              mb-3
-              text-2xl
-              font-bold
-              text-[var(--home-accent)]
-            "
-          >
-            Review
-          </h3>
+          <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-10 sm:py-8">
+            <div className="mx-auto max-w-2xl">
+              <div className="mb-5 flex items-center justify-between gap-3 border-b border-[var(--home-border)] pb-4">
+                <h3 className="text-2xl font-extrabold text-[var(--home-text)] sm:text-3xl">
+                  {chapterContent ? chapterContent.title : 'Review'}
+                </h3>
 
-          <p
-            className="
-              max-w-3xl
-              text-base
-              leading-[1.8]
-              text-[var(--home-text)]
-            "
-          >
-            {review}
-          </p>
+                {chapterContent && (
+                  <span className="shrink-0 rounded-full bg-[var(--home-control)] px-3 py-1 text-xs font-bold text-[var(--home-ink)]">
+                    Ch. {chapterContent.number}
+                    {book?.totalChapters ? ` / ${book.totalChapters}` : ''}
+                  </span>
+                )}
+              </div>
+
+              {chapterLoading ? (
+                <p className="text-base text-[var(--home-text-muted)]">Loading chapter...</p>
+              ) : (
+                <p
+                  className="
+                    whitespace-pre-line
+                    text-lg
+                    leading-[1.9]
+                    text-[var(--home-text)]
+                  "
+                >
+                  {chapterContent?.content || review}
+                </p>
+              )}
+            </div>
+          </div>
         </Surface>
 
       </div>

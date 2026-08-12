@@ -301,6 +301,16 @@
   text-decoration: underline;
 }
 
+.auth-text-link:disabled,
+.auth-google:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-text-link:disabled:hover {
+  text-decoration: none;
+}
+
 /* =========================
    ERROR
 ========================= */
