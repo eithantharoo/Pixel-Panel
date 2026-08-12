@@ -1,15 +1,13 @@
 import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const CHAPTER_COUNT = 20;
-const chapters = Array.from({ length: CHAPTER_COUNT }, (_, i) => i + 1);
-
-export default function ChapterSidebar({ currentChapter = 1, onChapterSelect, readDirection = 'ltr', onChapterEnd }) {
+export default function ChapterSidebar({ currentChapter = 1, totalChapters = 20, onChapterSelect, readDirection = 'ltr', onChapterEnd }) {
   const isRtl = readDirection === 'rtl';
+  const chapters = Array.from({ length: totalChapters }, (_, i) => i + 1);
   const displayChapters = isRtl ? [...chapters].reverse() : chapters;
 
   function goToPrev() {
     if (isRtl) {
-      if (currentChapter < CHAPTER_COUNT) onChapterSelect?.(currentChapter + 1);
+      if (currentChapter < totalChapters) onChapterSelect?.(currentChapter + 1);
     } else {
       if (currentChapter > 1) onChapterSelect?.(currentChapter - 1);
     }
@@ -20,7 +18,7 @@ export default function ChapterSidebar({ currentChapter = 1, onChapterSelect, re
       if (currentChapter > 1) onChapterSelect?.(currentChapter - 1);
       else onChapterEnd?.();
     } else {
-      if (currentChapter < CHAPTER_COUNT) onChapterSelect?.(currentChapter + 1);
+      if (currentChapter < totalChapters) onChapterSelect?.(currentChapter + 1);
       else onChapterEnd?.();
     }
   }
@@ -42,7 +40,7 @@ export default function ChapterSidebar({ currentChapter = 1, onChapterSelect, re
             <ChevronLeft size={16} />
           </button>
           <span className="min-w-[2.5rem] text-center text-xs font-bold text-[var(--home-accent)]">
-            {currentChapter}/{CHAPTER_COUNT}
+            {currentChapter}/{totalChapters}
           </span>
           <button
             type="button"
@@ -81,7 +79,7 @@ export default function ChapterSidebar({ currentChapter = 1, onChapterSelect, re
 
       <button type="button" onClick={goToNext} className="mt-6 inline-flex min-h-[4.5rem] w-full items-center justify-center gap-2 rounded-2xl bg-[var(--home-accent)] px-4 py-5 text-base font-bold text-[var(--home-ink)] transition-all hover:-translate-y-0.5 hover:bg-[var(--home-accent-hover)]">
         <BookOpen size={16} strokeWidth={2.4} />
-        {currentChapter < CHAPTER_COUNT ? `Next — Ch. ${isRtl ? currentChapter - 1 : currentChapter + 1}` : 'Finished'}
+        {currentChapter < totalChapters ? `Next — Ch. ${isRtl ? currentChapter - 1 : currentChapter + 1}` : 'Finished'}
       </button>
     </div>
   );

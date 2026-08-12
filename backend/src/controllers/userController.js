@@ -20,17 +20,39 @@ const getProfile = asyncHandler(async (req, res) => {
 });
 
 const updateProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).select('+password');
 
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
 
+  if (req.body.email !== undefined && req.body.email !== user.email) {
+    const emailTaken = await User.findOne({
+      email: req.body.email,
+      _id: { $ne: user._id },
+    });
+    if (emailTaken) {
+      res.status(400);
+      throw new Error('Email already in use');
+    }
+  }
+
+  if (req.body.password !== undefined) {
+    if (!req.body.currentPassword) {
+      res.status(401);
+      throw new Error('Current password is required to set a new password');
+    }
+    if (!(await user.matchPassword(req.body.currentPassword))) {
+      res.status(401);
+      throw new Error('Current password is incorrect');
+    }
+    user.password = req.body.password;
+  }
+
   if (req.body.name !== undefined) user.name = req.body.name;
   if (req.body.email !== undefined) user.email = req.body.email;
   if (req.body.avatar !== undefined) user.avatar = req.body.avatar;
-  if (req.body.password !== undefined) user.password = req.body.password;
 
   await user.save();
 

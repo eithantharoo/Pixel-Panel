@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import InterestCard from '../components/hub/InterestCard';
+import { saveInterests } from '../services/authService';
+import { clearAuth, loadAuth } from '../utils/authState';
 import './InterestsPage.css';
 
 const INTEREST_ROWS = [
@@ -44,6 +46,8 @@ function SelectedTag({ label, onRemove }) {
 export default function InterestsPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   function toggleInterest(id) {
     setSelected((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]);
@@ -54,7 +58,28 @@ export default function InterestsPage() {
   }
 
   const selectedItems = ALL_INTERESTS.filter((item) => selected.includes(item.id));
-  const canContinue = selected.length >= MIN_INTERESTS;
+  const canContinue = selected.length >= MIN_INTERESTS && !submitting;
+
+  async function handleContinue() {
+    if (!canContinue) return;
+
+    const token = loadAuth()?.token;
+    setSubmitting(true);
+    setError('');
+    try {
+      await saveInterests(selectedItems.map((item) => item.label), token);
+      navigate('/home');
+    } catch (err) {
+      if (err.status === 401) {
+        clearAuth();
+        navigate('/');
+        return;
+      }
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <section className="interests-page">
@@ -93,14 +118,16 @@ export default function InterestsPage() {
           </div>
         </div>
 
+        {error && <p className="interests-page__error">{error}</p>}
+
         <button
           type="button"
           className={`interests-page__continue${canContinue ? ' interests-page__continue--ready' : ''}`}
-          onClick={() => canContinue && navigate('/home')}
+          onClick={handleContinue}
           disabled={!canContinue}
           title={canContinue ? 'Continue to home page' : `Select at least ${MIN_INTERESTS} interests`}
         >
-          Continue
+          {submitting ? 'Saving...' : 'Continue'}
         </button>
       </div>
     </section>

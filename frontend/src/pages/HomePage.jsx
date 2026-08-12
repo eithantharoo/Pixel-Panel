@@ -11,39 +11,22 @@ import HistoryView from '../components/hub/HistoryView';
 import GenreView from '../components/hub/GenreView';
 import SettingsPanel from '../components/hub/SettingsPanel';
 import HelpPanel from '../components/hub/HelpPanel';
-import {
-  FOR_YOU,
-  NEWLY_RELEASED,
-  POPULAR,
-  TRENDING,
-  CONTINUE_READING,
-  FAVORITES,
-  HISTORY,
-} from '../data/home_data';
-import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
-import { loadSettings } from '../utils/settingsState';
+import { chapterToNumber } from '../utils/libraryState';
+import { clearAuth } from '../utils/authState';
+import { isEditableTarget } from '../utils/isEditableTarget';
+import { useStoryCatalog } from '../hooks/useStoryCatalog';
+import { useFavorites } from '../hooks/useFavorites';
+import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useLiveSettings } from '../hooks/useLiveSettings';
+import { searchStories as searchStoriesApi } from '../services/storyService';
+import { mapStoriesToBooks } from '../utils/storyAdapter';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
-function buildLibraryItems(favorites) {
+function buildLibraryItems(forYou, newReleases, popular, favorites) {
   return Array.from(
-    new Map([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...favorites].map((item) => [item.title, item])).values(),
+    new Map([...forYou, ...newReleases, ...popular, ...favorites].map((item) => [item.title, item])).values(),
   );
-}
-
-// Master deduplicated book list — every title appears exactly once
-// Used for global search so results are never duplicated
-const ALL_BOOKS = Array.from(
-  new Map(
-    [...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...HISTORY, ...CONTINUE_READING]
-      .map((book) => [book.title.trim().toLowerCase(), book])
-  ).values()
-);
-
-
-function isEditableTarget(target) {
-  const tagName = target?.tagName?.toLowerCase();
-  return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
 }
 
 function normalise(value) {
@@ -69,9 +52,17 @@ function EmptyResults({ query }) {
   );
 }
 
-// Global search results — searches ALL books regardless of active section
-function GlobalSearchResults({ navigate, searchQuery }) {
-  const results = filterItems(ALL_BOOKS, searchQuery);
+function LoadingResults() {
+  return (
+    <div className="home-empty">
+      <p className="home-empty__title">Loading...</p>
+    </div>
+  );
+}
+
+// Global search results — hits the real /api/stories/search endpoint
+function GlobalSearchResults({ navigate, searchQuery, results, loading }) {
+  if (loading) return <LoadingResults />;
   if (results.length === 0) return <EmptyResults query={searchQuery} />;
   return (
     <section className="home-library">
@@ -123,15 +114,18 @@ function MangaButton({ manga, navigate, variant }) {
   );
 }
 
-function HomeMainContent({ navigate, searchQuery }) {
+function HomeMainContent({ navigate, forYou, newReleases, popular, loading }) {
   const [expandedSections, setExpandedSections] = useState({});
+
+  if (loading) return <LoadingResults />;
+
   const sections = [
-    { title: 'For you', items: filterItems(FOR_YOU, searchQuery), variant: 'overlay' },
-    { title: 'Newly released', items: filterItems(NEWLY_RELEASED, searchQuery), variant: 'new' },
-    { title: 'Popular', items: filterItems(POPULAR, searchQuery), variant: 'popular' },
+    { title: 'For you', items: forYou, variant: 'overlay' },
+    { title: 'Newly released', items: newReleases, variant: 'new' },
+    { title: 'Popular', items: popular, variant: 'popular' },
   ].filter((section) => section.items.length > 0);
 
-  if (sections.length === 0) return <EmptyResults query={searchQuery} />;
+  if (sections.length === 0) return <EmptyResults query="" />;
 
   return sections.map((section) => (
     <SectionRow
@@ -189,18 +183,56 @@ export default function HomePage() {
   const [trendingExpanded, setTrendingExpanded] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
-  const libraryItems = useMemo(() => buildLibraryItems(favorites), [favorites]);
+  const { favorites, loading: favoritesLoading, toggleFavorite } = useFavorites();
 
-  // ── Live settings — re-read on every storage write from SettingsPanel ──
-  const [settings, setSettings] = useState(loadSettings);
+  const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
+  const { continueReading, history, loading: progressLoading } = useReadingProgress();
+  const libraryItems = useMemo(
+    () => buildLibraryItems(forYou, newReleases, popular, favorites),
+    [forYou, newReleases, popular, favorites],
+  );
+
+  // ── Global search — debounced against the real /api/stories/search ──
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   useEffect(() => {
-    function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') setSettings(loadSettings());
+    const query = searchQuery.trim();
+    let cancelled = false;
+
+    if (!query) {
+      Promise.resolve().then(() => {
+        if (!cancelled) {
+          setSearchResults([]);
+          setSearchLoading(false);
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
     }
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
+
+    Promise.resolve().then(() => {
+      if (!cancelled) setSearchLoading(true);
+    });
+
+    const timer = setTimeout(async () => {
+      try {
+        const stories = await searchStoriesApi(query);
+        if (!cancelled) setSearchResults(mapStoriesToBooks(stories));
+      } catch {
+        if (!cancelled) setSearchResults([]);
+      } finally {
+        if (!cancelled) setSearchLoading(false);
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  const settings = useLiveSettings();
 
   function handleNavChange(nav) {
     setActiveNav(nav);
@@ -219,22 +251,23 @@ export default function HomePage() {
       state: {
         book,
         startReading: true,
-        chapter: chapterToNumber(book.chapter),
+        chapter: book.chapterNumber ?? chapterToNumber(book.chapter),
       },
     });
   }
 
+  function handleLogout() {
+    clearAuth();
+    navigate('/');
+  }
+
   function handleFavoriteRemove(book) {
-    setFavorites((current) => {
-      const nextFavorites = toggleFavoriteBook(book, current);
-      saveFavorites(nextFavorites);
-      return nextFavorites;
-    });
+    toggleFavorite(book);
   }
 
   const notifications = useMemo(() => {
     const newBooks = settings.notifNewChapter
-      ? NEWLY_RELEASED.map((book) => ({
+      ? newReleases.map((book) => ({
         id: `new-book-${book.id}`,
         title: 'New Release',
         message: `${book.title} is now available on Pixel Panel.`,
@@ -243,7 +276,7 @@ export default function HomePage() {
       : [];
 
     const updates = settings.notifRecommendations
-      ? CONTINUE_READING.map((book) => ({
+      ? continueReading.map((book) => ({
         id: `chapter-${book.id}`,
         title: '🔔 Chapter Update',
         message: `${book.title} — new chapter available after ${book.chapter}.`,
@@ -251,8 +284,8 @@ export default function HomePage() {
       }))
       : [];
 
-    const popular = settings.notifRecommendations
-      ? POPULAR.slice(0, 2).map((book) => ({
+    const popularNotifs = settings.notifRecommendations
+      ? popular.slice(0, 2).map((book) => ({
         id: `popular-${book.id}`,
         title: '🔥 Trending Now',
         message: `${book.title} is trending this week. Don't miss it!`,
@@ -260,8 +293,8 @@ export default function HomePage() {
       }))
       : [];
 
-    const forYou = settings.notifRecommendations
-      ? FOR_YOU.slice(0, 2).map((book) => ({
+    const forYouNotifs = settings.notifRecommendations
+      ? forYou.slice(0, 2).map((book) => ({
         id: `foryou-${book.id}`,
         title: '⭐ Recommended',
         message: `Based on your reads: ${book.title} is a great pick.`,
@@ -270,7 +303,7 @@ export default function HomePage() {
       : [];
 
     const historyUpdates = settings.notifDigest
-      ? HISTORY.map((book) => ({
+      ? history.map((book) => ({
         id: `history-${book.id}`,
         title: '📖 Weekly Digest',
         message: `${book.title} has a fresh chapter. Continue from ${book.chapter}.`,
@@ -279,7 +312,7 @@ export default function HomePage() {
       : [];
 
     // Merge all, deduplicate by id, then cap to 10
-    const all = [...newBooks, ...updates, ...popular, ...forYou, ...historyUpdates];
+    const all = [...newBooks, ...updates, ...popularNotifs, ...forYouNotifs, ...historyUpdates];
     const seen = new Set();
     const unique = all.filter((n) => {
       if (seen.has(n.id)) return false;
@@ -287,16 +320,16 @@ export default function HomePage() {
       return true;
     });
     return unique.slice(0, 10);
-  }, [navigate, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest]);
+  }, [navigate, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, newReleases, popular, forYou, continueReading, history]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
 
   function getFirstVisibleBook() {
     if (activeNav === 'favorite') return filterItems(favorites, searchQuery)[0];
-    if (activeNav === 'history') return filterItems(HISTORY, searchQuery)[0];
+    if (activeNav === 'history') return filterItems(history, searchQuery)[0];
     if (activeNav === 'library') return filterItems(libraryItems, searchQuery)[0];
-    return filterItems([...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR], searchQuery)[0];
+    return filterItems([...forYou, ...newReleases, ...popular], searchQuery)[0];
   }
 
   useEffect(() => {
@@ -342,15 +375,23 @@ export default function HomePage() {
 
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
-  }, [activeGenre, activeNav, favorites, libraryItems, navigate, searchQuery, showHelp, showSettings, trendingExpanded]);
+  }, [activeGenre, activeNav, favorites, libraryItems, navigate, searchQuery, showHelp, showSettings, trendingExpanded, forYou, newReleases, popular, history]);
 
   function renderContent() {
     // ── Global search: always search ALL books, deduplicated ──────
     if (searchQuery.trim()) {
-      return <GlobalSearchResults navigate={navigate} searchQuery={searchQuery} />;
+      return (
+        <GlobalSearchResults
+          navigate={navigate}
+          searchQuery={searchQuery}
+          results={searchResults}
+          loading={searchLoading}
+        />
+      );
     }
 
     if (activeNav === 'favorite') {
+      if (favoritesLoading) return <LoadingResults />;
       return (
         <FavoritesView
           items={favorites}
@@ -369,9 +410,10 @@ export default function HomePage() {
           </div>
         );
       }
+      if (progressLoading) return <LoadingResults />;
       return (
         <HistoryView
-          items={HISTORY}
+          items={history}
           onBookClick={openSavedChapter}
         />
       );
@@ -379,7 +421,15 @@ export default function HomePage() {
 
     if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery="" libraryItems={libraryItems} />;
     if (activeGenre) return <GenreView genreId={activeGenre} query="" />;
-    return <HomeMainContent navigate={navigate} searchQuery="" />;
+    return (
+      <HomeMainContent
+        navigate={navigate}
+        forYou={forYou}
+        newReleases={newReleases}
+        popular={popular}
+        loading={catalogLoading}
+      />
+    );
   }
 
   return (
@@ -392,7 +442,7 @@ export default function HomePage() {
         onSearchChange={setSearchQuery}
         notifications={notifications}
         onLogin={() => navigate('/')}
-        onLogout={() => navigate('/')}
+        onLogout={handleLogout}
       />
 
       <Sidebar
@@ -412,7 +462,7 @@ export default function HomePage() {
           <main className="home-page__content">{renderContent()}</main>
           {showTrending && (
             <TrendingSidebar
-              items={TRENDING}
+              items={trending}
               onViewAll={() => setTrendingExpanded(true)}
               expanded={trendingExpanded}
               onCollapse={() => setTrendingExpanded(false)}
@@ -427,7 +477,7 @@ export default function HomePage() {
 
       <div className="home-page__footer">
         <ContinueReading
-          items={CONTINUE_READING}
+          items={continueReading}
           onViewAll={() => handleNavChange('history')}
           onCardClick={openSavedChapter}
           showChapterNumbers={settings.showChapterNumbers}

@@ -44,9 +44,26 @@ const createChapter = asyncHandler(async(req,res)=>{
 		res.status(404);
 		throw new Error('Story not found');
 	}
-	const created_chapter = await Chapter.create({...req.body,
-					story:req.params.storyId});
-	const update = await Story.findByIdAndUpdate(req.params.storyId,
+	const { number, title, content, pages } = req.body;
+
+	let created_chapter;
+	try {
+		created_chapter = await Chapter.create({
+			number,
+			title,
+			content,
+			pages,
+			story: req.params.storyId,
+		});
+	} catch (error) {
+		if (error.code === 11000) {
+			res.status(400);
+			throw new Error('Chapter number already exists for this story');
+		}
+		throw error;
+	}
+
+	await Story.findByIdAndUpdate(req.params.storyId,
 		{$inc: {totalChapters:1} } );
 	res.status(201).json(created_chapter);
 

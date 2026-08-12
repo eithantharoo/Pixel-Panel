@@ -8,12 +8,15 @@ import {
 } from 'lucide-react';
 
 import BrandSidebar from './components/brandsidebar';
+import { registerUser } from '../services/authService';
+import { saveAuth, seedProfileName } from '../utils/authState';
 import './signup_page.css';
 
 export default function SignupPage() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -24,6 +27,7 @@ export default function SignupPage() {
   // Separate eye states
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -41,6 +45,10 @@ export default function SignupPage() {
 
   function validate() {
     const newErrors = {};
+
+    if (!form.name.trim()) {
+      newErrors.name = 'Name is required.';
+    }
 
     const value = form.email.trim();
 
@@ -78,12 +86,26 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSignupSubmit(e) {
+  async function handleSignupSubmit(e) {
     e.preventDefault();
 
     if (!validate()) return;
 
-    navigate('/get-started');
+    setSubmitting(true);
+    try {
+      const user = await registerUser({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
+      saveAuth({ user, token: user.token });
+      seedProfileName(user.name);
+      navigate('/get-started');
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, form: error.message }));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -105,6 +127,46 @@ export default function SignupPage() {
           className="auth-form"
           onSubmit={handleSignupSubmit}
         >
+
+          {errors.form && (
+            <p className="auth-error">
+              {errors.form}
+            </p>
+          )}
+
+          {/* NAME */}
+          <label className="auth-field">
+
+            <span>Name</span>
+
+            <div className="auth-input-wrap">
+
+              <span
+                className="auth-input-icon"
+                aria-hidden="true"
+              >
+                <User size={18} />
+              </span>
+
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                value={form.name}
+                onChange={handleChange}
+                autoComplete="name"
+              />
+
+            </div>
+
+            {errors.name && (
+              <p className="auth-error">
+                {errors.name}
+              </p>
+            )}
+
+          </label>
+
 
           {/* EMAIL */}
           <label className="auth-field">
@@ -262,8 +324,9 @@ export default function SignupPage() {
           <button
             type="submit"
             className="auth-submit"
+            disabled={submitting}
           >
-            Sign Up
+            {submitting ? 'Signing up...' : 'Sign Up'}
           </button>
 
 
@@ -277,6 +340,8 @@ export default function SignupPage() {
           <button
             type="button"
             className="auth-google"
+            disabled
+            title="Coming soon"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

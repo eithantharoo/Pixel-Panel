@@ -12,10 +12,10 @@ function HeartIcon({ filled }) {
   );
 }
 
-function FavoriteCard({ title, color, cover, rating, genre, onRemove }) {
+function FavoriteCard({ id, title, color, cover, rating, genre, onRemove }) {
   const navigate = useNavigate();
-  const style = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
-  const book = { title, color, cover, rating, genre };
+  const style = cover ? undefined : { background: `linear-gradient(160deg, ${color}, ${color}88)` };
+  const book = { id, title, color, cover, rating, genre };
 
   return (
     <article

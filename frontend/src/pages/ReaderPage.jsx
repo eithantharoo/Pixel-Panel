@@ -8,17 +8,19 @@ import HeroCard from '../components/reader/HeroCard';
 import ChapterSidebar from '../components/reader/ChapterSidebar';
 import SettingsPanel from '../components/hub/SettingsPanel';
 import HelpPanel from '../components/hub/HelpPanel';
-import { CONTINUE_READING, FAVORITES, HISTORY, NEWLY_RELEASED, TRENDING } from '../data/home_data';
-import { chapterToNumber, isFavoriteBook, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
-import { loadSettings } from '../utils/settingsState';
+import { chapterToNumber } from '../utils/libraryState';
+import { clearAuth } from '../utils/authState';
+import { isEditableTarget } from '../utils/isEditableTarget';
+import { useStoryCatalog } from '../hooks/useStoryCatalog';
+import { useFavorites } from '../hooks/useFavorites';
+import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useSavedProgress } from '../hooks/useSavedProgress';
+import { useChapterContent } from '../hooks/useChapterContent';
+import { useLiveSettings } from '../hooks/useLiveSettings';
 import './ReaderPage.css';
 
-const CHAPTER_COUNT = 20;
+const DEFAULT_CHAPTER_COUNT = 20;
 
-function isEditableTarget(target) {
-  const tagName = target?.tagName?.toLowerCase();
-  return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
-}
 export default function ReaderPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,21 +30,27 @@ export default function ReaderPage() {
   const [selectedBook, setSelectedBook] = useState(location.state?.book ?? null);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
-  const [isFavorite, setIsFavorite] = useState(() => isFavoriteBook(location.state?.book, loadFavorites(FAVORITES)));
   const [currentChapter, setCurrentChapter] = useState(() => chapterToNumber(location.state?.chapter ?? location.state?.book?.chapter));
 
-  // ── Live settings ─────────────────────────────────────────────
-  const [settings, setSettings] = useState(loadSettings);
+  const { trending, newReleases } = useStoryCatalog();
+  const { continueReading, history } = useReadingProgress();
+  const { favorites, isFavorite: checkFavorite, toggleFavorite } = useFavorites();
+  const isFavorite = checkFavorite(selectedBook);
+  const totalChapters = selectedBook?.totalChapters || DEFAULT_CHAPTER_COUNT;
+  const { chapter: chapterContent, loading: chapterLoading } = useChapterContent(
+    selectedBook?.id,
+    showChapters ? currentChapter : null,
+  );
 
-  // Re-read settings whenever the panel saves (SettingsPanel fires a storage event)
-  useEffect(() => {
-    function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') setSettings(loadSettings());
-    }
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
+  useSavedProgress({
+    book: selectedBook,
+    currentChapter,
+    totalChapters,
+    isReading: showChapters,
+    onResume: setCurrentChapter,
+  });
+
+  const settings = useLiveSettings();
 
   // ── Auto-advance: move to next chapter when the current one ends ──
   function handleChapterEnd() {
@@ -50,7 +58,7 @@ export default function ReaderPage() {
     if (settings.readDirection === 'rtl') {
       setCurrentChapter((ch) => Math.max(1, ch - 1));
     } else {
-      setCurrentChapter((ch) => Math.min(CHAPTER_COUNT, ch + 1));
+      setCurrentChapter((ch) => Math.min(totalChapters, ch + 1));
     }
   }
 
@@ -58,7 +66,6 @@ export default function ReaderPage() {
     setSelectedBook(book);
     setShowChapters(startReading);
     setTrendingExpanded(false);
-    setIsFavorite(isFavoriteBook(book, favorites));
     setCurrentChapter(chapterToNumber(book.chapter));
   }
 
@@ -75,37 +82,36 @@ export default function ReaderPage() {
     navigate('/home', { state: { genreId } });
   }
 
+  function handleLogout() {
+    clearAuth();
+    navigate('/');
+  }
+
   function handleSavedChapterSelect(book) {
     handleBookSelect(book, true);
   }
 
   function handleToggleFavorite() {
     if (!selectedBook) return;
-
-    setFavorites((current) => {
-      const nextFavorites = toggleFavoriteBook(selectedBook, current);
-      saveFavorites(nextFavorites);
-      setIsFavorite(isFavoriteBook(selectedBook, nextFavorites));
-      return nextFavorites;
-    });
+    toggleFavorite(selectedBook);
   }
 
   const notifications = useMemo(() => {
-    const newBooks = NEWLY_RELEASED.slice(0, 2).map((book) => ({
+    const newBooks = newReleases.slice(0, 2).map((book) => ({
       id: `new-book-${book.id}`,
       title: 'New book',
       message: `${book.title} was added to Pixel Panel.`,
       onClick: () => handleBookSelect(book),
     }));
 
-    const updates = CONTINUE_READING.slice(0, 2).map((book) => ({
+    const updates = continueReading.slice(0, 2).map((book) => ({
       id: `chapter-${book.id}`,
       title: 'New chapter',
       message: `${book.title} has an update after ${book.chapter}.`,
       onClick: () => handleSavedChapterSelect(book),
     }));
 
-    const historyUpdates = HISTORY.slice(0, 1).map((book) => ({
+    const historyUpdates = history.slice(0, 1).map((book) => ({
       id: `history-${book.id}`,
       title: 'Reading update',
       message: `${book.title} has a fresh chapter from your history.`,
@@ -113,7 +119,7 @@ export default function ReaderPage() {
     }));
 
     return [...newBooks, ...updates, ...historyUpdates];
-  }, [navigate]);
+  }, [navigate, favorites, newReleases, continueReading, history]);
 
   function handleClose() {
     if (showChapters) {
@@ -164,8 +170,8 @@ export default function ReaderPage() {
         }
         if (event.key === nextKey) {
           event.preventDefault();
-          if (currentChapter < CHAPTER_COUNT) {
-            setCurrentChapter((ch) => Math.min(CHAPTER_COUNT, ch + 1));
+          if (currentChapter < totalChapters) {
+            setCurrentChapter((ch) => Math.min(totalChapters, ch + 1));
           } else {
             handleChapterEnd();
           }
@@ -175,7 +181,7 @@ export default function ReaderPage() {
 
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
-  }, [favorites, selectedBook, showChapters, showHelp, showSettings, trendingExpanded, settings, currentChapter]);
+  }, [favorites, selectedBook, showChapters, showHelp, showSettings, trendingExpanded, settings, currentChapter, totalChapters]);
 
   return (
     <div className="reader-page">
@@ -186,7 +192,7 @@ export default function ReaderPage() {
         onSearchChange={setSearchQuery}
         notifications={notifications}
         onLogin={() => navigate('/')}
-        onLogout={() => navigate('/')}
+        onLogout={handleLogout}
       />
 
       <Sidebar
@@ -209,6 +215,8 @@ export default function ReaderPage() {
               book={selectedBook}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              chapterContent={chapterContent}
+              chapterLoading={chapterLoading}
             />
           </main>
 
@@ -216,6 +224,7 @@ export default function ReaderPage() {
             <aside className="reader-page__right reader-page__right--chapters">
               <ChapterSidebar
                 currentChapter={currentChapter}
+                totalChapters={totalChapters}
                 onChapterSelect={setCurrentChapter}
                 readDirection={settings.readDirection}
                 onChapterEnd={handleChapterEnd}
@@ -223,7 +232,7 @@ export default function ReaderPage() {
             </aside>
           ) : (
             <TrendingSidebar
-              items={TRENDING}
+              items={trending}
               onViewAll={() => setTrendingExpanded(true)}
               expanded={trendingExpanded}
               onCollapse={() => setTrendingExpanded(false)}
@@ -235,7 +244,7 @@ export default function ReaderPage() {
 
       <div className="reader-page__footer">
         <ContinueReading
-          items={CONTINUE_READING}
+          items={continueReading}
           onViewAll={() => handleNavChange('history')}
           onCardClick={handleSavedChapterSelect}
           showChapterNumbers={settings.showChapterNumbers}

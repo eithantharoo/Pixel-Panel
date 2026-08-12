@@ -84,22 +84,28 @@ const getPopularStories = asyncHandler(async (req, res) => {
   res.json(stories);
 });
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // @desc    Search stories by title, description, or author
 // @route   GET /api/stories/search?q=demon
 // @access  Public
 const searchStories = asyncHandler(async (req, res) => {
   const { q } = req.query;
 
-  if (!q || q.trim() === '') {
+  if (typeof q !== 'string' || q.trim() === '') {
     res.status(400);
     throw new Error('Search query is required');
   }
 
+  const safeQuery = escapeRegex(q.trim());
+
   const stories = await Story.find({
     $or: [
-      { title: { $regex: q, $options: 'i' } },
-      { description: { $regex: q, $options: 'i' } },
-      { author: { $regex: q, $options: 'i' } },
+      { title: { $regex: safeQuery, $options: 'i' } },
+      { description: { $regex: safeQuery, $options: 'i' } },
+      { author: { $regex: safeQuery, $options: 'i' } },
     ],
   }).limit(20);
 

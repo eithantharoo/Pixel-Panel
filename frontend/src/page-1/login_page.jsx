@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 import BrandSidebar from './components/brandsidebar';
+import { loginUser } from '../services/authService';
+import { saveAuth, seedProfileName } from '../utils/authState';
 import './login_page.css';
 
 export default function LoginPage() {
@@ -14,6 +16,7 @@ export default function LoginPage() {
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -55,12 +58,22 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleLoginSubmit(e) {
+  async function handleLoginSubmit(e) {
     e.preventDefault();
 
     if (!validate()) return;
 
-    navigate('/get-started');
+    setSubmitting(true);
+    try {
+      const user = await loginUser({ email: form.email.trim(), password: form.password });
+      saveAuth({ user, token: user.token });
+      seedProfileName(user.name);
+      navigate(user.interests?.length > 0 ? '/home' : '/get-started');
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, form: error.message }));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -82,6 +95,12 @@ export default function LoginPage() {
           className="auth-form"
           onSubmit={handleLoginSubmit}
         >
+
+          {errors.form && (
+            <p className="auth-error">
+              {errors.form}
+            </p>
+          )}
 
           <label className="auth-field">
             <span>Email/Username</span>
@@ -166,6 +185,8 @@ export default function LoginPage() {
             <button
               type="button"
               className="auth-text-link"
+              disabled
+              title="Coming soon"
             >
               Forgot Password?
             </button>
@@ -193,8 +214,9 @@ export default function LoginPage() {
           <button
             type="submit"
             className="auth-submit"
+            disabled={submitting}
           >
-            Log In
+            {submitting ? 'Logging in...' : 'Log In'}
           </button>
 
           <div className="auth-divider">
@@ -204,6 +226,8 @@ export default function LoginPage() {
           <button
             type="button"
             className="auth-google"
+            disabled
+            title="Coming soon"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
