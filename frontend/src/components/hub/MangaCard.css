@@ -304,3 +304,24 @@ button:hover > .manga-card--continue .manga-card__cover::after {
   font-weight: 600;
   color: #fff43d;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK MODE — MangaCard
+   ════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .manga-card__title,
+[data-theme="dark"] .manga-card--new .manga-card__title,
+[data-theme="dark"] .manga-card--popular .manga-card__title {
+  color: #e8e0f5;
+}
+
+[data-theme="dark"] .manga-card__continue-title {
+  color: #e8e0f5;
+}
+
+[data-theme="dark"] .manga-card__continue-chapter {
+  color: #a090c0;
+}
+
+[data-theme="dark"] .manga-card--trending .manga-card__title {
+  color: #e8e0f5;
+}

@@ -35,6 +35,11 @@ export function loadSettings() {
 export function saveSettings(settings) {
   try {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    // Notify same-tab listeners (storage event only fires cross-tab normally)
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: SETTINGS_STORAGE_KEY,
+      newValue: JSON.stringify(settings),
+    }));
   } catch { /* noop */ }
 }
 

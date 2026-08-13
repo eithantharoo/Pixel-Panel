@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { loadSettings } from '../utils/settingsState';
+import { applySettings, loadSettings } from '../utils/settingsState';
 
 // Re-reads settings from localStorage whenever SettingsPanel saves (it
 // fires a storage event). Was duplicated identically in HomePage.jsx and
@@ -9,7 +9,11 @@ export function useLiveSettings() {
 
   useEffect(() => {
     function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') setSettings(loadSettings());
+      if (e.key === 'pixel-panel-settings') {
+        const next = loadSettings();
+        applySettings(next);
+        setSettings(next);
+      }
     }
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);

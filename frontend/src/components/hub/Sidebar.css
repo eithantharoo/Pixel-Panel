@@ -238,3 +238,33 @@
     font-size: 0.5625rem;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK MODE — Sidebar
+   ════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .sidebar {
+  background: #130d28;
+  border-right: 1px solid rgba(200, 170, 255, 0.08);
+}
+
+[data-theme="dark"] .sidebar__link {
+  color: #a090c0;
+}
+
+[data-theme="dark"] .sidebar__link:hover {
+  background: #2a1d48;
+  color: #e8e0f5;
+}
+
+[data-theme="dark"] .sidebar__link--active {
+  background: #2a1d48;
+  color: var(--home-accent);
+}
+
+[data-theme="dark"] .sidebar__link-label {
+  color: inherit;
+}
+
+[data-theme="dark"] .sidebar__divider {
+  border-color: rgba(200, 170, 255, 0.1);
+}

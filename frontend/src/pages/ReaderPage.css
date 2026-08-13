@@ -183,3 +183,38 @@
     border-radius: 12px;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK MODE — ReaderPage
+   ════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .reader-page {
+  --home-canvas:        #0f0b1a;
+  --home-panel:         #1e1535;
+  --home-panel-deep:    #130d28;
+  --home-panel-hover:   #2a1d48;
+  --home-control:       #2d2245;
+  --home-control-hover: #3d3060;
+  --home-text:          #e8e0f5;
+  --home-text-muted:    #a090c0;
+  --home-ink:           #e8e0f5;
+  --home-border:        rgba(200, 170, 255, 0.14);
+  background: #0f0b1a;
+}
+
+[data-theme="dark"] .reader-page__main {
+  background: #0f0b1a;
+}
+
+[data-theme="dark"] .reader-page__footer {
+  background: #130d28;
+  border-top-color: rgba(200, 170, 255, 0.1);
+}
+
+[data-theme="dark"] .reader-page__content {
+  background: #1e1535;
+  border-color: rgba(200, 170, 255, 0.12);
+}
+
+[data-theme="dark"] .reader-page__right > * {
+  background: linear-gradient(180deg, #1e1535 0%, #130d28 100%);
+}
