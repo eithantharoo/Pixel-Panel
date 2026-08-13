@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, Clock3 } from 'lucide-react';
 import Sidebar from '../components/hub/Sidebar';
@@ -246,7 +246,7 @@ export default function HomePage() {
     if (genreId !== null) setActiveNav('home');
   }
 
-  function openSavedChapter(book) {
+  const openSavedChapter = useCallback((book) => {
     navigate('/reader', {
       state: {
         book,
@@ -254,7 +254,7 @@ export default function HomePage() {
         chapter: book.chapterNumber ?? chapterToNumber(book.chapter),
       },
     });
-  }
+  }, [navigate]);
 
   function handleLogout() {
     clearAuth();
@@ -320,17 +320,17 @@ export default function HomePage() {
       return true;
     });
     return unique.slice(0, 10);
-  }, [navigate, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, newReleases, popular, forYou, continueReading, history]);
+  }, [navigate, openSavedChapter, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, newReleases, popular, forYou, continueReading, history]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
 
-  function getFirstVisibleBook() {
+  const getFirstVisibleBook = useCallback(() => {
     if (activeNav === 'favorite') return filterItems(favorites, searchQuery)[0];
     if (activeNav === 'history') return filterItems(history, searchQuery)[0];
     if (activeNav === 'library') return filterItems(libraryItems, searchQuery)[0];
     return filterItems([...forYou, ...newReleases, ...popular], searchQuery)[0];
-  }
+  }, [activeNav, favorites, forYou, history, libraryItems, newReleases, popular, searchQuery]);
 
   useEffect(() => {
     function handleShortcut(event) {
@@ -375,7 +375,7 @@ export default function HomePage() {
 
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
-  }, [activeGenre, activeNav, favorites, libraryItems, navigate, searchQuery, showHelp, showSettings, trendingExpanded, forYou, newReleases, popular, history]);
+  }, [activeGenre, activeNav, getFirstVisibleBook, navigate, showHelp, showSettings, trendingExpanded]);
 
   function renderContent() {
     // ── Global search: always search ALL books, deduplicated ──────

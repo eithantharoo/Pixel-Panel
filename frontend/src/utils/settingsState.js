@@ -1,5 +1,6 @@
 /* ── Pixel Panel — shared settings state ────────────────────────── */
 export const SETTINGS_STORAGE_KEY = 'pixel-panel-settings';
+export const SETTINGS_CHANGE_EVENT = 'pixel-panel-settings-changed';
 
 export const SETTINGS_DEFAULTS = {
   theme: 'dark',           // 'light' | 'dark'
@@ -35,11 +36,8 @@ export function loadSettings() {
 export function saveSettings(settings) {
   try {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-    // Notify same-tab listeners (storage event only fires cross-tab normally)
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: SETTINGS_STORAGE_KEY,
-      newValue: JSON.stringify(settings),
-    }));
+    // Native storage events only fire in other tabs, so notify this tab too.
+    window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
   } catch { /* noop */ }
 }
 

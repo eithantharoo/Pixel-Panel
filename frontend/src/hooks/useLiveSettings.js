@@ -1,22 +1,33 @@
 import { useEffect, useState } from 'react';
-import { applySettings, loadSettings } from '../utils/settingsState';
+import {
+  applySettings,
+  loadSettings,
+  SETTINGS_CHANGE_EVENT,
+  SETTINGS_STORAGE_KEY,
+} from '../utils/settingsState';
 
-// Re-reads settings from localStorage whenever SettingsPanel saves (it
-// fires a storage event). Was duplicated identically in HomePage.jsx and
-// ReaderPage.jsx.
+// Keep page settings synchronized with saves in this tab and native storage
+// events from other tabs. This was previously duplicated in both page files.
 export function useLiveSettings() {
   const [settings, setSettings] = useState(loadSettings);
 
   useEffect(() => {
-    function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') {
-        const next = loadSettings();
-        applySettings(next);
-        setSettings(next);
-      }
+    function syncSettings() {
+      const next = loadSettings();
+      applySettings(next);
+      setSettings(next);
     }
+
+    function onStorage(e) {
+      if (e.key === SETTINGS_STORAGE_KEY) syncSettings();
+    }
+
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener(SETTINGS_CHANGE_EVENT, syncSettings);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener(SETTINGS_CHANGE_EVENT, syncSettings);
+    };
   }, []);
 
   return settings;

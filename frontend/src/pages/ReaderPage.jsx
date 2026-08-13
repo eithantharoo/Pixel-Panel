@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import HomeHeader from '../components/hub/HomeHeader';
 import Sidebar from '../components/hub/Sidebar';
@@ -34,7 +34,7 @@ export default function ReaderPage() {
 
   const { trending, newReleases } = useStoryCatalog();
   const { continueReading, history } = useReadingProgress();
-  const { favorites, isFavorite: checkFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite: checkFavorite, toggleFavorite } = useFavorites();
   const isFavorite = checkFavorite(selectedBook);
   const totalChapters = selectedBook?.totalChapters || DEFAULT_CHAPTER_COUNT;
   const { chapter: chapterContent, loading: chapterLoading } = useChapterContent(
@@ -53,21 +53,21 @@ export default function ReaderPage() {
   const settings = useLiveSettings();
 
   // ── Auto-advance: move to next chapter when the current one ends ──
-  function handleChapterEnd() {
+  const handleChapterEnd = useCallback(() => {
     if (!settings.autoAdvance) return;
     if (settings.readDirection === 'rtl') {
       setCurrentChapter((ch) => Math.max(1, ch - 1));
     } else {
       setCurrentChapter((ch) => Math.min(totalChapters, ch + 1));
     }
-  }
+  }, [settings.autoAdvance, settings.readDirection, totalChapters]);
 
-  function handleBookSelect(book, startReading = false) {
+  const handleBookSelect = useCallback((book, startReading = false) => {
     setSelectedBook(book);
     setShowChapters(startReading);
     setTrendingExpanded(false);
     setCurrentChapter(chapterToNumber(book.chapter));
-  }
+  }, []);
 
   function handleNavChange(navId) {
     setTrendingExpanded(false);
@@ -87,14 +87,14 @@ export default function ReaderPage() {
     navigate('/');
   }
 
-  function handleSavedChapterSelect(book) {
+  const handleSavedChapterSelect = useCallback((book) => {
     handleBookSelect(book, true);
-  }
+  }, [handleBookSelect]);
 
-  function handleToggleFavorite() {
+  const handleToggleFavorite = useCallback(() => {
     if (!selectedBook) return;
     toggleFavorite(selectedBook);
-  }
+  }, [selectedBook, toggleFavorite]);
 
   const notifications = useMemo(() => {
     const newBooks = newReleases.slice(0, 2).map((book) => ({
@@ -119,16 +119,16 @@ export default function ReaderPage() {
     }));
 
     return [...newBooks, ...updates, ...historyUpdates];
-  }, [navigate, favorites, newReleases, continueReading, history]);
+  }, [handleBookSelect, handleSavedChapterSelect, newReleases, continueReading, history]);
 
-  function handleClose() {
+  const handleClose = useCallback(() => {
     if (showChapters) {
       setShowChapters(false);
       return;
     }
     setSelectedBook(null);
     navigate('/home');
-  }
+  }, [navigate, showChapters]);
 
   function handleReadNow() {
     setShowChapters(true);
@@ -181,7 +181,7 @@ export default function ReaderPage() {
 
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
-  }, [favorites, selectedBook, showChapters, showHelp, showSettings, trendingExpanded, settings, currentChapter, totalChapters]);
+  }, [currentChapter, handleChapterEnd, handleClose, handleToggleFavorite, settings.readDirection, showChapters, showHelp, showSettings, totalChapters, trendingExpanded]);
 
   return (
     <div className="reader-page">
