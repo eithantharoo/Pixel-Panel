@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Camera, Check, ChevronDown, Grid3X3, Heart, LogIn, LogOut, Search, User, X } from 'lucide-react';
+import { Bell, Camera, Check, ChevronDown, Grid3X3, LogIn, LogOut, Search, User, X } from 'lucide-react';
 import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
@@ -30,7 +30,7 @@ function saveProfile(profile) {
   }
 }
 
-function NotificationMenu({ notifications, onClose }) {
+function NotificationMenu({ notifications, onClose, onNotificationClick }) {
   return (
     <div className="home-header__menu home-header__notifications" role="dialog" aria-label="Notifications">
       <div className="home-header__menu-head">
@@ -52,7 +52,7 @@ function NotificationMenu({ notifications, onClose }) {
               type="button"
               className="home-header__notification"
               onClick={() => {
-                item.onClick?.();
+                onNotificationClick?.(item);
                 onClose();
               }}
             >
@@ -114,10 +114,10 @@ function ProfileMenu({ profile, draftName, onDraftNameChange, onImageChange, onS
 function HomeHeader({
   activeGenre,
   onGenreSelect,
-  onFavoriteClick,
   searchValue = '',
   onSearchChange,
   notifications = [],
+  onNotificationClick,
   onLogin,
   onLogout,
 }) {
@@ -283,6 +283,7 @@ function HomeHeader({
         {notificationOpen && (
           <NotificationMenu
             notifications={notifications}
+            onNotificationClick={onNotificationClick}
             onClose={() => setNotificationOpen(false)}
           />
         )}
@@ -315,15 +316,6 @@ function HomeHeader({
           />
         )}
 
-        <button
-          type="button"
-          className="home-header__icon-btn"
-          aria-label="Favorites"
-          title="Favorites"
-          onClick={onFavoriteClick}
-        >
-          <Heart size={20} aria-hidden="true" />
-        </button>
       </div>
     </header>
   );

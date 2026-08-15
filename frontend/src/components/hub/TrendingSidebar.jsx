@@ -1,4 +1,4 @@
-import { Flame, Star, X } from 'lucide-react';
+import { Flame, X } from 'lucide-react';
 import MangaCard from './MangaCard';
 import './TrendingSidebar.css';
 
@@ -12,36 +12,42 @@ function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
       <div className="trending__panel">
         <h2 className="trending__title">Trending</h2>
 
-        {featured && (
-          <div className="trending__featured">
-            <button
-              type="button"
-              className="trending__card-btn"
-              aria-label={`Read ${featured.title}`}
-              onClick={() => onCardClick?.(featured)}
-            >
-              <MangaCard {...featured} variant="featured" />
-            </button>
-          </div>
-        )}
-
-        <ul className="trending__list">
-          {list.map((item) => (
-            <li key={item.id}>
+        {items.length === 0 ? (
+          <p className="trending__empty">No trending matches.</p>
+        ) : (
+          <>
+            {featured && (
+              <div className="trending__featured">
               <button
                 type="button"
                 className="trending__card-btn"
-                aria-label={`Read ${item.title}`}
-                onClick={() => onCardClick?.(item)}
+                aria-label={`Read ${featured.title}`}
+                onClick={() => onCardClick?.(featured)}
               >
-                <MangaCard {...item} variant="trending" />
+                <MangaCard {...featured} variant="featured" />
               </button>
-            </li>
-          ))}
-        </ul>
+            </div>
+            )}
+
+            <ul className="trending__list">
+              {list.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className="trending__card-btn"
+                    aria-label={`Read ${item.title}`}
+                    onClick={() => onCardClick?.(item)}
+                  >
+                    <MangaCard {...item} variant="trending" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
-      <button type="button" className="trending__view-all" onClick={onViewAll}>
+      <button type="button" className="trending__view-all" onClick={onViewAll} disabled={items.length === 0}>
         View All
       </button>
     </aside>
@@ -79,25 +85,28 @@ function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
         </button>
       </div>
 
-      {/* 5-book grid — uses same MangaCard as home page */}
-      <div className="trending-expanded__grid">
-        {allItems.map((item, idx) => (
-          <button
-            key={item.id}
-            type="button"
-            className="trending-expanded__item"
-            aria-label={`Read ${item.title}`}
-            onClick={() => onCardClick?.(item)}
-            tabIndex={expanded ? 0 : -1}
-          >
-            <MangaCard
-              {...item}
-              variant="popular"
-              rank={item.rank ?? idx + 1}
-            />
-          </button>
-        ))}
-      </div>
+      {allItems.length === 0 ? (
+        <p className="trending-expanded__empty">No trending books match this search.</p>
+      ) : (
+        <div className="trending-expanded__grid">
+          {allItems.map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              className="trending-expanded__item"
+              aria-label={`Read ${item.title}`}
+              onClick={() => onCardClick?.(item)}
+              tabIndex={expanded ? 0 : -1}
+            >
+              <MangaCard
+                {...item}
+                variant="popular"
+                rank={item.rank ?? idx + 1}
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

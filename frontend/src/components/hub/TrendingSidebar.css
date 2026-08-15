@@ -95,6 +95,30 @@
   filter: brightness(1.05);
 }
 
+.trending__view-all:disabled {
+  cursor: default;
+  opacity: 0.55;
+  filter: none;
+}
+
+.trending__empty,
+.trending-expanded__empty {
+  margin: 0;
+  border: 1px solid var(--home-border);
+  border-radius: 8px;
+  background: rgba(56, 35, 66, 0.35);
+  padding: 1rem;
+  color: var(--home-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.trending-expanded__empty {
+  margin: 1.25rem;
+}
+
 /* Clickable card wrapper */
 .trending__card-btn {
   background: rgba(56, 35, 66, 0.46);

@@ -6,8 +6,6 @@ import {
   ChevronRight,
   Eye,
   Globe,
-  Monitor,
-  Moon,
   Palette,
   Settings,
   Shield,
@@ -15,7 +13,6 @@ import {
   X,
 } from 'lucide-react';
 import {
-  ACCENT_MAP,
   loadSettings,
   saveSettings,
   applySettings,
@@ -196,17 +193,6 @@ export default function SettingsPanel({ open, onClose }) {
           {/* ─ Appearance ─ */}
           <section className="sp-section">
             <SectionHeader icon={Palette} label="Appearance" />
-
-            <div className="sp-row">
-              <span className="sp-row__label">
-                <Moon size={14} aria-hidden="true" />
-                Theme
-              </span>
-              <span className="sp-badge">
-                <Monitor size={12} aria-hidden="true" />
-                Dark Mode
-              </span>
-            </div>
 
             <div className="sp-row sp-row--col">
               <span className="sp-row__label">

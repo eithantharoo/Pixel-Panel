@@ -21,6 +21,7 @@ import {
   HISTORY,
 } from '../data/home_data';
 import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
+import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
 import { loadSettings, applySettings } from '../utils/settingsState';
 import './HomePage.css';
 
@@ -157,7 +158,9 @@ export default function HomePage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
+  const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
   const libraryItems = useMemo(() => buildLibraryItems(favorites), [favorites]);
+  const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
 
   // ── Live settings — re-read on every storage write from SettingsPanel ──
   const [settings, setSettings] = useState(loadSettings);
@@ -167,6 +170,10 @@ export default function HomePage() {
         const next = loadSettings();
         applySettings(next);
         setSettings(next);
+      }
+
+      if (e.key === READ_NOTIFICATIONS_STORAGE_KEY) {
+        setReadNotificationIds(loadReadNotificationIds());
       }
     }
     window.addEventListener('storage', onStorage);
@@ -185,14 +192,34 @@ export default function HomePage() {
     if (genreId !== null) setActiveNav('home');
   }
 
-  function openSavedChapter(book) {
+  function openSavedChapter(book, reason = '') {
+    markNotificationsRead(getBookNotificationIds(book));
     navigate('/reader', {
       state: {
         book,
         startReading: true,
         chapter: chapterToNumber(book.chapter),
+        notificationReason: reason,
       },
     });
+  }
+
+  function openNotificationBook(book, reason) {
+    navigate('/reader', {
+      state: {
+        book,
+        notificationReason: reason,
+      },
+    });
+  }
+
+  function markNotificationsRead(ids) {
+    setReadNotificationIds(markReadNotificationIds(ids));
+  }
+
+  function handleNotificationClick(notification) {
+    markNotificationsRead([notification.id]);
+    notification.onClick?.();
   }
 
   function handleFavoriteRemove(book) {
@@ -204,61 +231,61 @@ export default function HomePage() {
   }
 
   const notifications = useMemo(() => {
-    const newBooks = settings.notifNewChapter
-      ? NEWLY_RELEASED.map((book) => ({
-        id: `new-book-${book.id}`,
-        title: 'New Release',
-        message: `${book.title} is now available on Pixel Panel.`,
-        onClick: () => navigate('/reader', { state: { book } }),
+    const followedBookUpdates = settings.notifNewChapter
+      ? favorites.slice(0, 4).map((book) => ({
+        id: `followed-book-${book.id}`,
+        title: 'New chapter',
+        message: `${book.title} has a new chapter because you follow this book.`,
+        onClick: () => openNotificationBook(book, `You received this because ${book.title} is in your favorites.`),
       }))
       : [];
 
-    const updates = settings.notifRecommendations
-      ? CONTINUE_READING.map((book) => ({
-        id: `chapter-${book.id}`,
-        title: '🔔 Chapter Update',
-        message: `${book.title} — new chapter available after ${book.chapter}.`,
-        onClick: () => openSavedChapter(book),
+    const followedAuthorUpdates = settings.notifNewChapter
+      ? NEWLY_RELEASED.slice(0, 3).map((book) => ({
+        id: `followed-author-${book.id}`,
+        title: 'Author update',
+        message: `${book.title} was added by an author you follow.`,
+        onClick: () => openNotificationBook(book, 'You received this because you follow this author.'),
       }))
       : [];
 
-    const popular = settings.notifRecommendations
-      ? POPULAR.slice(0, 2).map((book) => ({
-        id: `popular-${book.id}`,
-        title: '🔥 Trending Now',
-        message: `${book.title} is trending this week. Don't miss it!`,
-        onClick: () => navigate('/reader', { state: { book } }),
+    const readBookUpdates = settings.notifRecommendations
+      ? HISTORY.map((book) => ({
+        id: `read-book-${book.id}`,
+        title: 'Reading update',
+        message: `${book.title} has a new chapter after ${book.chapter}.`,
+        onClick: () => openSavedChapter(book, `You received this because you have read ${book.title} before.`),
       }))
       : [];
 
-    const forYou = settings.notifRecommendations
+    const recommendations = settings.notifRecommendations
       ? FOR_YOU.slice(0, 2).map((book) => ({
         id: `foryou-${book.id}`,
-        title: '⭐ Recommended',
+        title: 'Recommended',
         message: `Based on your reads: ${book.title} is a great pick.`,
-        onClick: () => navigate('/reader', { state: { book } }),
+        onClick: () => openNotificationBook(book, 'You received this because it matches books in your reading history.'),
       }))
       : [];
 
     const historyUpdates = settings.notifDigest
       ? HISTORY.map((book) => ({
         id: `history-${book.id}`,
-        title: '📖 Weekly Digest',
+        title: 'Weekly digest',
         message: `${book.title} has a fresh chapter. Continue from ${book.chapter}.`,
-        onClick: () => openSavedChapter(book),
+        onClick: () => openSavedChapter(book, `You received this because ${book.title} is in your reading history.`),
       }))
       : [];
 
-    // Merge all, deduplicate by id, then cap to 10
-    const all = [...newBooks, ...updates, ...popular, ...forYou, ...historyUpdates];
+    const all = [...followedBookUpdates, ...followedAuthorUpdates, ...readBookUpdates, ...recommendations, ...historyUpdates];
     const seen = new Set();
     const unique = all.filter((n) => {
       if (seen.has(n.id)) return false;
       seen.add(n.id);
       return true;
     });
-    return unique.slice(0, 10);
-  }, [navigate, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest]);
+    const read = new Set(readNotificationIds);
+    return unique.slice(0, 10).filter((notification) => !read.has(notification.id));
+  }, [favorites, readNotificationIds, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
@@ -359,10 +386,10 @@ export default function HomePage() {
       <HomeHeader
         activeGenre={activeGenre}
         onGenreSelect={handleGenreSelect}
-        onFavoriteClick={() => handleNavChange('favorite')}
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         notifications={notifications}
+        onNotificationClick={handleNotificationClick}
         onLogin={() => navigate('/')}
         onLogout={() => navigate('/')}
       />
@@ -384,7 +411,7 @@ export default function HomePage() {
           <main className="home-page__content">{renderContent()}</main>
           {showTrending && (
             <TrendingSidebar
-              items={TRENDING}
+              items={filteredTrending}
               onViewAll={() => setTrendingExpanded(true)}
               expanded={trendingExpanded}
               onCollapse={() => setTrendingExpanded(false)}

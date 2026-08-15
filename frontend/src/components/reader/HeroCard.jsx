@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Heart, Star, X } from 'lucide-react';
+import { Bell, BookOpen, Heart, Star, X } from 'lucide-react';
 import { images } from '../../assets/images';
 
 const DEFAULT_GENRES = ['Action', 'Dark Fantasy', 'Supernatural', 'School', 'Adventure'];
@@ -122,7 +122,7 @@ function Poster({ book }) {
   );
 }
 
-export default function HeroCard({ isReading, onReadNow, onClose, book, isFavorite = false, onToggleFavorite }) {
+export default function HeroCard({ isReading, onReadNow, onClose, book, isFavorite = false, onToggleFavorite, notificationReason = '' }) {
   // Derive display values — use book data if provided, else hardcoded defaults
   const title    = book?.title    ?? DEFAULT_TITLE;
   const rating   = book?.rating   ?? DEFAULT_RATING;
@@ -147,6 +147,12 @@ export default function HeroCard({ isReading, onReadNow, onClose, book, isFavori
             <span className="w-fit rounded-md bg-[var(--home-accent)] px-3 py-1.5 text-xs font-extrabold text-[var(--home-ink)]">Now Reading</span>
             <div>
               <h1 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl">{title}</h1>
+              {notificationReason && (
+                <p className="mt-2 flex max-w-2xl items-center gap-2 text-sm font-semibold leading-6 text-white/90">
+                  <Bell size={14} aria-hidden="true" />
+                  {notificationReason}
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <RatingBadge rating={rating} />
                 <button type="button" className="btn-yellow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold" onClick={onClose}>
@@ -220,6 +226,16 @@ export default function HeroCard({ isReading, onReadNow, onClose, book, isFavori
             <div className="mt-5">
               <MetaTable metadata={meta} />
             </div>
+
+            {notificationReason && (
+              <div className="mt-5 rounded-lg border border-[var(--home-border)] bg-black/[0.16] px-4 py-3 text-sm font-semibold leading-6 text-[var(--home-text)]">
+                <span className="mb-1 flex items-center gap-2 text-xs font-extrabold uppercase text-[var(--home-accent)]">
+                  <Bell size={14} aria-hidden="true" />
+                  Notification reason
+                </span>
+                {notificationReason}
+              </div>
+            )}
 
             <div className="mt-5">
               <h3 className="mb-3 text-xs font-bold uppercase text-[var(--home-accent)]">Genres</h3>

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Bell,
   ChevronDown,
-  Heart,
   Menu,
   Search,
   SlidersHorizontal,
@@ -29,7 +28,6 @@ function TopbarIconButton({ label, onClick, children, className = '' }) {
 export default function Topbar({
   activeGenre,
   onGenreSelect,
-  onFavoriteClick,
   onMenuClick,
   searchValue,
   onSearchChange,
@@ -171,9 +169,6 @@ export default function Topbar({
           <ChevronDown size={15} className="text-[var(--purple-normal)]" strokeWidth={2.4} />
         </button>
 
-        <TopbarIconButton label="Favorites" onClick={onFavoriteClick}>
-          <Heart size={20} strokeWidth={2.1} />
-        </TopbarIconButton>
       </div>
     </header>
   );
