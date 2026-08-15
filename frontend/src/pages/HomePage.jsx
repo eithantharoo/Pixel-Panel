@@ -31,16 +31,6 @@ function buildLibraryItems(favorites) {
   );
 }
 
-// Master deduplicated book list — every title appears exactly once
-// Used for global search so results are never duplicated
-const ALL_BOOKS = Array.from(
-  new Map(
-    [...FOR_YOU, ...NEWLY_RELEASED, ...POPULAR, ...HISTORY, ...CONTINUE_READING]
-      .map((book) => [book.title.trim().toLowerCase(), book])
-  ).values()
-);
-
-
 function isEditableTarget(target) {
   const tagName = target?.tagName?.toLowerCase();
   return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
@@ -68,29 +58,6 @@ function EmptyResults({ query }) {
     </div>
   );
 }
-
-// Global search results — searches ALL books regardless of active section
-function GlobalSearchResults({ navigate, searchQuery }) {
-  const results = filterItems(ALL_BOOKS, searchQuery);
-  if (results.length === 0) return <EmptyResults query={searchQuery} />;
-  return (
-    <section className="home-library">
-      <div className="home-library__header">
-        <div>
-          <h1 className="home-library__title">Search Results</h1>
-          <p className="home-library__subtitle">Showing results for "{searchQuery}" across all titles</p>
-        </div>
-        <span className="home-library__count">{results.length} found</span>
-      </div>
-      <div className="home-library__grid">
-        {results.map((book) => (
-          <MangaButton key={book.id} manga={book} navigate={navigate} variant="popular" />
-        ))}
-      </div>
-    </section>
-  );
-}
-
 
 function SectionRow({ title, expanded, onToggleExpanded, children }) {
   return (
@@ -349,15 +316,13 @@ export default function HomePage() {
   }, [activeGenre, activeNav, favorites, libraryItems, navigate, searchQuery, showHelp, showSettings, trendingExpanded]);
 
   function renderContent() {
-    // ── Global search: always search ALL books, deduplicated ──────
-    if (searchQuery.trim()) {
-      return <GlobalSearchResults navigate={navigate} searchQuery={searchQuery} />;
-    }
-
     if (activeNav === 'favorite') {
+      const filteredFavorites = filterItems(favorites, searchQuery);
       return (
         <FavoritesView
-          items={favorites}
+          items={filteredFavorites}
+          emptyTitle={searchQuery ? 'No favorites found' : undefined}
+          emptySubtitle={searchQuery ? 'Try another search in your favorites.' : undefined}
           onRemove={handleFavoriteRemove}
         />
       );
@@ -373,17 +338,20 @@ export default function HomePage() {
           </div>
         );
       }
+      const filteredHistory = filterItems(HISTORY, searchQuery);
       return (
         <HistoryView
-          items={HISTORY}
+          items={filteredHistory}
+          emptyTitle={searchQuery ? 'No history found' : undefined}
+          emptySubtitle={searchQuery ? 'Try another search in your reading history.' : undefined}
           onBookClick={openSavedChapter}
         />
       );
     }
 
-    if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery="" libraryItems={libraryItems} />;
-    if (activeGenre) return <GenreView genreId={activeGenre} query="" />;
-    return <HomeMainContent navigate={navigate} searchQuery="" />;
+    if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery={searchQuery} libraryItems={libraryItems} />;
+    if (activeGenre) return <GenreView genreId={activeGenre} query={searchQuery} />;
+    return <HomeMainContent navigate={navigate} searchQuery={searchQuery} />;
   }
 
   return (
