@@ -16,7 +16,6 @@ import {
   NEWLY_RELEASED,
   POPULAR,
   TRENDING,
-  CONTINUE_READING,
   FAVORITES,
   HISTORY,
 } from '../data/home_data';
@@ -161,6 +160,10 @@ export default function HomePage() {
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
   const libraryItems = useMemo(() => buildLibraryItems(favorites), [favorites]);
   const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
+  const latestUnfinishedReads = useMemo(
+    () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
+    [],
+  );
 
   // ── Live settings — re-read on every storage write from SettingsPanel ──
   const [settings, setSettings] = useState(loadSettings);
@@ -426,7 +429,7 @@ export default function HomePage() {
 
       <div className="home-page__footer">
         <ContinueReading
-          items={CONTINUE_READING}
+          items={latestUnfinishedReads}
           onViewAll={() => handleNavChange('history')}
           onCardClick={openSavedChapter}
           showChapterNumbers={settings.showChapterNumbers}

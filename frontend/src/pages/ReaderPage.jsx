@@ -49,6 +49,10 @@ export default function ReaderPage() {
   const [isFavorite, setIsFavorite] = useState(() => isFavoriteBook(location.state?.book, loadFavorites(FAVORITES)));
   const [currentChapter, setCurrentChapter] = useState(() => chapterToNumber(location.state?.chapter ?? location.state?.book?.chapter));
   const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
+  const latestUnfinishedReads = useMemo(
+    () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
+    [],
+  );
 
   // ── Live settings ─────────────────────────────────────────────
   const [settings, setSettings] = useState(loadSettings);
@@ -284,7 +288,7 @@ export default function ReaderPage() {
 
       <div className="reader-page__footer">
         <ContinueReading
-          items={CONTINUE_READING}
+          items={latestUnfinishedReads}
           onViewAll={() => handleNavChange('history')}
           onCardClick={handleSavedChapterSelect}
           showChapterNumbers={settings.showChapterNumbers}
