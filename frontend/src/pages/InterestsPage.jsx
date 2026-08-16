@@ -96,9 +96,9 @@ export default function InterestsPage() {
         <button
           type="button"
           className={`interests-page__continue${canContinue ? ' interests-page__continue--ready' : ''}`}
-          onClick={() => canContinue && navigate('/home')}
+          onClick={() => canContinue && navigate('/language')}
           disabled={!canContinue}
-          title={canContinue ? 'Continue to home page' : `Select at least ${MIN_INTERESTS} interests`}
+          title={canContinue ? 'Continue to language page' : `Select at least ${MIN_INTERESTS} interests`}
         >
           Continue
         </button>
