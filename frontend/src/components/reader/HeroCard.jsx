@@ -497,8 +497,7 @@ export default function HeroCard({
     (title.toLowerCase() === 'solo leveling' ? images.banners.soloLeveling : book?.cover) ||
     images.heroBanner;
 
-
-  if (isReading) {
+if (isReading) {
     return (
       <div
         key={title}
@@ -514,26 +513,20 @@ export default function HeroCard({
             'heroFadeIn 0.35s ease',
         }}
       >
-
-        {/* ==========================
-            BANNER
-        =========================== */}
-
+        {/* BANNER SECTION */}
         <section
           className="
             relative
             min-h-0
             flex-[0_0_auto]
-            h-40
+            h-44
             overflow-hidden
             rounded-[1.75rem]
             border
             border-[var(--home-border)]
           "
         >
-
-          {/* ACTUAL BANNER IMAGE */}
-
+          {/* BANNER IMAGE */}
           <img
             src={bannerImage}
             alt={`${title} Banner`}
@@ -547,9 +540,7 @@ export default function HeroCard({
             "
           />
 
-
           {/* COLOR OVERLAY */}
-
           {color && (
             <div
               className="
@@ -569,9 +560,7 @@ export default function HeroCard({
             />
           )}
 
-
           {/* DARK OVERLAY */}
-
           <div
             className="
               absolute
@@ -583,9 +572,7 @@ export default function HeroCard({
             "
           />
 
-
           {/* CLOSE BUTTON */}
-
           <IconButton
             label="Close reading mode"
             onClick={onClose}
@@ -599,46 +586,52 @@ export default function HeroCard({
             "
           />
 
-
-          {/* BANNER TEXT */}
-
+          {/* BANNER TEXT & ACTIONS */}
+    {/* BANNER TEXT & ACTIONS */}
           <div
             className="
               absolute
-              bottom-4
+              bottom-3
               left-4
               z-10
               flex
               flex-col
-              gap-2
-              sm:bottom-5
+              items-start
+              gap-2.5
+              sm:bottom-4
               sm:left-5
             "
           >
+            {/* BALANCED TITLE FRAME */}
             <span
               className="
-                w-fit
+                inline-block
+                whitespace-nowrap
                 rounded-xl
                 bg-[var(--home-accent)]
-                px-4
-                py-2
-                text-xl
+                text-base
                 font-extrabold
                 leading-none
-                text-[var(--home-ink)]
-                sm:text-2xl
+                text-black
+                shadow-md
+                sm:text-lg
               "
+              style={{
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                paddingTop: '8px',
+                paddingBottom: '8px',
+              }}
             >
               {title}
             </span>
-
 
             <div
               className="
                 flex
                 flex-wrap
                 items-center
-                gap-2
+                gap-2.5
               "
             >
               <RatingBadge
@@ -646,6 +639,7 @@ export default function HeroCard({
                 compact
               />
 
+              {/* BALANCED DETAILS BUTTON FRAME */}
               <button
                 type="button"
                 className="
@@ -653,34 +647,35 @@ export default function HeroCard({
                   inline-flex
                   items-center
                   gap-2
-                  rounded-lg
-                  px-4
-                  py-2
-                  text-sm
+                  whitespace-nowrap
+                  rounded-xl
+                  text-xs
                   font-bold
+                  text-black
+                  shadow-sm
+                  transition-all
+                  hover:brightness-105
+                  sm:text-sm
                 "
+                style={{
+                  paddingLeft: '16px',
+                  paddingRight: '16px',
+                  paddingTop: '6px',
+                  paddingBottom: '6px',
+                }}
                 onClick={onClose}
               >
                 <BookOpen
-                  size={15}
+                  size={14}
                   strokeWidth={2.3}
                 />
-
                 Details
               </button>
             </div>
           </div>
-
         </section>
 
-
-        {/* ==========================
-            CHAPTER READING PANE
-            The dominant area while reading — book metadata/genres are
-            one tap away via the "Details" button above, so this space
-            stays focused on the actual chapter text.
-        =========================== */}
-
+        {/* CHAPTER READING PANE */}
         <Surface
           className="
             flex
@@ -692,11 +687,11 @@ export default function HeroCard({
             p-0
           "
         >
-          <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-10 sm:py-8">
-            <div className="mx-auto max-w-2xl">
+          <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+            <div className="w-full">
               <div className="mb-5 flex items-center justify-between gap-3 border-b border-[var(--home-border)] pb-4">
                 <h3 className="text-2xl font-extrabold text-[var(--home-text)] sm:text-3xl">
-                  {chapterContent ? chapterContent.title : 'Review'}
+                  {chapterContent ? chapterContent.title : 'Chapter 1'}
                 </h3>
 
                 {chapterContent && (
@@ -712,10 +707,12 @@ export default function HeroCard({
               ) : (
                 <p
                   className="
+                    w-full
                     whitespace-pre-line
-                    text-lg
-                    leading-[1.9]
+                    text-base
+                    leading-[1.8]
                     text-[var(--home-text)]
+                    sm:text-lg
                   "
                 >
                   {chapterContent?.content || review}
@@ -724,14 +721,13 @@ export default function HeroCard({
             </div>
           </div>
         </Surface>
-
       </div>
     );
   }
 
 
-  /* =====================================
-     NORMAL DETAILS VIEW
+ /* =====================================
+      NORMAL DETAILS VIEW
   ====================================== */
 
   return (
@@ -749,7 +745,6 @@ export default function HeroCard({
           'heroFadeIn 0.35s ease',
       }}
     >
-
       <IconButton
         label="Close details"
         onClick={onClose}
@@ -761,139 +756,138 @@ export default function HeroCard({
         "
       />
 
-
-      <div
-        className="
-          grid
-          items-start
-          gap-x-6
-          gap-y-0
-          pr-11
-          sm:grid-cols-[minmax(0,220px)_minmax(0,1fr)]
-          lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)]
-        "
-      >
-
+      {/* TOP SECTION & BUTTONS WRAPPER WITH DIRECT GAP */}
+      <div className="flex flex-col gap-6">
+        {/* Poster + Metadata Grid */}
         <div
           className="
-            flex
-            flex-col
-            gap-4
+            grid
+            items-start
+            gap-x-6
+            gap-y-0
+            pr-11
+            sm:grid-cols-[minmax(0,220px)_minmax(0,1fr)]
+            lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)]
           "
         >
-
           <Poster
             book={book}
             accentBorder
           />
 
-
           <div
             className="
-              flex
-              flex-wrap
-              items-center
-              gap-2.5
+              min-w-0
+              pt-0.5
             "
           >
-
-            <button
-              type="button"
+            <h1
               className="
-                btn-yellow
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                whitespace-nowrap
-                rounded-full
-                px-4
-                py-2.5
-                text-sm
-                font-bold
-                sm:text-base
+                text-2xl
+                font-extrabold
+                leading-tight
+                text-[var(--home-text)]
+                sm:text-3xl
               "
-              onClick={onReadNow}
             >
-              <Play
-                size={14}
-                fill="currentColor"
-                strokeWidth={0}
-                aria-hidden="true"
-              />
+              {title}
+            </h1>
 
-              Read Now
-            </button>
-
-
-            <button
-              type="button"
-              className="
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                whitespace-nowrap
-                rounded-full
-                bg-[#9b72b8]
-                px-4
-                py-2.5
-                text-sm
-                font-semibold
-                text-white
-                transition-colors
-                hover:bg-[#8a63a6]
-                sm:text-base
-              "
-              onClick={onToggleFavorite}
-              aria-pressed={isFavorite}
-            >
-              <Heart
-                size={14}
-                strokeWidth={2.3}
-                fill={
-                  isFavorite
-                    ? 'currentColor'
-                    : 'none'
-                }
-              />
-
-              {isFavorite
-                ? 'Favorited'
-                : 'Add To Favorites'}
-            </button>
-
+            <MetaList
+              metadata={meta}
+              rating={rating}
+            />
           </div>
         </div>
 
-
+     {/* BUTTONS SECTION */}
         <div
           className="
-            min-w-0
-            pt-0.5
+            flex
+            flex-wrap
+            items-center
+            gap-3.5
           "
         >
-          <h1
+          {/* READ NOW BUTTON */}
+          <button
+            type="button"
             className="
-              text-2xl
+              btn-yellow
+              inline-flex
+              items-center
+              justify-center
+              gap-2.5
+              whitespace-nowrap
+              rounded-xl
+              text-sm
               font-extrabold
-              leading-tight
-              text-[var(--home-text)]
-              sm:text-3xl
+              text-black
+              shadow-sm
+              transition-all
+              hover:brightness-105
             "
+            style={{
+              paddingLeft: '32px',
+              paddingRight: '32px',
+              paddingTop: '14px',
+              paddingBottom: '14px',
+            }}
+            onClick={onReadNow}
           >
-            {title}
-          </h1>
+            <Play
+              size={15}
+              fill="currentColor"
+              strokeWidth={0}
+              aria-hidden="true"
+            />
+            Read Now
+          </button>
 
-          <MetaList
-            metadata={meta}
-            rating={rating}
-          />
+          {/* FAVORITE BUTTON */}
+          <button
+            type="button"
+            className="
+              inline-flex
+              items-center
+              justify-center
+              gap-2.5
+              whitespace-nowrap
+              rounded-xl
+              bg-[#9b72b8]
+              text-sm
+              font-bold
+              text-white
+              shadow-sm
+              transition-colors
+              hover:bg-[#8a63a6]
+            "
+            style={{
+              paddingLeft: '32px',
+              paddingRight: '32px',
+              paddingTop: '14px',
+              paddingBottom: '14px',
+            }}
+            onClick={onToggleFavorite}
+            aria-pressed={isFavorite}
+          >
+            <Heart
+              size={15}
+              strokeWidth={2.3}
+              fill={
+                isFavorite
+                  ? 'currentColor'
+                  : 'none'
+              }
+            />
+            {isFavorite
+              ? 'Favorited'
+              : 'Add To Favorites'}
+          </button>
         </div>
-
       </div>
 
-
+      {/* GENRES SECTION */}
       <div className="mt-7">
         <h3
           className="
@@ -913,7 +907,7 @@ export default function HeroCard({
         />
       </div>
 
-
+      {/* REVIEW SECTION */}
       <div className="mt-7 mb-0">
         <h3
           className="
@@ -938,7 +932,6 @@ export default function HeroCard({
           {review}
         </p>
       </div>
-
     </div>
   );
 }
