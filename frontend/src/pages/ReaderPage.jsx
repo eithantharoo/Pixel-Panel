@@ -11,7 +11,13 @@ import HelpPanel from '../components/hub/HelpPanel';
 import { CONTINUE_READING, FAVORITES, HISTORY, NEWLY_RELEASED, TRENDING } from '../data/home_data';
 import { chapterToNumber, isFavoriteBook, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
-import { loadSettings, applySettings } from '../utils/settingsState';
+import { clearAuth } from '../utils/authState';
+import { isEditableTarget } from '../utils/isEditableTarget';
+import { useStoryCatalog } from '../hooks/useStoryCatalog';
+import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useFavorites } from '../hooks/useFavorites';
+import { useChapterContent } from '../hooks/useChapterContent';
+import { useLiveSettings } from '../hooks/useLiveSettings';
 import './ReaderPage.css';
 
 const DEFAULT_CHAPTER_COUNT = 20;
@@ -41,7 +47,6 @@ export default function ReaderPage() {
   const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
   const [notificationReason, setNotificationReason] = useState(location.state?.notificationReason ?? '');
-  const [isFavorite, setIsFavorite] = useState(() => isFavoriteBook(location.state?.book, loadFavorites(FAVORITES)));
   const [currentChapter, setCurrentChapter] = useState(() => chapterToNumber(location.state?.chapter ?? location.state?.book?.chapter));
   const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
   const latestUnfinishedReads = useMemo(
@@ -49,6 +54,7 @@ export default function ReaderPage() {
     [],
   );
 
+  const settings = useLiveSettings();
   const { trending, newReleases } = useStoryCatalog();
   const { continueReading, history } = useReadingProgress();
   const { isFavorite: checkFavorite, toggleFavorite } = useFavorites();
@@ -59,15 +65,8 @@ export default function ReaderPage() {
     showChapters ? currentChapter : null,
   );
 
-  // Re-read settings whenever the panel saves (SettingsPanel fires a storage event)
   useEffect(() => {
     function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') {
-        const next = loadSettings();
-        applySettings(next);
-        setSettings(next);
-      }
-
       if (e.key === READ_NOTIFICATIONS_STORAGE_KEY) {
         setReadNotificationIds(loadReadNotificationIds());
       }
@@ -76,7 +75,6 @@ export default function ReaderPage() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  // ── Auto-advance: move to next chapter when the current one ends ──
   const handleChapterEnd = useCallback(() => {
     if (!settings.autoAdvance) return;
     if (settings.readDirection === 'rtl') {
@@ -91,9 +89,17 @@ export default function ReaderPage() {
     setShowChapters(startReading);
     setTrendingExpanded(false);
     setNotificationReason(reason);
-    setIsFavorite(isFavoriteBook(book, favorites));
+    setFavorites((prevFavorites) => {
+      saveFavorites(prevFavorites);
+      return prevFavorites;
+    });
     setCurrentChapter(chapterToNumber(book.chapter));
-  }, []);
+  }
+
+  function handleLogout() {
+    clearAuth();
+    navigate('/');
+  }
 
   function handleNavChange(navId) {
     setTrendingExpanded(false);
@@ -258,6 +264,8 @@ export default function ReaderPage() {
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
               notificationReason={notificationReason}
+              chapterContent={chapterContent}
+              chapterLoading={chapterLoading}
             />
           </main>
 

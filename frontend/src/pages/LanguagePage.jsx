@@ -36,7 +36,6 @@ export default function LanguagePage() {
 
   function chooseLanguage(language) {
     localStorage.setItem(STORAGE_KEY, language.code);
-    document.documentElement.lang = language.code;
     setSelectedLanguage(language.code);
     window.dispatchEvent(new CustomEvent('languagechange', {
       detail: { language: language.code, label: language.label },

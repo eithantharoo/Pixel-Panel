@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Camera, Check, ChevronDown, Grid3X3, LogIn, LogOut, Search, User, X } from 'lucide-react';
+import { Bell, Camera, Check, ChevronDown, Grid3X3, Heart, LogIn, LogOut, Search, User, X } from 'lucide-react';
 import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
@@ -120,6 +120,7 @@ function HomeHeader({
   onNotificationClick,
   onLogin,
   onLogout,
+  onFavoriteClick,
 }) {
   const [genreOpen, setGenreOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);

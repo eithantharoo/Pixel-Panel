@@ -21,7 +21,13 @@ import {
 } from '../data/home_data';
 import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
-import { loadSettings, applySettings } from '../utils/settingsState';
+import { clearAuth } from '../utils/authState';
+import { useStoryCatalog } from '../hooks/useStoryCatalog';
+import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useFavorites } from '../hooks/useFavorites';
+import { useLiveSettings } from '../hooks/useLiveSettings';
+import { searchStories } from '../services/storyService';
+import { mapStoriesToBooks } from '../utils/storyAdapter';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
@@ -46,6 +52,15 @@ function filterItems(items, query) {
 
   return items.filter((item) =>
     [item.title, item.genre, item.chapter].some((value) => normalise(value).includes(normalisedQuery)),
+  );
+}
+
+function LoadingResults() {
+  return (
+    <div className="home-empty">
+      <p className="home-empty__title">Loading...</p>
+      <p className="home-empty__text">Fetching the latest stories for you.</p>
+    </div>
   );
 }
 
@@ -161,35 +176,37 @@ export default function HomePage() {
   const [showHelp, setShowHelp] = useState(false);
   const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
-  const libraryItems = useMemo(() => buildLibraryItems(favorites), [favorites]);
   const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
   const latestUnfinishedReads = useMemo(
     () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
     [],
   );
 
+  const settings = useLiveSettings();
   const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
   const { continueReading, history, loading: progressLoading } = useReadingProgress();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const libraryItems = useMemo(
     () => buildLibraryItems(forYou, newReleases, popular, favorites),
     [forYou, newReleases, popular, favorites],
   );
 
-  // ── Global search — debounced against the real /api/stories/search ──
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+
   useEffect(() => {
     function onStorage(e) {
-      if (e.key === 'pixel-panel-settings') {
-        const next = loadSettings();
-        applySettings(next);
-        setSettings(next);
-      }
-
       if (e.key === READ_NOTIFICATIONS_STORAGE_KEY) {
         setReadNotificationIds(loadReadNotificationIds());
       }
     }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const query = searchQuery;
 
     Promise.resolve().then(() => {
       if (!cancelled) setSearchLoading(true);
@@ -197,7 +214,7 @@ export default function HomePage() {
 
     const timer = setTimeout(async () => {
       try {
-        const stories = await searchStoriesApi(query);
+        const stories = await searchStories(query);
         if (!cancelled) setSearchResults(mapStoriesToBooks(stories));
       } catch {
         if (!cancelled) setSearchResults([]);
@@ -212,12 +229,9 @@ export default function HomePage() {
     };
   }, [searchQuery]);
 
-  const settings = useLiveSettings();
-
   function handleNavChange(nav) {
     setActiveNav(nav);
     setActiveGenre(null);
-    // Collapse trending panel whenever user navigates (especially Home)
     setTrendingExpanded(false);
   }
 
@@ -236,7 +250,7 @@ export default function HomePage() {
         notificationReason: reason,
       },
     });
-  }, [navigate]);
+  }
 
   function handleLogout() {
     clearAuth();
@@ -413,7 +427,7 @@ export default function HomePage() {
 
     if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery={searchQuery} libraryItems={libraryItems} />;
     if (activeGenre) return <GenreView genreId={activeGenre} query={searchQuery} />;
-    return <HomeMainContent navigate={navigate} searchQuery={searchQuery} />;
+    return <HomeMainContent navigate={navigate} forYou={forYou} newReleases={newReleases} popular={popular} loading={catalogLoading} />;
   }
 
   return (

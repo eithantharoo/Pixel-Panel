@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, BookOpen, Heart, Star, X } from 'lucide-react';
+import { Bell, BookOpen, Heart, Play, Star, X } from 'lucide-react';
 import { images } from '../../assets/images';
 
 
@@ -37,10 +37,6 @@ function capitalize(value) {
 }
 
 
-// Builds the meta table from the real book's fields (author/status/chapter
-// count from the backend) instead of always showing Jujutsu Kaisen's info.
-// Illustrator/Volumes aren't tracked by the backend, so they're just
-// omitted rather than faked.
 function buildMetadata(book) {
   if (!book) return DEFAULT_METADATA;
 
@@ -449,15 +445,6 @@ function Poster({
   );
 }
 
-export default function HeroCard({ isReading, onReadNow, onClose, book, isFavorite = false, onToggleFavorite, notificationReason = '' }) {
-  // Derive display values — use book data if provided, else hardcoded defaults
-  const title    = book?.title    ?? DEFAULT_TITLE;
-  const rating   = book?.rating   ?? DEFAULT_RATING;
-  const color    = book?.color    ?? null;
-  const review   = DEFAULT_REVIEW;
-  const genres   = DEFAULT_GENRES;
-  const meta     = DEFAULT_METADATA;
-
 export default function HeroCard({
   isReading,
   onReadNow,
@@ -467,6 +454,7 @@ export default function HeroCard({
   onToggleFavorite,
   chapterContent = null,
   chapterLoading = false,
+  notificationReason = '',
 }) {
   const title =
     book?.title ?? DEFAULT_TITLE;
@@ -487,18 +475,12 @@ export default function HeroCard({
     buildMetadata(book);
 
 
-  /*
-    Banner priority: the book's own banner image, if any → the
-    Solo Leveling special-case banner → the book's real cover (so the
-    reading banner actually matches the open book) → the generic default.
-  */
-
   const bannerImage =
     book?.banner ||
     (title.toLowerCase() === 'solo leveling' ? images.banners.soloLeveling : book?.cover) ||
     images.heroBanner;
 
-if (isReading) {
+  if (isReading) {
     return (
       <div
         key={title}
@@ -588,7 +570,6 @@ if (isReading) {
           />
 
           {/* BANNER TEXT & ACTIONS */}
-    {/* BANNER TEXT & ACTIONS */}
           <div
             className="
               absolute
@@ -888,7 +869,7 @@ if (isReading) {
         </div>
 
             <div className="mt-5">
-              <MetaTable metadata={meta} />
+              <MetaList metadata={meta} rating={rating} />
             </div>
 
             {notificationReason && (
@@ -947,5 +928,6 @@ if (isReading) {
         </p>
       </div>
     </div>
+    </div>
   );
-}PM. To continue using Codex, add credits or 
+}
