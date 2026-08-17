@@ -17,6 +17,9 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useSavedProgress } from '../hooks/useSavedProgress';
 import { useChapterContent } from '../hooks/useChapterContent';
 import { useLiveSettings } from '../hooks/useLiveSettings';
+import { getStoryById } from '../services/storyService';
+import { mapStoryToBook } from '../utils/storyAdapter';
+import { isRealStoryId } from '../utils/objectId';
 import './ReaderPage.css';
 
 const DEFAULT_CHAPTER_COUNT = 20;
@@ -31,6 +34,17 @@ export default function ReaderPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(() => chapterToNumber(location.state?.chapter ?? location.state?.book?.chapter));
+
+  // Reaching /reader with no book (direct URL nav, or a hard refresh —
+  // which loses location.state) used to fall through to HeroCard's
+  // built-in sample data, showing a fake "Jujutsu Kaisen" detail page as
+  // if it were real. Bounce back to /home instead.
+  useEffect(() => {
+    if (!location.state?.book) {
+      navigate('/home', { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only check the book present at initial mount, not on later setSelectedBook(null) from handleClose
+  }, []);
 
   const { trending, newReleases } = useStoryCatalog();
   const { continueReading, history } = useReadingProgress();
@@ -94,6 +108,17 @@ export default function ReaderPage() {
   function handleToggleFavorite() {
     if (!selectedBook) return;
     toggleFavorite(selectedBook);
+  }
+
+  // Reviews recalculate the story's average rating server-side — refetch
+  // it so the rating shown here updates without a full page reload.
+  function handleRatingChange() {
+    if (!isRealStoryId(selectedBook?.id)) return;
+    getStoryById(selectedBook.id)
+      .then((story) => {
+        setSelectedBook((current) => (current ? mapStoryToBook(story, { chapter: current.chapter, chapterNumber: current.chapterNumber }) : current));
+      })
+      .catch(() => {});
   }
 
   const notifications = useMemo(() => {
@@ -183,6 +208,10 @@ export default function ReaderPage() {
     return () => window.removeEventListener('keydown', handleShortcut);
   }, [favorites, selectedBook, showChapters, showHelp, showSettings, trendingExpanded, settings, currentChapter, totalChapters]);
 
+  // Render nothing while the redirect-to-/home effect above is in flight,
+  // rather than flashing HeroCard's fake sample book for a frame.
+  if (!selectedBook) return null;
+
   return (
     <div className="reader-page">
       <HomeHeader
@@ -217,6 +246,7 @@ export default function ReaderPage() {
               onToggleFavorite={handleToggleFavorite}
               chapterContent={chapterContent}
               chapterLoading={chapterLoading}
+              onRatingChange={handleRatingChange}
             />
           </main>
 

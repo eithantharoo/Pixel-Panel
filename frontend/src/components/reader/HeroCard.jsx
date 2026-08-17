@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 import { images } from '../../assets/images';
+import ReviewsSection from './ReviewsSection';
 
 
 const DEFAULT_GENRES = [
@@ -466,6 +467,7 @@ export default function HeroCard({
   onToggleFavorite,
   chapterContent = null,
   chapterLoading = false,
+  onRatingChange,
 }) {
   const title =
     book?.title ?? DEFAULT_TITLE;
@@ -761,6 +763,10 @@ export default function HeroCard({
         "
       />
 
+      {/* Scrollable — the details view (poster/meta, genres, synopsis,
+          reviews) can grow taller than the panel, especially once a story
+          has several reviews, so this needs to scroll rather than clip. */}
+      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto pr-1">
 
       <div
         className="
@@ -924,7 +930,7 @@ export default function HeroCard({
             sm:text-2xl
           "
         >
-          Review
+          Synopsis
         </h3>
 
         <p
@@ -937,6 +943,10 @@ export default function HeroCard({
         >
           {review}
         </p>
+      </div>
+
+      {book && <ReviewsSection storyId={book.id} onRatingChange={onRatingChange} />}
+
       </div>
 
     </div>

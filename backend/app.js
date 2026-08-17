@@ -10,6 +10,7 @@ const storyRoutes = require("./src/routes/storyRoutes");
 const chapterRoutes = require("./src/routes/chapterRoutes");
 const progressRoutes = require("./src/routes/progressRoutes");
 const favoriteRoutes = require("./src/routes/favoriteRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
 const { errorHandler, notFound } = require("./src/middleware/errorMiddleware");
 
 const app = express();
@@ -38,6 +39,7 @@ app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/stories", storyRoutes);
 app.use("/api", chapterRoutes);
+app.use("/api", reviewRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/favorites", favoriteRoutes);
 

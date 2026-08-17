@@ -27,3 +27,7 @@ export async function getStoriesByGenre(genre, { limit = 50 } = {}) {
 export function searchStories(q) {
   return apiRequest(`/stories/search?q=${encodeURIComponent(q)}`);
 }
+
+export function getStoryById(storyId) {
+  return apiRequest(`/stories/${storyId}`);
+}
