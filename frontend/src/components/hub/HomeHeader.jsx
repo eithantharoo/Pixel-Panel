@@ -197,9 +197,8 @@ function HomeHeader({
     <header className="home-header">
       <div className="home-header__brand">
         <div className="home-header__logo">
-          <img src={images.logoBook} alt="" aria-hidden="true" />
+          <img src="/images/logo_pic.png" alt="Pixel Panel" />    
         </div>
-        <span className="home-header__brand-name">Pixel Panel</span>
       </div>
 
       <div className="home-header__search-row">
@@ -268,7 +267,7 @@ function HomeHeader({
       <div className="home-header__actions" ref={actionsRef}>
         <button
           type="button"
-          className={`home-header__icon-btn home-header__icon-btn--badge${notificationOpen ? ' home-header__icon-btn--active' : ''}`}
+          className={`home-header__icon-btn home-header__icon-btn--notification home-header__icon-btn--badge${notificationOpen ? ' home-header__icon-btn--active' : ''}`}
           aria-label={`Notifications${notifications.length ? `, ${notifications.length} new` : ''}`}
           title="Notifications"
           aria-expanded={notificationOpen}
@@ -317,7 +316,7 @@ function HomeHeader({
 
         <button
           type="button"
-          className="home-header__icon-btn"
+          className="home-header__icon-btn home-header__icon-btn--favorite"
           aria-label="Favorites"
           title="Favorites"
           onClick={onFavoriteClick}
