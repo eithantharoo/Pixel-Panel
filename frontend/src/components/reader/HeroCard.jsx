@@ -884,7 +884,7 @@ if (isReading) {
               ? 'Favorited'
               : 'Add To Favorites'}
           </button>
-        </div>
+        </div>  
       </div>
 
       {/* GENRES SECTION */}
