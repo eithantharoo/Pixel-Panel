@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  BookOpen,
-  Heart,
-  Play,
-  Star,
-  X,
-} from 'lucide-react';
-
+import { Bell, BookOpen, Heart, Star, X } from 'lucide-react';
 import { images } from '../../assets/images';
 
 
@@ -456,218 +449,44 @@ function Poster({
   );
 }
 
+export default function HeroCard({ isReading, onReadNow, onClose, book, isFavorite = false, onToggleFavorite, notificationReason = '' }) {
+  // Derive display values — use book data if provided, else hardcoded defaults
+  const title    = book?.title    ?? DEFAULT_TITLE;
+  const rating   = book?.rating   ?? DEFAULT_RATING;
+  const color    = book?.color    ?? null;
+  const review   = DEFAULT_REVIEW;
+  const genres   = DEFAULT_GENRES;
+  const meta     = DEFAULT_METADATA;
 
-export default function HeroCard({
-  isReading,
-  onReadNow,
-  onClose,
-  book,
-  isFavorite = false,
-  onToggleFavorite,
-  chapterContent = null,
-  chapterLoading = false,
-}) {
-  const title =
-    book?.title ?? DEFAULT_TITLE;
-
-  const rating =
-    book?.rating ?? DEFAULT_RATING;
-
-  const color =
-    book?.color ?? null;
-
-  const review =
-    book?.description || DEFAULT_REVIEW;
-
-  const genres =
-    book?.genres?.length ? book.genres : DEFAULT_GENRES;
-
-  const meta =
-    buildMetadata(book);
-
-
-  /*
-    Banner priority: the book's own banner image, if any → the
-    Solo Leveling special-case banner → the book's real cover (so the
-    reading banner actually matches the open book) → the generic default.
-  */
-
-  const bannerImage =
-    book?.banner ||
-    (title.toLowerCase() === 'solo leveling' ? images.banners.soloLeveling : book?.cover) ||
-    images.heroBanner;
-
+  // Banner style: gradient from book color when a trending book is selected
+  const bannerStyle = color
+    ? { background: `linear-gradient(135deg, ${color} 0%, ${color}aa 50%, ${color}44 100%)` }
+    : {};
 
   if (isReading) {
     return (
-      <div
-        key={title}
-        className="
-          flex
-          h-full
-          min-h-0
-          flex-col
-          gap-4
-        "
-        style={{
-          animation:
-            'heroFadeIn 0.35s ease',
-        }}
-      >
-
-        {/* ==========================
-            BANNER
-        =========================== */}
-
-        <section
-          className="
-            relative
-            min-h-0
-            flex-[0_0_auto]
-            h-40
-            overflow-hidden
-            rounded-[1.75rem]
-            border
-            border-[var(--home-border)]
-          "
-        >
-
-          {/* ACTUAL BANNER IMAGE */}
-
-          <img
-            src={bannerImage}
-            alt={`${title} Banner`}
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-              object-center
-            "
-          />
-
-
-          {/* COLOR OVERLAY */}
-
-          {color && (
-            <div
-              className="
-                absolute
-                inset-0
-              "
-              style={{
-                background: `
-                  linear-gradient(
-                    135deg,
-                    ${color}88 0%,
-                    ${color}45 50%,
-                    transparent 100%
-                  )
-                `,
-              }}
-            />
-          )}
-
-
-          {/* DARK OVERLAY */}
-
-          <div
-            className="
-              absolute
-              inset-0
-              bg-gradient-to-r
-              from-black/60
-              via-black/25
-              to-transparent
-            "
-          />
-
-
-          {/* CLOSE BUTTON */}
-
-          <IconButton
-            label="Close reading mode"
-            onClick={onClose}
-            className="
-              absolute
-              right-4
-              top-4
-              z-20
-              bg-black/[0.35]
-              hover:bg-black/[0.55]
-            "
-          />
-
-
-          {/* BANNER TEXT */}
-
-          <div
-            className="
-              absolute
-              bottom-4
-              left-4
-              z-10
-              flex
-              flex-col
-              gap-2
-              sm:bottom-5
-              sm:left-5
-            "
-          >
-            <span
-              className="
-                w-fit
-                rounded-xl
-                bg-[var(--home-accent)]
-                px-4
-                py-2
-                text-xl
-                font-extrabold
-                leading-none
-                text-[var(--home-ink)]
-                sm:text-2xl
-              "
-            >
-              {title}
-            </span>
-
-
-            <div
-              className="
-                flex
-                flex-wrap
-                items-center
-                gap-2
-              "
-            >
-              <RatingBadge
-                rating={rating}
-                compact
-              />
-
-              <button
-                type="button"
-                className="
-                  btn-yellow
-                  inline-flex
-                  items-center
-                  gap-2
-                  rounded-lg
-                  px-4
-                  py-2
-                  text-sm
-                  font-bold
-                "
-                onClick={onClose}
-              >
-                <BookOpen
-                  size={15}
-                  strokeWidth={2.3}
-                />
-
-                Details
-              </button>
+      <div key={title} className="flex h-full min-h-0 flex-col gap-5" style={{ animation: 'heroFadeIn 0.35s ease' }}>
+        <section className="relative min-h-[210px] shrink-0 overflow-hidden rounded-lg border border-[var(--home-border)]" style={bannerStyle}>
+          {!color && <img src={images.heroBanner} alt={`${title} Banner`} className="h-full min-h-[210px] w-full object-cover" />}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/[0.78] via-black/[0.38] to-transparent" />
+          <IconButton label="Close reading mode" onClick={onClose} className="absolute right-4 top-4 bg-black/[0.35] hover:bg-black/[0.55]" />
+          <div className="absolute inset-0 flex flex-col justify-end gap-3 p-5 sm:p-6">
+            <span className="w-fit rounded-md bg-[var(--home-accent)] px-3 py-1.5 text-xs font-extrabold text-[var(--home-ink)]">Now Reading</span>
+            <div>
+              <h1 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl">{title}</h1>
+              {notificationReason && (
+                <p className="mt-2 flex max-w-2xl items-center gap-2 text-sm font-semibold leading-6 text-white/90">
+                  <Bell size={14} aria-hidden="true" />
+                  {notificationReason}
+                </p>
+              )}
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <RatingBadge rating={rating} />
+                <button type="button" className="btn-yellow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold" onClick={onClose}>
+                  <BookOpen size={16} strokeWidth={2.3} />
+                  Details
+                </button>
+              </div>
             </div>
           </div>
 
@@ -891,7 +710,19 @@ export default function HeroCard({
           />
         </div>
 
-      </div>
+            <div className="mt-5">
+              <MetaTable metadata={meta} />
+            </div>
+
+            {notificationReason && (
+              <div className="mt-5 rounded-lg border border-[var(--home-border)] bg-black/[0.16] px-4 py-3 text-sm font-semibold leading-6 text-[var(--home-text)]">
+                <span className="mb-1 flex items-center gap-2 text-xs font-extrabold uppercase text-[var(--home-accent)]">
+                  <Bell size={14} aria-hidden="true" />
+                  Notification reason
+                </span>
+                {notificationReason}
+              </div>
+            )}
 
 
       <div className="mt-7">

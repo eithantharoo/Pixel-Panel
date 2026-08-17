@@ -3,7 +3,6 @@ export const SETTINGS_STORAGE_KEY = 'pixel-panel-settings';
 export const SETTINGS_CHANGE_EVENT = 'pixel-panel-settings-changed';
 
 export const SETTINGS_DEFAULTS = {
-  theme: 'dark',           // 'light' | 'dark'
   accentColor: 'yellow',
   fontSize: 'medium',
   readDirection: 'ltr',
@@ -44,15 +43,12 @@ export function saveSettings(settings) {
 /**
  * Injects / updates a <style id="pp-theme-override"> tag so CSS
  * custom-property overrides win over scoped declarations in HomePage.css.
- * Also sets data-theme on <html> for the dark-mode selector blocks.
  */
 export function applySettings(settings) {
   const { accent, accentHover } = ACCENT_MAP[settings.accentColor] ?? ACCENT_MAP.yellow;
   const fontSize = FONT_MAP[settings.fontSize] ?? '15px';
-  const isDark = settings.theme === 'dark';
 
-  // Toggle the data-theme attribute — CSS dark-mode overrides key off this
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.documentElement.removeAttribute('data-theme');
 
   let el = document.getElementById('pp-theme-override');
   if (!el) {

@@ -11,15 +11,17 @@ import HistoryView from '../components/hub/HistoryView';
 import GenreView from '../components/hub/GenreView';
 import SettingsPanel from '../components/hub/SettingsPanel';
 import HelpPanel from '../components/hub/HelpPanel';
-import { chapterToNumber } from '../utils/libraryState';
-import { clearAuth } from '../utils/authState';
-import { isEditableTarget } from '../utils/isEditableTarget';
-import { useStoryCatalog } from '../hooks/useStoryCatalog';
-import { useFavorites } from '../hooks/useFavorites';
-import { useReadingProgress } from '../hooks/useReadingProgress';
-import { useLiveSettings } from '../hooks/useLiveSettings';
-import { searchStories as searchStoriesApi } from '../services/storyService';
-import { mapStoriesToBooks } from '../utils/storyAdapter';
+import {
+  FOR_YOU,
+  NEWLY_RELEASED,
+  POPULAR,
+  TRENDING,
+  FAVORITES,
+  HISTORY,
+} from '../data/home_data';
+import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
+import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
+import { loadSettings, applySettings } from '../utils/settingsState';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
@@ -27,6 +29,11 @@ function buildLibraryItems(forYou, newReleases, popular, favorites) {
   return Array.from(
     new Map([...forYou, ...newReleases, ...popular, ...favorites].map((item) => [item.title, item])).values(),
   );
+}
+
+function isEditableTarget(target) {
+  const tagName = target?.tagName?.toLowerCase();
+  return tagName === 'input' || tagName === 'textarea' || target?.isContentEditable;
 }
 
 function normalise(value) {
@@ -51,37 +58,6 @@ function EmptyResults({ query }) {
     </div>
   );
 }
-
-function LoadingResults() {
-  return (
-    <div className="home-empty">
-      <p className="home-empty__title">Loading...</p>
-    </div>
-  );
-}
-
-// Global search results — hits the real /api/stories/search endpoint
-function GlobalSearchResults({ navigate, searchQuery, results, loading }) {
-  if (loading) return <LoadingResults />;
-  if (results.length === 0) return <EmptyResults query={searchQuery} />;
-  return (
-    <section className="home-library">
-      <div className="home-library__header">
-        <div>
-          <h1 className="home-library__title">Search Results</h1>
-          <p className="home-library__subtitle">Showing results for "{searchQuery}" across all titles</p>
-        </div>
-        <span className="home-library__count">{results.length} found</span>
-      </div>
-      <div className="home-library__grid">
-        {results.map((book) => (
-          <MangaButton key={book.id} manga={book} navigate={navigate} variant="popular" />
-        ))}
-      </div>
-    </section>
-  );
-}
-
 
 function SectionRow({ title, expanded, onToggleExpanded, children }) {
   return (
@@ -183,7 +159,14 @@ export default function HomePage() {
   const [trendingExpanded, setTrendingExpanded] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const { favorites, loading: favoritesLoading, toggleFavorite } = useFavorites();
+  const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
+  const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
+  const libraryItems = useMemo(() => buildLibraryItems(favorites), [favorites]);
+  const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
+  const latestUnfinishedReads = useMemo(
+    () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
+    [],
+  );
 
   const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
   const { continueReading, history, loading: progressLoading } = useReadingProgress();
@@ -196,19 +179,16 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   useEffect(() => {
-    const query = searchQuery.trim();
-    let cancelled = false;
+    function onStorage(e) {
+      if (e.key === 'pixel-panel-settings') {
+        const next = loadSettings();
+        applySettings(next);
+        setSettings(next);
+      }
 
-    if (!query) {
-      Promise.resolve().then(() => {
-        if (!cancelled) {
-          setSearchResults([]);
-          setSearchLoading(false);
-        }
-      });
-      return () => {
-        cancelled = true;
-      };
+      if (e.key === READ_NOTIFICATIONS_STORAGE_KEY) {
+        setReadNotificationIds(loadReadNotificationIds());
+      }
     }
 
     Promise.resolve().then(() => {
@@ -246,12 +226,14 @@ export default function HomePage() {
     if (genreId !== null) setActiveNav('home');
   }
 
-  const openSavedChapter = useCallback((book) => {
+  function openSavedChapter(book, reason = '') {
+    markNotificationsRead(getBookNotificationIds(book));
     navigate('/reader', {
       state: {
         book,
         startReading: true,
-        chapter: book.chapterNumber ?? chapterToNumber(book.chapter),
+        chapter: chapterToNumber(book.chapter),
+        notificationReason: reason,
       },
     });
   }, [navigate]);
@@ -261,66 +243,84 @@ export default function HomePage() {
     navigate('/');
   }
 
+  function openNotificationBook(book, reason) {
+    navigate('/reader', {
+      state: {
+        book,
+        notificationReason: reason,
+      },
+    });
+  }
+
+  function markNotificationsRead(ids) {
+    setReadNotificationIds(markReadNotificationIds(ids));
+  }
+
+  function handleNotificationClick(notification) {
+    markNotificationsRead([notification.id]);
+    notification.onClick?.();
+  }
+
   function handleFavoriteRemove(book) {
     toggleFavorite(book);
   }
 
   const notifications = useMemo(() => {
-    const newBooks = settings.notifNewChapter
-      ? newReleases.map((book) => ({
-        id: `new-book-${book.id}`,
-        title: 'New Release',
-        message: `${book.title} is now available on Pixel Panel.`,
-        onClick: () => navigate('/reader', { state: { book } }),
+    const followedBookUpdates = settings.notifNewChapter
+      ? favorites.slice(0, 4).map((book) => ({
+        id: `followed-book-${book.id}`,
+        title: 'New chapter',
+        message: `${book.title} has a new chapter because you follow this book.`,
+        onClick: () => openNotificationBook(book, `You received this because ${book.title} is in your favorites.`),
       }))
       : [];
 
-    const updates = settings.notifRecommendations
-      ? continueReading.map((book) => ({
-        id: `chapter-${book.id}`,
-        title: '🔔 Chapter Update',
-        message: `${book.title} — new chapter available after ${book.chapter}.`,
-        onClick: () => openSavedChapter(book),
+    const followedAuthorUpdates = settings.notifNewChapter
+      ? NEWLY_RELEASED.slice(0, 3).map((book) => ({
+        id: `followed-author-${book.id}`,
+        title: 'Author update',
+        message: `${book.title} was added by an author you follow.`,
+        onClick: () => openNotificationBook(book, 'You received this because you follow this author.'),
       }))
       : [];
 
-    const popularNotifs = settings.notifRecommendations
-      ? popular.slice(0, 2).map((book) => ({
-        id: `popular-${book.id}`,
-        title: '🔥 Trending Now',
-        message: `${book.title} is trending this week. Don't miss it!`,
-        onClick: () => navigate('/reader', { state: { book } }),
+    const readBookUpdates = settings.notifRecommendations
+      ? HISTORY.map((book) => ({
+        id: `read-book-${book.id}`,
+        title: 'Reading update',
+        message: `${book.title} has a new chapter after ${book.chapter}.`,
+        onClick: () => openSavedChapter(book, `You received this because you have read ${book.title} before.`),
       }))
       : [];
 
-    const forYouNotifs = settings.notifRecommendations
-      ? forYou.slice(0, 2).map((book) => ({
+    const recommendations = settings.notifRecommendations
+      ? FOR_YOU.slice(0, 2).map((book) => ({
         id: `foryou-${book.id}`,
-        title: '⭐ Recommended',
+        title: 'Recommended',
         message: `Based on your reads: ${book.title} is a great pick.`,
-        onClick: () => navigate('/reader', { state: { book } }),
+        onClick: () => openNotificationBook(book, 'You received this because it matches books in your reading history.'),
       }))
       : [];
 
     const historyUpdates = settings.notifDigest
       ? history.map((book) => ({
         id: `history-${book.id}`,
-        title: '📖 Weekly Digest',
+        title: 'Weekly digest',
         message: `${book.title} has a fresh chapter. Continue from ${book.chapter}.`,
-        onClick: () => openSavedChapter(book),
+        onClick: () => openSavedChapter(book, `You received this because ${book.title} is in your reading history.`),
       }))
       : [];
 
-    // Merge all, deduplicate by id, then cap to 10
-    const all = [...newBooks, ...updates, ...popularNotifs, ...forYouNotifs, ...historyUpdates];
+    const all = [...followedBookUpdates, ...followedAuthorUpdates, ...readBookUpdates, ...recommendations, ...historyUpdates];
     const seen = new Set();
     const unique = all.filter((n) => {
       if (seen.has(n.id)) return false;
       seen.add(n.id);
       return true;
     });
-    return unique.slice(0, 10);
-  }, [navigate, openSavedChapter, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, newReleases, popular, forYou, continueReading, history]);
+    const read = new Set(readNotificationIds);
+    return unique.slice(0, 10).filter((notification) => !read.has(notification.id));
+  }, [favorites, readNotificationIds, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
@@ -378,23 +378,13 @@ export default function HomePage() {
   }, [activeGenre, activeNav, getFirstVisibleBook, navigate, showHelp, showSettings, trendingExpanded]);
 
   function renderContent() {
-    // ── Global search: always search ALL books, deduplicated ──────
-    if (searchQuery.trim()) {
-      return (
-        <GlobalSearchResults
-          navigate={navigate}
-          searchQuery={searchQuery}
-          results={searchResults}
-          loading={searchLoading}
-        />
-      );
-    }
-
     if (activeNav === 'favorite') {
-      if (favoritesLoading) return <LoadingResults />;
+      const filteredFavorites = filterItems(favorites, searchQuery);
       return (
         <FavoritesView
-          items={favorites}
+          items={filteredFavorites}
+          emptyTitle={searchQuery ? 'No favorites found' : undefined}
+          emptySubtitle={searchQuery ? 'Try another search in your favorites.' : undefined}
           onRemove={handleFavoriteRemove}
         />
       );
@@ -410,26 +400,20 @@ export default function HomePage() {
           </div>
         );
       }
-      if (progressLoading) return <LoadingResults />;
+      const filteredHistory = filterItems(HISTORY, searchQuery);
       return (
         <HistoryView
-          items={history}
+          items={filteredHistory}
+          emptyTitle={searchQuery ? 'No history found' : undefined}
+          emptySubtitle={searchQuery ? 'Try another search in your reading history.' : undefined}
           onBookClick={openSavedChapter}
         />
       );
     }
 
-    if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery="" libraryItems={libraryItems} />;
-    if (activeGenre) return <GenreView genreId={activeGenre} query="" />;
-    return (
-      <HomeMainContent
-        navigate={navigate}
-        forYou={forYou}
-        newReleases={newReleases}
-        popular={popular}
-        loading={catalogLoading}
-      />
-    );
+    if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery={searchQuery} libraryItems={libraryItems} />;
+    if (activeGenre) return <GenreView genreId={activeGenre} query={searchQuery} />;
+    return <HomeMainContent navigate={navigate} searchQuery={searchQuery} />;
   }
 
   return (
@@ -437,10 +421,10 @@ export default function HomePage() {
       <HomeHeader
         activeGenre={activeGenre}
         onGenreSelect={handleGenreSelect}
-        onFavoriteClick={() => handleNavChange('favorite')}
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         notifications={notifications}
+        onNotificationClick={handleNotificationClick}
         onLogin={() => navigate('/')}
         onLogout={handleLogout}
       />
@@ -462,7 +446,7 @@ export default function HomePage() {
           <main className="home-page__content">{renderContent()}</main>
           {showTrending && (
             <TrendingSidebar
-              items={trending}
+              items={filteredTrending}
               onViewAll={() => setTrendingExpanded(true)}
               expanded={trendingExpanded}
               onCollapse={() => setTrendingExpanded(false)}
@@ -477,7 +461,7 @@ export default function HomePage() {
 
       <div className="home-page__footer">
         <ContinueReading
-          items={continueReading}
+          items={latestUnfinishedReads}
           onViewAll={() => handleNavChange('history')}
           onCardClick={openSavedChapter}
           showChapterNumbers={settings.showChapterNumbers}
