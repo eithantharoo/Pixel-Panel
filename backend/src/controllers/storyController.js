@@ -1,5 +1,6 @@
 const asyncHandler = require('../utils/asyncHandler');
 const Story = require('../models/Story');
+const escapeRegex = require('../utils/escapeRegex');
 
 // @desc    Get all stories with filters + pagination
 // @route   GET /api/stories?page=1&limit=10&genre=Fantasy&status=ongoing
@@ -83,10 +84,6 @@ const getPopularStories = asyncHandler(async (req, res) => {
   const stories = await Story.find().sort('-rating -ratingCount').limit(10);
   res.json(stories);
 });
-
-function escapeRegex(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 // @desc    Search stories by title, description, or author
 // @route   GET /api/stories/search?q=demon

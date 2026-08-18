@@ -10,6 +10,10 @@ const storyRoutes = require("./src/routes/storyRoutes");
 const chapterRoutes = require("./src/routes/chapterRoutes");
 const progressRoutes = require("./src/routes/progressRoutes");
 const favoriteRoutes = require("./src/routes/favoriteRoutes");
+const ratingRoutes = require("./src/routes/ratingRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+const notificationRoutes = require("./src/routes/notificationRoutes");
+const embedRoutes = require("./src/routes/embedRoutes");
 const { errorHandler, notFound } = require("./src/middleware/errorMiddleware");
 
 const app = express();
@@ -39,6 +43,10 @@ app.use("/api/stories", storyRoutes);
 app.use("/api", chapterRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/ratings", ratingRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/embed", embedRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

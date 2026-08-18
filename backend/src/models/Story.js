@@ -20,6 +20,11 @@ const storySchema = new mongoose.Schema(
       type: String,
       required: [true, 'Cover image URL is required'],
     },
+    banner: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     author: {
       type: String,
       required: [true, 'Author name is required'],

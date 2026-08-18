@@ -20,6 +20,24 @@ const chapterSchema = new mongoose.Schema(
             type: String,
             default: '',
         },
+        contentUrl:{
+            type: String,
+            trim: true,
+            default: '',
+        },
+        pdfFileId:{
+            type: mongoose.Schema.Types.ObjectId,
+            default: null,
+        },
+        pdfFilename:{
+            type: String,
+            trim: true,
+            default: '',
+        },
+        pdfSize:{
+            type: Number,
+            default: 0,
+        },
         pages:{
             type: [String],
             default: [],
