@@ -1,0 +1,33 @@
+.admin-settings-layer { position: fixed; inset: 0; z-index: 1000; }
+.admin-settings-backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(7, 3, 17, .72); backdrop-filter: blur(5px); cursor: default; }
+.admin-settings-panel { position: absolute; inset: 0 auto 0 0; width: min(460px, 94vw); display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid rgba(204,168,255,.24); background: linear-gradient(180deg, #3b2258, #211335 55%, #180e2b); color: #eee7f8; box-shadow: 22px 0 60px rgba(0,0,0,.45); animation: admin-settings-in .24s ease both; }
+@keyframes admin-settings-in { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.admin-settings-head { min-height: 85px; display: flex; align-items: center; justify-content: space-between; padding: 16px 23px; border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(68,39,94,.78); }
+.admin-settings-head h2 { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 20px; }
+.admin-settings-head h2 svg { color: #ff63ad; }
+.admin-settings-head > button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.15); border-radius: 12px; background: rgba(255,255,255,.06); color: #cfc3dd; cursor: pointer; }
+.admin-settings-head > button:hover { color: white; border-color: #ff63ad; }
+.admin-settings-scroll { flex: 1; overflow-y: auto; padding: 7px 10px 30px; scrollbar-width: thin; scrollbar-color: #705586 transparent; }
+.admin-settings-section { padding: 25px 0; border-bottom: 1px solid rgba(255,255,255,.09); }
+.admin-settings-section h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; color: #ff69ad; font-size: 13px; letter-spacing: .07em; text-transform: uppercase; }
+.admin-settings-section--admin h3 { color: #43e7f4; }
+.admin-setting-row { min-height: 61px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.admin-setting-row > div { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.admin-setting-row strong, .admin-setting-block > strong { color: #d7cde3; font-size: 14px; }
+.admin-setting-row small { color: #88799d; font-size: 12px; line-height: 1.35; }
+.admin-setting-value { padding: 7px 13px; border: 1px solid rgba(255,255,255,.15); border-radius: 9px; background: rgba(255,255,255,.06); color: #ded4eb; font-size: 12px; }
+.admin-setting-block { margin-bottom: 19px; }
+.admin-setting-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+.admin-option { min-height: 34px; padding: 0 13px; border: 1px solid rgba(255,255,255,.16); border-radius: 10px; background: rgba(255,255,255,.05); color: #b7a9c8; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.admin-option:hover, .admin-option.is-selected { border-color: #ff63ad; color: #ff78b8; background: rgba(255,99,173,.1); }
+.admin-option i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; border-radius: 50%; vertical-align: -1px; box-shadow: 0 0 8px currentColor; }
+.admin-option--yellow i { background: #f6e522; }.admin-option--cyan i { background: #43e7f4; }.admin-option--rose i { background: #ff63ad; }
+.admin-setting-toggle { width: 50px; height: 28px; flex: 0 0 auto; padding: 3px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: #544666; cursor: pointer; transition: .2s ease; }
+.admin-setting-toggle span { display: block; width: 20px; height: 20px; border-radius: 50%; background: #c9bfce; transition: transform .2s ease; }
+.admin-setting-toggle.is-on { border-color: #ff63ad; background: #ff63ad; }
+.admin-setting-toggle.is-on span { transform: translateX(21px); background: #39213f; }
+.admin-setting-row select { height: 36px; min-width: 115px; padding: 0 10px; border: 1px solid rgba(67,231,244,.35); border-radius: 9px; outline: 0; background: #160d27; color: #ddd3e9; }
+.admin-settings-policy { width: 100%; min-height: 43px; display: flex; align-items: center; gap: 10px; margin-top: 8px; border: 0; background: none; color: #9687aa; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.admin-settings-policy span { margin-left: auto; font-size: 22px; }
+.admin-settings-policy:hover { color: #ff63ad; }
+@media (max-width: 520px) { .admin-settings-head { min-height: 72px; }.admin-settings-section { padding: 21px 0; } }
