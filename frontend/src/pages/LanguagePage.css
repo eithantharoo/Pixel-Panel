@@ -2,7 +2,11 @@
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
+  /* `clip`, not `hidden` — clips the decorative pixel-grid bleed on the X
+     axis only, without the "overflow-x set + overflow-y unset computes to
+     auto" quirk that `hidden` triggers, which would otherwise reintroduce a
+     second (nested) scroll container fighting the page's own scroll. */
+  overflow-x: clip;
   color: #ffffff;
   background:
     radial-gradient(circle at 50% 22%, rgba(255, 230, 0, 0.16), transparent 28%),
@@ -226,10 +230,6 @@
 }
 
 @media (max-width: 820px) {
-  .language-page {
-    overflow-y: auto;
-  }
-
   .language-page__brand {
     position: relative;
     top: auto;

@@ -118,7 +118,7 @@ export default function ChapterFormModal({ initialValues, existingChapters = [],
           <h2 className="text-lg font-extrabold text-[var(--home-text)]">
             {initialValues ? t('Edit Chapter') : t('New Chapter')}
           </h2>
-          <button type="button" className="text-[var(--home-text-muted)] transition-colors hover:text-[var(--home-text)]" onClick={onCancel} aria-label="Close">
+          <button type="button" className="bg-transparent text-[var(--home-text-muted)] transition-colors hover:text-[var(--home-text)]" onClick={onCancel} aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -160,7 +160,7 @@ export default function ChapterFormModal({ initialValues, existingChapters = [],
             <div className="flex gap-2 rounded-xl border border-[var(--home-border)] bg-black/20 p-1">
               <button
                 type="button"
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${sourceType === 'url' ? 'bg-[var(--home-accent)] text-black' : 'text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${sourceType === 'url' ? 'bg-[var(--home-accent)] text-black' : 'bg-transparent text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
                 onClick={() => setSourceType('url')}
               >
                 <Link2 size={14} aria-hidden="true" />
@@ -168,7 +168,7 @@ export default function ChapterFormModal({ initialValues, existingChapters = [],
               </button>
               <button
                 type="button"
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${sourceType === 'pdf' ? 'bg-[var(--home-accent)] text-black' : 'text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${sourceType === 'pdf' ? 'bg-[#4df5ff] text-black' : 'bg-transparent text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
                 onClick={() => setSourceType('pdf')}
               >
                 <FileText size={14} aria-hidden="true" />
@@ -189,7 +189,7 @@ export default function ChapterFormModal({ initialValues, existingChapters = [],
               </label>
             ) : (
               <div className="flex flex-col gap-1.5">
-                <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-[var(--home-border)] bg-black/20 px-3 py-6 text-center text-sm text-[var(--home-text-muted)] transition-colors hover:border-[var(--home-accent)]">
+                <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-[var(--home-border)] bg-black/20 px-3 py-6 text-center text-sm text-[var(--home-text-muted)] transition-colors hover:border-[#4df5ff]">
                   <UploadCloud size={22} aria-hidden="true" />
                   {pdfFile ? (
                     <span className="font-semibold text-[var(--home-text)]">{pdfFile.name} · {formatBytes(pdfFile.size)}</span>

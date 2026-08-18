@@ -16,6 +16,7 @@
     "build": "npm run build:frontend",
     "build:frontend": "cd frontend && npm run build",
     "seed": "cd backend && npm run seed",
+    "seed:users": "cd backend && npm run seed:users",
     "lint": "cd frontend && npm run lint"
   },
   "devDependencies": {

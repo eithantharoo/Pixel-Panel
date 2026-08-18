@@ -180,7 +180,7 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
         {isEdit && (
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded-full border border-[var(--home-border)] px-3 py-1.5 text-xs font-semibold text-[var(--home-text-muted)] transition-colors hover:text-[var(--home-text)]"
+            className="flex items-center gap-1.5 rounded-full border border-[var(--home-border)] bg-transparent px-3 py-1.5 text-xs font-semibold text-[var(--home-text-muted)] transition-colors hover:text-[var(--home-text)]"
             onClick={onCancel}
           >
             <X size={13} aria-hidden="true" />
@@ -259,8 +259,8 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
                   type="button"
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                     selected
-                      ? 'border-[var(--home-accent)] bg-[rgba(255,221,0,0.16)] text-[var(--home-accent)]'
-                      : 'border-[var(--home-border)] text-[var(--home-text-muted)] hover:text-[var(--home-text)]'
+                      ? 'border-[var(--accent-lilac)] bg-[rgba(155,112,189,0.2)] text-[var(--accent-lilac)]'
+                      : 'border-[var(--home-border)] bg-transparent text-[var(--home-text-muted)] hover:text-[var(--home-text)]'
                   }`}
                   aria-pressed={selected}
                   onClick={() => toggleGenre(label)}
@@ -311,7 +311,7 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
                   >
                     <span className="min-w-[32px] text-xs font-extrabold text-[var(--home-accent)]">#{chapter.number}</span>
                     <span className="min-w-[120px] flex-1 text-sm font-medium text-[var(--home-text)]">{chapter.title}</span>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--home-text-muted)]">
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${chapter.pdfFileId ? 'text-[#4df5ff]' : 'text-[var(--home-text-muted)]'}`}>
                       {chapter.pdfFileId ? <FileText size={12} aria-hidden="true" /> : <Link2 size={12} aria-hidden="true" />}
                       {chapter.pdfFileId ? t('PDF') : t('URL')}
                     </span>
@@ -319,10 +319,10 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
                       {chapter.isPublished ? t('Published') : t('Draft')}
                     </span>
                     <div className="ml-auto flex items-center gap-2 text-[var(--home-text-muted)]">
-                      <button type="button" className="transition-colors hover:text-[var(--home-text)]" aria-label={t('Edit')} title={t('Edit')} onClick={() => setChapterFormTarget(chapter)}>
+                      <button type="button" className="bg-transparent transition-colors hover:text-[var(--home-text)]" aria-label={t('Edit')} title={t('Edit')} onClick={() => setChapterFormTarget(chapter)}>
                         <Pencil size={14} />
                       </button>
-                      <button type="button" className="transition-colors hover:text-[#ff8fa3]" aria-label={t('Delete')} title={t('Delete')} onClick={() => handleChapterDelete(chapter)}>
+                      <button type="button" className="bg-transparent transition-colors hover:text-[#ff8fa3]" aria-label={t('Delete')} title={t('Delete')} onClick={() => handleChapterDelete(chapter)}>
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -336,7 +336,7 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
               <div className="flex gap-2 rounded-xl border border-[var(--home-border)] bg-black/20 p-1">
                 <button
                   type="button"
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${chapterSourceType === 'url' ? 'bg-[var(--home-accent)] text-black' : 'text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${chapterSourceType === 'url' ? 'bg-[var(--home-accent)] text-black' : 'bg-transparent text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
                   onClick={() => setChapterSourceType('url')}
                 >
                   <Link2 size={14} aria-hidden="true" />
@@ -344,7 +344,7 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
                 </button>
                 <button
                   type="button"
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${chapterSourceType === 'pdf' ? 'bg-[var(--home-accent)] text-black' : 'text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${chapterSourceType === 'pdf' ? 'bg-[#4df5ff] text-black' : 'bg-transparent text-[var(--home-text-muted)] hover:text-[var(--home-text)]'}`}
                   onClick={() => setChapterSourceType('pdf')}
                 >
                   <FileText size={14} aria-hidden="true" />
@@ -361,7 +361,7 @@ export default function StoryEditor({ story, onCreated, onUpdated, onCancel, onC
                   onChange={(e) => update('chapterUrl', e.target.value)}
                 />
               ) : (
-                <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-[var(--home-border)] bg-black/20 px-3 py-5 text-center text-sm text-[var(--home-text-muted)] transition-colors hover:border-[var(--home-accent)]">
+                <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-[var(--home-border)] bg-black/20 px-3 py-5 text-center text-sm text-[var(--home-text-muted)] transition-colors hover:border-[#4df5ff]">
                   <UploadCloud size={20} aria-hidden="true" />
                   {chapterPdfFile ? (
                     <span className="font-semibold text-[var(--home-text)]">{chapterPdfFile.name} · {formatBytes(chapterPdfFile.size)}</span>

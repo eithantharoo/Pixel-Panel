@@ -374,14 +374,14 @@ function MetaList({
             items-center
             gap-1.5
             font-normal
-            text-[var(--home-accent)]
+            text-[#ffb300]
           "
         >
           <Star
             size={16}
             className="
-              fill-[var(--text-yellow)]
-              text-[var(--text-yellow)]
+              fill-[#ffb300]
+              text-[#ffb300]
             "
             aria-hidden="true"
           />
@@ -623,7 +623,7 @@ function StarRatingInput({ value, onRate, disabled = false }) {
             aria-checked={value === star}
             aria-label={`${t('Rate this story')} — ${star}/5`}
             disabled={disabled}
-            className="p-0.5 text-[var(--home-accent)] transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-transparent p-0.5 text-[#ffb300] transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50"
             onMouseEnter={() => setHovered(star)}
             onFocus={() => setHovered(star)}
             onBlur={() => setHovered(null)}

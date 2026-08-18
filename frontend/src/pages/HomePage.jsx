@@ -15,7 +15,6 @@ import {
   FOR_YOU,
   NEWLY_RELEASED,
   POPULAR,
-  HISTORY,
 } from '../data/home_data';
 import { chapterToNumber } from '../utils/libraryState';
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
@@ -181,10 +180,6 @@ export default function HomePage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
-  const latestUnfinishedReads = useMemo(
-    () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
-    [],
-  );
 
   const settings = useLiveSettings();
   const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
@@ -324,7 +319,7 @@ export default function HomePage() {
       : [];
 
     const readBookUpdates = settings.notifRecommendations
-      ? HISTORY.map((book) => ({
+      ? history.slice(0, 3).map((book) => ({
         id: `read-book-${book.id}`,
         title: 'Reading update',
         message: `${book.title} has a new chapter after ${book.chapter}.`,
@@ -359,7 +354,7 @@ export default function HomePage() {
     });
     const read = new Set(readNotificationIds);
     return unique.slice(0, 10).filter((notification) => !read.has(notification.id));
-  }, [favorites, readNotificationIds, serverNotifications, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, t, navigate, markServerNotificationRead]);
+  }, [favorites, history, readNotificationIds, serverNotifications, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, t, navigate, markServerNotificationRead]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
@@ -439,7 +434,7 @@ export default function HomePage() {
           </div>
         );
       }
-      const filteredHistory = filterItems(HISTORY, searchQuery);
+      const filteredHistory = filterItems(history, searchQuery);
       return (
         <HistoryView
           items={filteredHistory}
@@ -502,7 +497,7 @@ export default function HomePage() {
 
       <div className="home-page__footer">
         <ContinueReading
-          items={latestUnfinishedReads}
+          items={continueReading}
           onViewAll={() => handleNavChange('history')}
           onCardClick={openSavedChapter}
           showChapterNumbers={settings.showChapterNumbers}

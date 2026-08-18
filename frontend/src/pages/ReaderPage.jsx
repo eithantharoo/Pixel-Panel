@@ -8,13 +8,14 @@ import HeroCard from '../components/reader/HeroCard';
 import ChapterSidebar from '../components/reader/ChapterSidebar';
 import SettingsPanel from '../components/hub/SettingsPanel';
 import HelpPanel from '../components/hub/HelpPanel';
-import { CONTINUE_READING, FAVORITES, HISTORY, NEWLY_RELEASED } from '../data/home_data';
+import { FAVORITES, NEWLY_RELEASED } from '../data/home_data';
 import { chapterToNumber, isFavoriteBook, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
 import { clearAuth, loadAuth } from '../utils/authState';
 import { isEditableTarget } from '../utils/isEditableTarget';
 import { useStoryCatalog } from '../hooks/useStoryCatalog';
 import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useSavedProgress } from '../hooks/useSavedProgress';
 import { useFavorites } from '../hooks/useFavorites';
 import { useChapterContent } from '../hooks/useChapterContent';
 import { useLiveSettings } from '../hooks/useLiveSettings';
@@ -50,10 +51,6 @@ export default function ReaderPage() {
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
   const [notificationReason, setNotificationReason] = useState(location.state?.notificationReason ?? '');
   const [currentChapter, setCurrentChapter] = useState(() => chapterToNumber(location.state?.chapter ?? location.state?.book?.chapter));
-  const latestUnfinishedReads = useMemo(
-    () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
-    [],
-  );
 
   const settings = useLiveSettings();
   const { trending } = useStoryCatalog();
@@ -66,6 +63,14 @@ export default function ReaderPage() {
     selectedBook?.id,
     showChapters ? currentChapter : null,
   );
+
+  useSavedProgress({
+    book: selectedBook,
+    currentChapter,
+    totalChapters,
+    isReading: showChapters,
+    onResume: setCurrentChapter,
+  });
 
   useEffect(() => {
     function onStorage(e) {
@@ -150,7 +155,7 @@ export default function ReaderPage() {
       onClick: () => handleBookSelect(book, false, 'You received this because you follow this author.'),
     }));
 
-    const readingUpdates = CONTINUE_READING.slice(0, 3).map((book) => ({
+    const readingUpdates = continueReading.slice(0, 3).map((book) => ({
       id: `read-book-${book.id}`,
       title: 'Reading update',
       message: `${book.title} has an update after ${book.chapter}.`,
@@ -168,7 +173,7 @@ export default function ReaderPage() {
     return [...followedBookUpdates, ...followedAuthorUpdates, ...readingUpdates, ...historyUpdates]
       .slice(0, 10)
       .filter((notification) => !read.has(notification.id));
-  }, [favorites, readNotificationIds]);
+  }, [continueReading, favorites, history, readNotificationIds]);
 
   const handleClose = useCallback(() => {
     if (showChapters) {
@@ -311,7 +316,7 @@ export default function ReaderPage() {
       {!(showChapters && fullscreenReading) && (
         <div className="reader-page__footer">
           <ContinueReading
-            items={latestUnfinishedReads}
+            items={continueReading}
             onViewAll={() => handleNavChange('history')}
             onCardClick={handleSavedChapterSelect}
             showChapterNumbers={settings.showChapterNumbers}

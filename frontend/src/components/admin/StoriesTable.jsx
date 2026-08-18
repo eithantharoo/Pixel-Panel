@@ -101,7 +101,7 @@ export default function StoriesTable() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       {story.genres?.slice(0, 2).map((g) => (
-                        <span key={g} className="rounded-full bg-[rgba(255,255,255,0.08)] px-2 py-0.5 text-[11px] font-semibold text-[var(--home-text-muted)]">
+                        <span key={g} className="rounded-full bg-[rgba(155,112,189,0.16)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-lilac)]">
                           {t(g, g)}
                         </span>
                       ))}
