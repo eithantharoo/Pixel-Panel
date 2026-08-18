@@ -109,6 +109,22 @@
 .reader-page__content--reading {
   padding: 0.5rem;
   border-radius: 20px;
+  border: none;
+  background:
+    radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--home-accent) 16%, transparent), transparent 45%),
+    radial-gradient(circle at 90% 88%, color-mix(in srgb, var(--home-panel-hover) 65%, transparent), transparent 55%),
+    var(--home-canvas);
+}
+
+/* Drop cap on the first paragraph of a chapter's plain-text body —
+   only meaningful once there's a real block of prose to lead into. */
+.reader-chapter-text::first-letter {
+  font-size: 2.4em;
+  font-weight: 700;
+  line-height: 0.8;
+  float: left;
+  padding: 0.04em 0.08em 0 0;
+  color: var(--home-accent);
 }
 
 .reader-page__content::-webkit-scrollbar {
@@ -223,6 +239,13 @@
 [data-theme="dark"] .reader-page__content {
   background: #1e1535;
   border-color: rgba(200, 170, 255, 0.12);
+}
+
+[data-theme="dark"] .reader-page__content--reading {
+  background:
+    radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--home-accent) 18%, transparent), transparent 45%),
+    radial-gradient(circle at 90% 88%, color-mix(in srgb, var(--home-panel-hover) 70%, transparent), transparent 55%),
+    var(--home-canvas);
 }
 
 [data-theme="dark"] .reader-page__right > * {

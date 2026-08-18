@@ -59,17 +59,26 @@ function buildMetadata(book) {
 
 function Surface({
   className = '',
+  glass = false,
   children,
 }) {
   return (
     <section
+      style={
+        glass
+          ? {
+            background: 'linear-gradient(165deg, rgba(255,255,255,0.12), rgba(170,200,255,0.05))',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 20px 50px rgba(0,0,0,0.35)',
+          }
+          : undefined
+      }
       className={`
         rounded-lg
         border
-        border-[var(--home-border)]
-        bg-[var(--home-panel-deep)]
+        ${glass
+          ? 'border-white/15 backdrop-blur-2xl backdrop-saturate-150'
+          : 'border-[var(--home-border)] bg-[var(--home-panel-deep)] shadow-[0_10px_24px_rgba(47,28,56,0.18)]'}
         p-4
-        shadow-[0_10px_24px_rgba(47,28,56,0.18)]
         sm:p-5
         ${className}
       `}
@@ -126,6 +135,7 @@ function IconButton({
   label,
   onClick,
   compact = false,
+  glass = false,
   className = '',
 }) {
   return (
@@ -137,11 +147,10 @@ function IconButton({
         justify-center
         rounded-lg
         border
-        border-[var(--home-border)]
-        bg-[var(--home-panel-hover)]
-        text-[var(--home-text)]
         transition-colors
-        hover:bg-[var(--home-panel)]
+        ${glass
+          ? 'border-white/15 bg-white/10 text-[var(--home-text)] backdrop-blur-md hover:bg-white/20'
+          : 'border-[var(--home-border)] bg-[var(--home-panel-hover)] text-[var(--home-text)] hover:bg-[var(--home-panel)]'}
         ${compact ? 'h-6 w-6' : 'h-9 w-9'}
         ${className}
       `}
@@ -703,6 +712,7 @@ export default function HeroCard({
         {/* CHAPTER READING PANE — no banner in reading mode; every pixel
             goes to the chapter itself (esp. PDF chapters). */}
         <Surface
+          glass
           className="
             flex
             min-h-0
@@ -715,27 +725,42 @@ export default function HeroCard({
         >
           <div className={`flex min-h-0 flex-1 flex-col pl-2.5 pr-1.5 py-1.5 sm:pl-3 sm:pr-2 sm:py-1.5 ${(chapterContent?.contentUrl || chapterContent?.pdfFileId) ? '' : 'panel-scroll overflow-y-auto'}`}>
             <div className="flex min-h-0 w-full flex-1 flex-col">
-              <div className="mb-1 flex items-center justify-between gap-1.5 border-b border-[var(--home-border)] pb-1">
+              <div className="mb-1 flex items-center justify-between gap-1.5 border-b border-white/10 pb-1">
                 <div className="flex min-w-0 items-center gap-1.5">
                   <h3 className="truncate text-sm font-extrabold text-[var(--home-text)] sm:text-base">
                     {chapterContent ? chapterContent.title : `${t('Chapter')} 1`}
                   </h3>
 
                   {chapterContent && (
-                    <span className="shrink-0 rounded-full bg-[var(--home-control)] px-2 py-0.5 text-[10px] font-bold text-[var(--home-ink)]">
+                    <span className="shrink-0 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold text-[var(--home-text)] backdrop-blur-md">
                       Ch. {chapterContent.number}
                       {book?.totalChapters ? ` / ${book.totalChapters}` : ''}
                     </span>
                   )}
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex shrink-0 items-center gap-1.5">
+                  {chapterContent && book?.totalChapters ? (
+                    <div className="relative hidden h-6 w-6 shrink-0 sm:block" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6 -rotate-90">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2.5" />
+                        <circle
+                          cx="12" cy="12" r="10" fill="none"
+                          stroke="var(--home-accent)" strokeWidth="2.5" strokeLinecap="round"
+                          strokeDasharray={2 * Math.PI * 10}
+                          strokeDashoffset={2 * Math.PI * 10 * (1 - Math.min(1, chapterContent.number / book.totalChapters))}
+                          style={{ filter: 'drop-shadow(0 0 3px var(--home-accent))' }}
+                        />
+                      </svg>
+                    </div>
+                  ) : null}
+
                   <button
                     type="button"
                     onClick={onToggleFullscreen}
                     aria-label={fullscreen ? t('Exit full screen') : t('Full screen')}
                     title={fullscreen ? t('Exit full screen') : t('Full screen')}
-                    className="flex h-6 w-6 items-center justify-center rounded-lg border border-[var(--home-border)] bg-[var(--home-panel-hover)] text-[var(--home-text)] transition-colors hover:bg-[var(--home-panel)]"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg border border-white/15 bg-white/10 text-[var(--home-text)] backdrop-blur-md transition-colors hover:bg-white/20"
                   >
                     {fullscreen ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
                   </button>
@@ -744,6 +769,7 @@ export default function HeroCard({
                     label={t('Close reading mode')}
                     onClick={onClose}
                     compact
+                    glass
                   />
                 </div>
               </div>
@@ -757,13 +783,15 @@ export default function HeroCard({
               ) : (
                 <p
                   className="
+                    reader-chapter-text
                     w-full
                     whitespace-pre-line
                     text-base
-                    leading-[1.8]
+                    leading-[1.85]
                     text-[var(--home-text)]
                     sm:text-lg
                   "
+                  style={{ fontFamily: "'Source Serif 4', Georgia, serif" }}
                 >
                   {chapterContent?.content || review}
                 </p>
@@ -873,7 +901,6 @@ export default function HeroCard({
               text-sm
               font-extrabold
               text-black
-              shadow-sm
               transition-all
               hover:brightness-105
             "
@@ -882,6 +909,7 @@ export default function HeroCard({
               paddingRight: '32px',
               paddingTop: '14px',
               paddingBottom: '14px',
+              boxShadow: '0 8px 20px color-mix(in srgb, var(--home-accent) 45%, transparent), 0 0 32px color-mix(in srgb, var(--home-accent) 40%, transparent)',
             }}
             onClick={onReadNow}
           >
