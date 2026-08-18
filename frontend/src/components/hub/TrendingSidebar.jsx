@@ -1,19 +1,21 @@
 import { Flame, X } from 'lucide-react';
 import MangaCard from './MangaCard';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './TrendingSidebar.css';
 
 /* ── Compact sidebar (normal mode) ─────────────────────────────── */
 function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
+  const { t } = useTranslation();
   const featured = items.find((item) => item.featured);
   const list = items.filter((item) => !item.featured).slice(0, 3);
 
   return (
     <aside className="trending" aria-label="Trending manga">
       <div className="trending__panel">
-        <h2 className="trending__title">Trending</h2>
+        <h2 className="trending__title">{t('Trending')}</h2>
 
         {items.length === 0 ? (
-          <p className="trending__empty">No trending matches.</p>
+          <p className="trending__empty">{t('No trending matches.')}</p>
         ) : (
           <>
             {featured && (
@@ -48,7 +50,7 @@ function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
       </div>
 
       <button type="button" className="trending__view-all" onClick={onViewAll} disabled={items.length === 0}>
-        View All
+        {t('View all')}
       </button>
     </aside>
   );
@@ -56,6 +58,7 @@ function TrendingSidebarCompact({ items, onViewAll, onCardClick }) {
 
 /* ── Expanded overlay panel — always in DOM for CSS transition ─── */
 function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
+  const { t } = useTranslation();
   const allItems = [
     ...items.filter((i) => i.featured),
     ...items.filter((i) => !i.featured),
@@ -71,8 +74,8 @@ function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
       <div className="trending-expanded__header">
         <h2 className="trending-expanded__title">
           <Flame size={18} className="trending-expanded__flame" aria-hidden="true" />
-          Trending
-          <span className="trending-expanded__badge">Top {allItems.length}</span>
+          {t('Trending')}
+          <span className="trending-expanded__badge">{t('Top')} {allItems.length}</span>
         </h2>
         <button
           type="button"
@@ -86,7 +89,7 @@ function TrendingSidebarExpanded({ items, onCollapse, expanded, onCardClick }) {
       </div>
 
       {allItems.length === 0 ? (
-        <p className="trending-expanded__empty">No trending books match this search.</p>
+        <p className="trending-expanded__empty">{t('No trending books match this search.')}</p>
       ) : (
         <div className="trending-expanded__grid">
           {allItems.map((item, idx) => (

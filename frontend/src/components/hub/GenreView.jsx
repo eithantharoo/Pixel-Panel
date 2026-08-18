@@ -5,6 +5,7 @@ import { GENRES } from '../../data/home_data';
 import { GENRE_ID_TO_LABEL } from '../../utils/genreMap';
 import { getStoriesByGenre } from '../../services/storyService';
 import { mapStoriesToBooks } from '../../utils/storyAdapter';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import GenreIcon from './GenreIcon';
 import './GenreView.css';
 
@@ -14,6 +15,7 @@ function normalise(value) {
 
 export default function GenreView({ genreId, query = '' }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const genre = GENRES.find(g => g.id === genreId);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,11 +48,12 @@ export default function GenreView({ genreId, query = '' }) {
   if (!genre) return null;
 
   const filteredBooks = books.filter((book) => normalise(book.title).includes(normalise(query)));
+  const genreLabel = t(`genres.${genre.id}`, genre.label);
   const subtitle = loading
-    ? 'Loading titles...'
+    ? t('Loading titles...')
     : query
-      ? `${filteredBooks.length} of ${books.length} titles match`
-      : `${books.length} titles in this genre`;
+      ? `${filteredBooks.length} ${t('of')} ${books.length} ${t('titles match')}`
+      : `${books.length} ${t('titles in this genre')}`;
 
   return (
     <div className="genre-view">
@@ -59,15 +62,15 @@ export default function GenreView({ genreId, query = '' }) {
           <GenreIcon genreId={genre.id} size={28} strokeWidth={2.1} />
         </span>
         <div>
-          <h2 className="genre-view__title">{genre.label}</h2>
+          <h2 className="genre-view__title">{genreLabel}</h2>
           <p className="genre-view__subtitle">{subtitle}</p>
         </div>
       </div>
 
       {!loading && filteredBooks.length === 0 ? (
         <div className="genre-view__empty">
-          <p>No titles found</p>
-          <span>Try another search in {genre.label}.</span>
+          <p>{t('No titles found')}</p>
+          <span>{t('Try another search in')} {genreLabel}.</span>
         </div>
       ) : (
         <div className="genre-view__grid">
@@ -82,7 +85,7 @@ export default function GenreView({ genreId, query = '' }) {
               <div className="genre-view__cover">
                 {book.cover && <img src={book.cover} alt={book.title} />}
                 <div className="genre-view__hover-overlay">
-                  <span className="genre-view__read-btn">Read Now</span>
+                  <span className="genre-view__read-btn">{t('Read now')}</span>
                 </div>
                 {/* Book footer overlay */}
                 <div className="genre-view__book-footer">

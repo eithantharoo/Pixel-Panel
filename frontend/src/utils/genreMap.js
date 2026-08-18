@@ -16,3 +16,21 @@ export const GENRE_ID_TO_LABEL = {
   drama: 'Drama',
   thriller: 'Thriller',
 };
+
+// Reverse lookup for places that only have a display label on hand (e.g. a
+// story's raw genres[] array from the backend, or home_data.js's title-cased
+// "Slice Of Life"). Case-insensitive so both label casings resolve to the
+// same id — used by the i18n layer to translate genres via `genres.<id>`
+// instead of the raw label, since raw labels collide across differing casing.
+const NORMALIZED_LABEL_TO_ID = Object.entries(GENRE_ID_TO_LABEL).reduce(
+  (map, [id, label]) => {
+    map[label.toLowerCase()] = id;
+    return map;
+  },
+  {}
+);
+
+export function labelToGenreId(label) {
+  if (!label) return undefined;
+  return NORMALIZED_LABEL_TO_ID[String(label).toLowerCase()];
+}

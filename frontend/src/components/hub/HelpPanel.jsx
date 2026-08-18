@@ -13,6 +13,7 @@ import {
   Send,
   X,
 } from 'lucide-react';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './HelpPanel.css';
 
 /* ── FAQ data ────────────────────────────────────────────────────── */
@@ -161,6 +162,7 @@ function FormModal({ title, placeholder, onClose, onSubmit }) {
 
 /* ── Main component ──────────────────────────────────────────────── */
 export default function HelpPanel({ open, onClose }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // 'bug' | 'request' | 'support'
@@ -227,7 +229,7 @@ export default function HelpPanel({ open, onClose }) {
         <div className="hp-panel__header">
           <div className="hp-panel__title">
             <HelpCircle size={18} className="hp-panel__title-icon" aria-hidden="true" />
-            <span>Help Center</span>
+            <span>{t('Help Center')}</span>
           </div>
           <button
             type="button"
@@ -256,7 +258,7 @@ export default function HelpPanel({ open, onClose }) {
               ref={searchRef}
               type="search"
               className="hp-search__input"
-              placeholder="Search help articles…"
+              placeholder={t('Search')}
               aria-label="Search FAQ"
               value={query}
               onChange={(e) => { setQuery(e.target.value); setOpenFaq(null); }}

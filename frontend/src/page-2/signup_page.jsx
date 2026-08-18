@@ -10,10 +10,12 @@ import {
 import BrandSidebar from './components/brandsidebar';
 import { registerUser } from '../services/authService';
 import { saveAuth, seedProfileName } from '../utils/authState';
+import { useTranslation } from '../utils/i18n/I18nContext';
 import './signup_page.css';
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     name: '',
@@ -47,38 +49,38 @@ export default function SignupPage() {
     const newErrors = {};
 
     if (!form.name.trim()) {
-      newErrors.name = 'Name is required.';
+      newErrors.name = t('Name is required.');
     }
 
     const value = form.email.trim();
 
     if (!value) {
-      newErrors.email = 'Username or email is required.';
+      newErrors.email = t('Username or email is required.');
     } else {
       const isEmail = value.includes('@');
       const emailRegex =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (isEmail && !emailRegex.test(value)) {
-        newErrors.email = 'Enter a valid email address.';
+        newErrors.email = t('Enter a valid email address.');
       }
     }
 
     if (!form.password.trim()) {
-      newErrors.password = 'Password is required.';
+      newErrors.password = t('Password is required.');
     } else if (form.password.length < 8) {
       newErrors.password =
-        'Password must be at least 8 characters.';
+        t('Password must be at least 8 characters.');
     }
 
     if (!form.confirmPassword.trim()) {
       newErrors.confirmPassword =
-        'Confirm password is required.';
+        t('Confirm password is required.');
     } else if (
       form.confirmPassword !== form.password
     ) {
       newErrors.confirmPassword =
-        'Passwords do not match.';
+        t('Passwords do not match.');
     }
 
     setErrors(newErrors);
@@ -116,10 +118,10 @@ export default function SignupPage() {
       <section className="auth-card">
 
         <header className="auth-card__header">
-          <h2>Start Your Story</h2>
+          <h2>{t('Start Your Story')}</h2>
 
           <p>
-            Join us to start your journey in endless stories.
+            {t('Join us to start your journey in endless stories.')}
           </p>
         </header>
 
@@ -137,7 +139,7 @@ export default function SignupPage() {
           {/* NAME */}
           <label className="auth-field">
 
-            <span>Name</span>
+            <span>{t('Name')}</span>
 
             <div className="auth-input-wrap">
 
@@ -151,7 +153,7 @@ export default function SignupPage() {
               <input
                 type="text"
                 name="name"
-                placeholder="Enter your name"
+                placeholder={t('Enter your name')}
                 value={form.name}
                 onChange={handleChange}
                 autoComplete="name"
@@ -171,7 +173,7 @@ export default function SignupPage() {
           {/* EMAIL */}
           <label className="auth-field">
 
-            <span>Email/Username</span>
+            <span>{t('Email/Username')}</span>
 
             <div className="auth-input-wrap">
 
@@ -185,7 +187,7 @@ export default function SignupPage() {
               <input
                 type="text"
                 name="email"
-                placeholder="Enter your email or username"
+                placeholder={t('Enter your email or username')}
                 value={form.email}
                 onChange={handleChange}
                 autoComplete="username"
@@ -205,7 +207,7 @@ export default function SignupPage() {
           {/* PASSWORD */}
           <label className="auth-field">
 
-            <span>Password</span>
+            <span>{t('Password')}</span>
 
             <div className="auth-input-wrap">
 
@@ -223,7 +225,7 @@ export default function SignupPage() {
                     : 'password'
                 }
                 name="password"
-                placeholder="Enter your password"
+                placeholder={t('Enter your password')}
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -239,8 +241,8 @@ export default function SignupPage() {
                 }
                 aria-label={
                   showPassword
-                    ? 'Hide password'
-                    : 'Show password'
+                    ? t('Hide password')
+                    : t('Show password')
                 }
               >
                 {showPassword ? (
@@ -264,7 +266,7 @@ export default function SignupPage() {
           {/* CONFIRM PASSWORD */}
           <label className="auth-field">
 
-            <span>Confirm Password</span>
+            <span>{t('Confirm Password')}</span>
 
             <div className="auth-input-wrap">
 
@@ -282,7 +284,7 @@ export default function SignupPage() {
                     : 'password'
                 }
                 name="confirmPassword"
-                placeholder="Confirm your password"
+                placeholder={t('Confirm your password')}
                 value={form.confirmPassword}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -298,8 +300,8 @@ export default function SignupPage() {
                 }
                 aria-label={
                   showConfirmPassword
-                    ? 'Hide confirm password'
-                    : 'Show confirm password'
+                    ? t('Hide confirm password')
+                    : t('Show confirm password')
                 }
               >
                 {showConfirmPassword ? (
@@ -326,13 +328,13 @@ export default function SignupPage() {
             className="auth-submit"
             disabled={submitting}
           >
-            {submitting ? 'Signing up...' : 'Sign Up'}
+            {submitting ? t('Signing up...') : t('Sign Up')}
           </button>
 
 
           {/* DIVIDER */}
           <div className="auth-divider">
-            <span>or</span>
+            <span>{t('or')}</span>
           </div>
 
 
@@ -350,7 +352,7 @@ export default function SignupPage() {
             />
 
             <span>
-              Continue with Google
+              {t('Continue with Google')}
             </span>
           </button>
 
@@ -361,7 +363,7 @@ export default function SignupPage() {
         <p className="auth-footer">
 
           <span>
-            Already have an account?
+            {t('Already have an account?')}
           </span>
 
           {' '}
@@ -370,7 +372,7 @@ export default function SignupPage() {
             to="/"
             className="auth-text-link"
           >
-            Login
+            {t('Login')}
           </Link>
 
         </p>

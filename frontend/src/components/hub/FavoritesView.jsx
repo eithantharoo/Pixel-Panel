@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './FavoritesView.css';
 
 function StarIcon() {
@@ -14,6 +15,7 @@ function HeartIcon({ filled }) {
 
 function FavoriteCard({ id, title, color, cover, rating, genre, onRemove }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const style = cover ? undefined : { background: `linear-gradient(160deg, ${color}, ${color}88)` };
   const book = { id, title, color, cover, rating, genre };
 
@@ -32,7 +34,7 @@ function FavoriteCard({ id, title, color, cover, rating, genre, onRemove }) {
         <button
           type="button"
           className="fav-card__heart"
-          aria-label={`Remove ${title} from favorites`}
+          aria-label={t('Remove from Favorites')}
           onClick={(e) => {
             e.stopPropagation();
             onRemove?.(book);
@@ -50,22 +52,23 @@ function FavoriteCard({ id, title, color, cover, rating, genre, onRemove }) {
         </div>
         {/* Genres-style hover overlay */}
         <div className="fav-card__hover-overlay">
-          <span className="fav-card__read-btn">Read Now</span>
+          <span className="fav-card__read-btn">{t('Read now')}</span>
         </div>
       </div>
     </article>
   );
 }
 
-function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle = 'Saved titles will appear here.', onRemove }) {
+function FavoritesView({ items, emptyTitle, emptySubtitle, onRemove }) {
+  const { t } = useTranslation();
   if (!items || items.length === 0) {
     return (
       <div className="fav-empty">
         <div className="fav-empty__icon">
           <HeartIcon />
         </div>
-        <p className="fav-empty__text">{emptyTitle}</p>
-        <p className="fav-empty__sub">{emptySubtitle}</p>
+        <p className="fav-empty__text">{emptyTitle ?? t('No favorites yet')}</p>
+        <p className="fav-empty__sub">{emptySubtitle ?? t('Saved titles will appear here.')}</p>
       </div>
     );
   }
@@ -73,8 +76,8 @@ function FavoritesView({ items, emptyTitle = 'No favorites yet', emptySubtitle =
   return (
     <div className="fav-view">
       <div className="fav-view__header">
-        <h1 className="fav-view__title">My Favorites</h1>
-        <span className="fav-view__count">{items.length} books</span>
+        <h1 className="fav-view__title">{t('My Favorites')}</h1>
+        <span className="fav-view__count">{items.length} {t('books')}</span>
       </div>
       <div className="fav-view__grid">
         {items.map((book) => (

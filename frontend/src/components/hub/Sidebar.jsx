@@ -1,9 +1,10 @@
 import { CircleHelp, Clock3, Heart, Home, Library, Settings } from 'lucide-react';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './Sidebar.css';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', Icon: Home },
-  { id: 'favorite', label: 'Favorites', Icon: Heart },
+  { id: 'favorite', label: 'Favorite', Icon: Heart },
   { id: 'library', label: 'Library', Icon: Library },
   { id: 'history', label: 'History', Icon: Clock3 },
 ];
@@ -13,7 +14,7 @@ const BOTTOM_ITEMS = [
   { id: 'help', label: 'Help Center', Icon: CircleHelp },
 ];
 
-function SidebarLink({ item, active, onClick }) {
+function SidebarLink({ item, active, onClick, t }) {
   const { Icon } = item;
 
   return (
@@ -24,12 +25,13 @@ function SidebarLink({ item, active, onClick }) {
       onClick={onClick}
     >
       <Icon size={20} strokeWidth={1.9} aria-hidden="true" />
-      <span>{item.label}</span>
+      <span>{t(item.label)}</span>
     </button>
   );
 }
 
 function Sidebar({ activeItem = 'home', onNavChange, onSettingsClick, onHelpClick }) {
+  const { t } = useTranslation();
   function handleBottomClick(id) {
     if (id === 'setting') onSettingsClick?.();
     else if (id === 'help') onHelpClick?.();
@@ -45,6 +47,7 @@ function Sidebar({ activeItem = 'home', onNavChange, onSettingsClick, onHelpClic
               item={item}
               active={activeItem === item.id}
               onClick={() => onNavChange?.(item.id)}
+              t={t}
             />
           ))}
         </nav>
@@ -55,6 +58,7 @@ function Sidebar({ activeItem = 'home', onNavChange, onSettingsClick, onHelpClic
               key={item.id}
               item={item}
               onClick={() => handleBottomClick(item.id)}
+              t={t}
             />
           ))}
         </div>
@@ -73,7 +77,7 @@ function Sidebar({ activeItem = 'home', onNavChange, onSettingsClick, onHelpClic
               onClick={() => onNavChange?.(item.id)}
             >
               <Icon size={20} strokeWidth={1.9} aria-hidden="true" />
-              <span className="mobile-nav__label">{item.label}</span>
+              <span className="mobile-nav__label">{t(item.label)}</span>
             </button>
           );
         })}

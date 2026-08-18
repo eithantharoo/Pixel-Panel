@@ -1,12 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
-import LoginPage from './page-1/login_page'; 
-import SignupPage from './page-2/signup_page'; 
-import GetStartedPage from './page-3/page_3'; 
+import LoginPage from './page-1/login_page';
+import SignupPage from './page-2/signup_page';
+import GetStartedPage from './page-3/page_3';
 import InterestsPage from './pages/InterestsPage';
 import LanguagePage from './pages/LanguagePage';
 import HomePage from './pages/HomePage';
 import ReaderPage from './pages/ReaderPage';
+import AdminPage from './pages/AdminPage';
 import RequireAuth from './components/auth/RequireAuth';
+import RequireAdmin from './components/auth/RequireAdmin';
 
 export default function App() {
   return (
@@ -19,6 +21,7 @@ export default function App() {
       <Route path="/language" element={<LanguagePage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/reader" element={<ReaderPage />} />
+      <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
     </Routes>
   );
 }

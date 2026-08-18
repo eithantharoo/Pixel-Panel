@@ -18,6 +18,7 @@ import {
   applySettings,
   SETTINGS_DEFAULTS as DEFAULTS,
 } from '../../utils/settingsState';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './SettingsPanel.css';
 
 
@@ -113,6 +114,7 @@ function ChipGroup({ options, value, onChange }) {
 
 /* ── Main component ──────────────────────────────────────────────── */
 export default function SettingsPanel({ open, onClose }) {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState(loadSettings);
   const [toast, setToast] = useState(null);
   const [showPrivacy, setShowPrivacy] = useState(false);
@@ -147,7 +149,7 @@ export default function SettingsPanel({ open, onClose }) {
 
   function set(key, value) {
     setSettings((prev) => ({ ...prev, [key]: value }));
-    showToast('Setting saved');
+    showToast(t('Setting saved'));
   }
 
   return (
@@ -172,12 +174,12 @@ export default function SettingsPanel({ open, onClose }) {
         <div className="sp-panel__header">
           <div className="sp-panel__title">
             <Settings size={18} className="sp-panel__title-icon" aria-hidden="true" />
-            <span>Settings</span>
+            <span>{t('Settings')}</span>
           </div>
           <button
             type="button"
             className="sp-panel__close"
-            aria-label="Close settings"
+            aria-label={t('Close settings')}
             onClick={onClose}
           >
             <X size={18} />
@@ -192,20 +194,20 @@ export default function SettingsPanel({ open, onClose }) {
 
           {/* ─ Appearance ─ */}
           <section className="sp-section">
-            <SectionHeader icon={Palette} label="Appearance" />
+            <SectionHeader icon={Palette} label={t('Appearance')} />
 
             <div className="sp-row sp-row--col">
               <span className="sp-row__label">
                 <Palette size={14} aria-hidden="true" />
-                Accent Color
+                {t('Accent Color')}
               </span>
               <ChipGroup
                 value={settings.accentColor}
                 onChange={(v) => set('accentColor', v)}
                 options={[
-                  { value: 'yellow', label: 'Yellow', color: '#fff43d', swatch: true },
-                  { value: 'cyan', label: 'Cyan', color: '#4df5ff', swatch: true },
-                  { value: 'rose', label: 'Rose', color: '#ff6b9d', swatch: true },
+                  { value: 'yellow', label: t('Yellow'), color: '#fff43d', swatch: true },
+                  { value: 'cyan', label: t('Cyan'), color: '#4df5ff', swatch: true },
+                  { value: 'rose', label: t('Rose'), color: '#ff6b9d', swatch: true },
                 ]}
               />
             </div>
@@ -213,15 +215,15 @@ export default function SettingsPanel({ open, onClose }) {
             <div className="sp-row sp-row--col">
               <span className="sp-row__label">
                 <Type size={14} aria-hidden="true" />
-                Font Size
+                {t('Font Size')}
               </span>
               <ChipGroup
                 value={settings.fontSize}
                 onChange={(v) => set('fontSize', v)}
                 options={[
-                  { value: 'small', label: 'Small' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'large', label: 'Large' },
+                  { value: 'small', label: t('Small') },
+                  { value: 'medium', label: t('Medium') },
+                  { value: 'large', label: t('Large') },
                 ]}
               />
             </div>
@@ -229,35 +231,35 @@ export default function SettingsPanel({ open, onClose }) {
 
           {/* ─ Reading ─ */}
           <section className="sp-section">
-            <SectionHeader icon={BookOpen} label="Reading" />
+            <SectionHeader icon={BookOpen} label={t('Reading')} />
 
             <div className="sp-row sp-row--col">
               <span className="sp-row__label">
                 <Globe size={14} aria-hidden="true" />
-                Reading Direction
+                {t('Reading Direction')}
               </span>
               <ChipGroup
                 value={settings.readDirection}
                 onChange={(v) => set('readDirection', v)}
                 options={[
-                  { value: 'ltr', label: '← Left to Right' },
-                  { value: 'rtl', label: 'Right to Left →' },
+                  { value: 'ltr', label: t('Left to Right') },
+                  { value: 'rtl', label: t('Right to Left') },
                 ]}
               />
             </div>
 
             <ToggleRow
               id="auto-advance"
-              label="Auto-advance Chapters"
-              description="Jump to next chapter when you finish reading"
+              label={t('Auto-advance Chapters')}
+              description={t('Jump to next chapter when you finish reading')}
               checked={settings.autoAdvance}
               onChange={(v) => set('autoAdvance', v)}
             />
 
             <ToggleRow
               id="chapter-numbers"
-              label="Show Chapter Numbers"
-              description="Display chapter numbers on manga covers"
+              label={t('Show Chapter Numbers')}
+              description={t('Display chapter numbers on manga covers')}
               checked={settings.showChapterNumbers}
               onChange={(v) => set('showChapterNumbers', v)}
             />
@@ -265,28 +267,28 @@ export default function SettingsPanel({ open, onClose }) {
 
           {/* ─ Notifications ─ */}
           <section className="sp-section">
-            <SectionHeader icon={Bell} label="Notifications" />
+            <SectionHeader icon={Bell} label={t('Notifications')} />
 
             <ToggleRow
               id="notif-new"
-              label="New Chapter Alerts"
-              description="Get notified when a new chapter drops"
+              label={t('New Chapter Alerts')}
+              description={t('Get notified when a new chapter drops')}
               checked={settings.notifNewChapter}
               onChange={(v) => set('notifNewChapter', v)}
             />
 
             <ToggleRow
               id="notif-recs"
-              label="Recommendations"
-              description="Personalised picks based on your reads"
+              label={t('Recommendations', 'Recommendations')}
+              description={t('Personalised picks based on your reads')}
               checked={settings.notifRecommendations}
               onChange={(v) => set('notifRecommendations', v)}
             />
 
             <ToggleRow
               id="notif-digest"
-              label="Weekly Digest"
-              description="A roundup of trending titles every Sunday"
+              label={t('Weekly Digest')}
+              description={t('A roundup of trending titles every Sunday')}
               checked={settings.notifDigest}
               onChange={(v) => set('notifDigest', v)}
             />
@@ -294,20 +296,20 @@ export default function SettingsPanel({ open, onClose }) {
 
           {/* ─ Privacy ─ */}
           <section className="sp-section">
-            <SectionHeader icon={Shield} label="Privacy" />
+            <SectionHeader icon={Shield} label={t('Privacy')} />
 
             <ToggleRow
               id="save-history"
-              label="Save Reading History"
-              description="Keep track of chapters you've read"
+              label={t('Save Reading History')}
+              description={t("Keep track of chapters you've read")}
               checked={settings.saveHistory}
               onChange={(v) => set('saveHistory', v)}
             />
 
             <ToggleRow
               id="sync-devices"
-              label="Sync Across Devices"
-              description="Continue where you left off on any device"
+              label={t('Sync Across Devices')}
+              description={t('Continue where you left off on any device')}
               checked={settings.syncDevices}
               onChange={(v) => set('syncDevices', v)}
             />
@@ -319,7 +321,7 @@ export default function SettingsPanel({ open, onClose }) {
               onClick={() => setShowPrivacy(true)}
             >
               <Eye size={14} aria-hidden="true" />
-              Privacy Policy
+              {t('Privacy Policy')}
               <ChevronRight size={14} className="sp-link-row__arrow" aria-hidden="true" />
             </button>
           </section>

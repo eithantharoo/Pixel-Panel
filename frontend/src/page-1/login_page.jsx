@@ -4,10 +4,12 @@ import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 import BrandSidebar from './components/brandsidebar';
 import { loginUser } from '../services/authService';
 import { saveAuth, seedProfileName } from '../utils/authState';
+import { useTranslation } from '../utils/i18n/I18nContext';
 import './login_page.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     email: '',
@@ -37,20 +39,20 @@ export default function LoginPage() {
     const value = form.email.trim();
 
     if (!value) {
-      newErrors.email = 'Username or email is required.';
+      newErrors.email = t('Username or email is required.');
     } else {
       const isEmail = value.includes('@');
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (isEmail && !emailRegex.test(value)) {
-        newErrors.email = 'Enter a valid email address.';
+        newErrors.email = t('Enter a valid email address.');
       }
     }
 
     if (!form.password.trim()) {
-      newErrors.password = 'Password is required.';
+      newErrors.password = t('Password is required.');
     } else if (form.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters.';
+      newErrors.password = t('Password must be at least 8 characters.');
     }
 
     setErrors(newErrors);
@@ -84,10 +86,10 @@ export default function LoginPage() {
       <section className="auth-card">
 
         <header className="auth-card__header">
-          <h2>Welcome Back</h2>
+          <h2>{t('Welcome Back')}</h2>
 
           <p>
-            Continue your journey in endless stories.
+            {t('Continue your journey in endless stories.')}
           </p>
         </header>
 
@@ -103,7 +105,7 @@ export default function LoginPage() {
           )}
 
           <label className="auth-field">
-            <span>Email/Username</span>
+            <span>{t('Email/Username')}</span>
 
             <div className="auth-input-wrap">
 
@@ -117,7 +119,7 @@ export default function LoginPage() {
               <input
                 type="text"
                 name="email"
-                placeholder="Enter your email or username"
+                placeholder={t('Enter your email or username')}
                 value={form.email}
                 onChange={handleChange}
                 autoComplete="username"
@@ -133,7 +135,7 @@ export default function LoginPage() {
           </label>
 
           <label className="auth-field">
-            <span>Password</span>
+            <span>{t('Password')}</span>
 
             <div className="auth-input-wrap">
 
@@ -147,7 +149,7 @@ export default function LoginPage() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
-                placeholder="Enter your password"
+                placeholder={t('Enter your password')}
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
@@ -161,8 +163,8 @@ export default function LoginPage() {
                 }
                 aria-label={
                   showPassword
-                    ? 'Hide password'
-                    : 'Show password'
+                    ? t('Hide password')
+                    : t('Show password')
                 }
               >
                 {showPassword ? (
@@ -188,7 +190,7 @@ export default function LoginPage() {
               disabled
               title="Coming soon"
             >
-              Forgot Password?
+              {t('Forgot Password?')}
             </button>
           </div>
 
@@ -201,11 +203,11 @@ export default function LoginPage() {
 
             <span>
               <strong>
-                Remember Me
+                {t('Remember Me')}
               </strong>
 
               <small>
-                Keep me signed in on this device
+                {t('Keep me signed in on this device')}
               </small>
             </span>
 
@@ -216,11 +218,11 @@ export default function LoginPage() {
             className="auth-submit"
             disabled={submitting}
           >
-            {submitting ? 'Logging in...' : 'Log In'}
+            {submitting ? t('Logging in...') : t('Log In')}
           </button>
 
           <div className="auth-divider">
-            <span>or</span>
+            <span>{t('or')}</span>
           </div>
 
           <button
@@ -236,7 +238,7 @@ export default function LoginPage() {
             />
 
             <span>
-              Continue with Google
+              {t('Continue with Google')}
             </span>
           </button>
 
@@ -245,14 +247,14 @@ export default function LoginPage() {
         <p className="auth-footer">
 
           <span>
-            Don&apos;t have an account?
+            {t("Don't have an account?")}
           </span>
 
           <Link
             to="/signup"
             className="auth-text-link"
           >
-            Sign Up
+            {t('Sign Up')}
           </Link>
 
         </p>

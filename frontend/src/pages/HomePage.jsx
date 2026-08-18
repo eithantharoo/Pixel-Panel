@@ -15,19 +15,19 @@ import {
   FOR_YOU,
   NEWLY_RELEASED,
   POPULAR,
-  TRENDING,
-  FAVORITES,
   HISTORY,
 } from '../data/home_data';
-import { chapterToNumber, loadFavorites, saveFavorites, toggleFavoriteBook } from '../utils/libraryState';
+import { chapterToNumber } from '../utils/libraryState';
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
-import { clearAuth } from '../utils/authState';
+import { clearAuth, loadAuth } from '../utils/authState';
 import { useStoryCatalog } from '../hooks/useStoryCatalog';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useFavorites } from '../hooks/useFavorites';
 import { useLiveSettings } from '../hooks/useLiveSettings';
+import { useServerNotifications } from '../hooks/useServerNotifications';
 import { searchStories } from '../services/storyService';
-import { mapStoriesToBooks } from '../utils/storyAdapter';
+import { mapStoriesToBooks, mapStoryToBook } from '../utils/storyAdapter';
+import { useTranslation } from '../utils/i18n/I18nContext';
 import './HomePage.css';
 
 const NAV_IDS = new Set(['home', 'favorite', 'library', 'history']);
@@ -56,20 +56,22 @@ function filterItems(items, query) {
 }
 
 function LoadingResults() {
+  const { t } = useTranslation();
   return (
     <div className="home-empty">
-      <p className="home-empty__title">Loading...</p>
+      <p className="home-empty__title">{t('Loading...')}</p>
       <p className="home-empty__text">Fetching the latest stories for you.</p>
     </div>
   );
 }
 
 function EmptyResults({ query }) {
+  const { t } = useTranslation();
   return (
     <div className="home-empty">
-      <p className="home-empty__title">No titles found</p>
-      <p className="home-empty__text">Try a shorter search or clear the genre filter.</p>
-      {query && <span className="home-empty__query">Search: {query}</span>}
+      <p className="home-empty__title">{t('No titles found')}</p>
+      <p className="home-empty__text">{t('Try a shorter search or clear the genre filter.')}</p>
+      {query && <span className="home-empty__query">{t('Search:')} {query}</span>}
     </div>
   );
 }
@@ -106,27 +108,28 @@ function MangaButton({ manga, navigate, variant }) {
 }
 
 function HomeMainContent({ navigate, forYou, newReleases, popular, loading }) {
+  const { t } = useTranslation();
   const [expandedSections, setExpandedSections] = useState({});
 
   if (loading) return <LoadingResults />;
 
   const sections = [
-    { title: 'For you', items: forYou, variant: 'overlay' },
-    { title: 'Newly released', items: newReleases, variant: 'new' },
-    { title: 'Popular', items: popular, variant: 'popular' },
+    { key: 'For you', title: t('For you'), items: forYou, variant: 'overlay' },
+    { key: 'Newly released', title: t('Newly released'), items: newReleases, variant: 'new' },
+    { key: 'Popular', title: t('Popular'), items: popular, variant: 'popular' },
   ].filter((section) => section.items.length > 0);
 
   if (sections.length === 0) return <EmptyResults query="" />;
 
   return sections.map((section) => (
     <SectionRow
-      key={section.title}
+      key={section.key}
       title={section.title}
-      expanded={Boolean(expandedSections[section.title])}
+      expanded={Boolean(expandedSections[section.key])}
       onToggleExpanded={() => {
         setExpandedSections((current) => ({
           ...current,
-          [section.title]: !current[section.title],
+          [section.key]: !current[section.key],
         }));
       }}
     >
@@ -138,6 +141,7 @@ function HomeMainContent({ navigate, forYou, newReleases, popular, loading }) {
 }
 
 function LibraryContent({ navigate, searchQuery, libraryItems }) {
+  const { t } = useTranslation();
   const books = filterItems(libraryItems, searchQuery);
   if (books.length === 0) return <EmptyResults query={searchQuery} />;
 
@@ -145,10 +149,10 @@ function LibraryContent({ navigate, searchQuery, libraryItems }) {
     <section className="home-library">
       <div className="home-library__header">
         <div>
-          <h1 className="home-library__title">Library</h1>
-          <p className="home-library__subtitle">Browse every available title in one place.</p>
+          <h1 className="home-library__title">{t('Library')}</h1>
+          <p className="home-library__subtitle">{t('Browse every available title in one place')}.</p>
         </div>
-        <span className="home-library__count">{books.length} titles</span>
+        <span className="home-library__count">{books.length} {t('titles')}</span>
       </div>
       <div className="home-library__grid">
         {books.map((book) => (
@@ -162,6 +166,8 @@ function LibraryContent({ navigate, searchQuery, libraryItems }) {
 export default function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
+  const isAdmin = loadAuth()?.user?.role === 'admin';
   const initialGenre = location.state?.genreId ?? null;
   const initialNav = initialGenre
     ? 'home'
@@ -174,9 +180,7 @@ export default function HomePage() {
   const [trendingExpanded, setTrendingExpanded] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [favorites, setFavorites] = useState(() => loadFavorites(FAVORITES));
   const [readNotificationIds, setReadNotificationIds] = useState(loadReadNotificationIds);
-  const filteredTrending = useMemo(() => filterItems(TRENDING, searchQuery), [searchQuery]);
   const latestUnfinishedReads = useMemo(
     () => HISTORY.filter((book) => book.progress < 100).slice(0, 4),
     [],
@@ -184,8 +188,13 @@ export default function HomePage() {
 
   const settings = useLiveSettings();
   const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
+  const filteredTrending = useMemo(() => filterItems(trending, searchQuery), [trending, searchQuery]);
   const { continueReading, history, loading: progressLoading } = useReadingProgress();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const {
+    notifications: serverNotifications,
+    markRead: markServerNotificationRead,
+  } = useServerNotifications();
   const libraryItems = useMemo(
     () => buildLibraryItems(forYou, newReleases, popular, favorites),
     [forYou, newReleases, popular, favorites],
@@ -280,6 +289,22 @@ export default function HomePage() {
   }
 
   const notifications = useMemo(() => {
+    const serverUpdates = settings.notifNewChapter
+      ? serverNotifications
+        .filter((n) => !n.read)
+        .map((n) => ({
+          id: `srv-${n._id}`,
+          title: t(n.title, n.title),
+          message: n.message,
+          onClick: () => {
+            markServerNotificationRead(n._id);
+            if (n.relatedStory) {
+              navigate('/reader', { state: { book: mapStoryToBook(n.relatedStory) } });
+            }
+          },
+        }))
+      : [];
+
     const followedBookUpdates = settings.notifNewChapter
       ? favorites.slice(0, 4).map((book) => ({
         id: `followed-book-${book.id}`,
@@ -325,7 +350,7 @@ export default function HomePage() {
       }))
       : [];
 
-    const all = [...followedBookUpdates, ...followedAuthorUpdates, ...readBookUpdates, ...recommendations, ...historyUpdates];
+    const all = [...serverUpdates, ...followedBookUpdates, ...followedAuthorUpdates, ...readBookUpdates, ...recommendations, ...historyUpdates];
     const seen = new Set();
     const unique = all.filter((n) => {
       if (seen.has(n.id)) return false;
@@ -334,7 +359,7 @@ export default function HomePage() {
     });
     const read = new Set(readNotificationIds);
     return unique.slice(0, 10).filter((notification) => !read.has(notification.id));
-  }, [favorites, readNotificationIds, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest]);
+  }, [favorites, readNotificationIds, serverNotifications, settings.notifNewChapter, settings.notifRecommendations, settings.notifDigest, t, navigate, markServerNotificationRead]);
 
 
   const showTrending = activeNav === 'home' && !activeGenre;
@@ -397,8 +422,8 @@ export default function HomePage() {
       return (
         <FavoritesView
           items={filteredFavorites}
-          emptyTitle={searchQuery ? 'No favorites found' : undefined}
-          emptySubtitle={searchQuery ? 'Try another search in your favorites.' : undefined}
+          emptyTitle={searchQuery ? t('No favorites found') : undefined}
+          emptySubtitle={searchQuery ? t('Try another search in your favorites.') : undefined}
           onRemove={handleFavoriteRemove}
         />
       );
@@ -418,8 +443,8 @@ export default function HomePage() {
       return (
         <HistoryView
           items={filteredHistory}
-          emptyTitle={searchQuery ? 'No history found' : undefined}
-          emptySubtitle={searchQuery ? 'Try another search in your reading history.' : undefined}
+          emptyTitle={searchQuery ? t('No history found') : undefined}
+          emptySubtitle={searchQuery ? t('Try another search in your reading history.') : undefined}
           onBookClick={openSavedChapter}
         />
       );
@@ -441,6 +466,8 @@ export default function HomePage() {
         onNotificationClick={handleNotificationClick}
         onLogin={() => navigate('/')}
         onLogout={handleLogout}
+        isAdmin={isAdmin}
+        onAdminClick={() => navigate('/admin')}
       />
 
       <Sidebar

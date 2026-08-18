@@ -1,4 +1,5 @@
 import { Clock3, Trash2 } from 'lucide-react';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './HistoryView.css';
 
 function ClockIcon() {
@@ -10,6 +11,7 @@ function TrashIcon() {
 }
 
 function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookClick, ...rest }) {
+  const { t } = useTranslation();
   const coverStyle = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
   const book = { title, color, cover, chapter, readAt, progress, ...rest };
   const isFinished = progress === 100;
@@ -49,7 +51,7 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookCli
             <span>{readAt}</span>
           </div>
           {isFinished ? (
-            <span className="hist-item__badge hist-item__badge--done">Finished</span>
+            <span className="hist-item__badge hist-item__badge--done">{t('Finished')}</span>
           ) : (
             <span className="hist-item__badge">{progress}%</span>
           )}
@@ -63,15 +65,16 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookCli
   );
 }
 
-function HistoryView({ items, emptyTitle = 'No reading history', emptySubtitle = 'Books you read will appear here.', onBookClick }) {
+function HistoryView({ items, emptyTitle, emptySubtitle, onBookClick }) {
+  const { t } = useTranslation();
   if (!items || items.length === 0) {
     return (
       <div className="hist-empty">
         <div className="hist-empty__icon">
           <ClockIcon />
         </div>
-        <p className="hist-empty__text">{emptyTitle}</p>
-        <p className="hist-empty__sub">{emptySubtitle}</p>
+        <p className="hist-empty__text">{emptyTitle ?? t('No reading history')}</p>
+        <p className="hist-empty__sub">{emptySubtitle ?? t('Books you read will appear here.')}</p>
       </div>
     );
   }
@@ -79,8 +82,8 @@ function HistoryView({ items, emptyTitle = 'No reading history', emptySubtitle =
   return (
     <div className="hist-view">
       <div className="hist-view__header">
-        <h1 className="hist-view__title">Reading History</h1>
-        <button type="button" className="hist-view__clear">Clear All</button>
+        <h1 className="hist-view__title">{t('Reading History')}</h1>
+        <button type="button" className="hist-view__clear">{t('Clear All')}</button>
       </div>
       <div className="hist-view__list">
         {items.map((item) => (

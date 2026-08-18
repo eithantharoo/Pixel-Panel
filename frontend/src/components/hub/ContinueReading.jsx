@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { BookOpen, ChevronRight } from 'lucide-react';
 import MangaCard from './MangaCard';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './ContinueReading.css';
 
 function ContinueReading({ items = [], onViewAll, onCardClick, showChapterNumbers = true }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -15,7 +17,7 @@ function ContinueReading({ items = [], onViewAll, onCardClick, showChapterNumber
         onClick={() => setOpen((isOpen) => !isOpen)}
       >
         <BookOpen className="continue-reading__toggle-icon" size={17} aria-hidden="true" />
-        <span>Continue Reading</span>
+        <span>{t('Continue Reading')}</span>
         <ChevronRight className="continue-reading__toggle-arrow" size={15} aria-hidden="true" />
       </button>
 
@@ -34,7 +36,7 @@ function ContinueReading({ items = [], onViewAll, onCardClick, showChapterNumber
       </div>
 
       <button type="button" className="continue-reading__view-all" onClick={onViewAll}>
-        View All
+        {t('View all')}
       </button>
     </section>
   );

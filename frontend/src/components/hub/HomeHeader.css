@@ -26,6 +26,19 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+/* Reading mode — the reader page passes `compact` while a chapter is open
+   so the header takes as little vertical room as possible. */
+.home-header--compact {
+  min-height: 0;
+  padding: 0.3rem 1.25rem;
+}
+
+.home-header--compact .home-header__logo {
+  width: 150px;
+  height: 40px;
 }
 
 .home-header__logo img {
@@ -266,6 +279,12 @@
 
 .home-header__icon-btn:active {
   transform: scale(0.94);
+}
+
+.home-header__lang-btn {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .home-header__icon-btn--favorite:hover {

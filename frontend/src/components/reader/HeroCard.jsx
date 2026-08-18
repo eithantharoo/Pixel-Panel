@@ -1,6 +1,13 @@
-import React from 'react';
-import { Bell, BookOpen, Heart, Play, Star, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Bell, BookOpen, Heart, Maximize2, Minimize2, Play, Star, SquareArrowOutUpRight, X } from 'lucide-react';
 import { images } from '../../assets/images';
+import { labelToGenreId } from '../../utils/genreMap';
+import { useTranslation } from '../../utils/i18n/I18nContext';
+import { checkEmbeddable } from '../../services/embedService';
+import { fetchChapterPdfObjectUrl } from '../../services/pdfService';
+import { loadAuth } from '../../utils/authState';
+import { isRealStoryId } from '../../utils/objectId';
+import { useMyRating } from '../../hooks/useMyRating';
 
 
 const DEFAULT_GENRES = [
@@ -118,6 +125,7 @@ function RatingBadge({
 function IconButton({
   label,
   onClick,
+  compact = false,
   className = '',
 }) {
   return (
@@ -125,8 +133,6 @@ function IconButton({
       type="button"
       className={`
         flex
-        h-9
-        w-9
         items-center
         justify-center
         rounded-lg
@@ -136,6 +142,7 @@ function IconButton({
         text-[var(--home-text)]
         transition-colors
         hover:bg-[var(--home-panel)]
+        ${compact ? 'h-6 w-6' : 'h-9 w-9'}
         ${className}
       `}
       onClick={onClick}
@@ -143,7 +150,7 @@ function IconButton({
       title={label}
     >
       <X
-        size={18}
+        size={compact ? 12 : 18}
         strokeWidth={2.4}
       />
     </button>
@@ -151,10 +158,151 @@ function IconButton({
 }
 
 
+// Tries to show a chapter's source URL inline via <iframe>. Many sites
+// (e.g. Webtoons) send X-Frame-Options/CSP headers that make browsers
+// refuse to render them in a frame — and there's no reliable in-browser JS
+// signal for that refusal (a blocked cross-origin frame and a genuinely
+// loaded one both throw when you try to read their location). So instead
+// we ask the backend to check the target's headers before ever attempting
+// the iframe, and fall back to a plain link-out button when it can't be
+// embedded (or the check itself fails, e.g. offline).
+function ChapterEmbed({ url, title, t }) {
+  const [status, setStatus] = useState('checking'); // 'checking' | 'embeddable' | 'blocked'
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const token = loadAuth()?.token;
+
+    checkEmbeddable(url, token)
+      .then(({ embeddable }) => {
+        if (!cancelled) setStatus(embeddable ? 'embeddable' : 'blocked');
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('blocked');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // The parent remounts this component (via `key={url}`) on chapter
+    // change, so `url` doesn't need to be a dependency here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
+      <div className="flex justify-end">
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--home-text-muted)] transition-colors hover:text-[var(--home-accent)]"
+        >
+          <SquareArrowOutUpRight size={12} aria-hidden="true" />
+          {t('Open in new tab')}
+        </a>
+      </div>
+
+      <div className="relative min-h-[50vh] flex-1 overflow-hidden rounded-xl border border-[var(--home-border)] bg-black/20">
+        {status === 'embeddable' && (
+          <iframe
+            src={url}
+            title={title}
+            onLoad={() => setIframeLoaded(true)}
+            className={`h-full min-h-[50vh] w-full ${iframeLoaded ? '' : 'opacity-0'}`}
+            style={{ minHeight: '50vh' }}
+          />
+        )}
+
+        {(status === 'checking' || (status === 'embeddable' && !iframeLoaded)) && (
+          <p className="absolute inset-0 flex items-center justify-center text-base text-[var(--home-text-muted)]">
+            {t('Loading chapter...')}
+          </p>
+        )}
+
+        {status === 'blocked' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
+            <p className="max-w-sm text-base text-[var(--home-text-muted)]">
+              {t("This chapter can't be shown here — the source site blocks embedding.")}
+            </p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-yellow inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-extrabold text-black"
+            >
+              <SquareArrowOutUpRight size={15} aria-hidden="true" />
+              {t('Read Chapter on Original Site')}
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Renders a PDF chapter stored in GridFS. GET requests via <iframe src>
+// can't carry an Authorization header, so the PDF is fetched as an
+// authenticated Blob first and shown via its object URL instead — the
+// browser's native PDF viewer renders that fine inside an iframe.
+function ChapterPdf({ fileId, title, t }) {
+  const [objectUrl, setObjectUrl] = useState(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    let createdUrl = null;
+    const token = loadAuth()?.token;
+
+    fetchChapterPdfObjectUrl(fileId, token)
+      .then((url) => {
+        if (cancelled) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+        createdUrl = url;
+        setObjectUrl(url);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+
+    return () => {
+      cancelled = true;
+      if (createdUrl) URL.revokeObjectURL(createdUrl);
+    };
+    // The parent remounts this component (via `key={fileId}`) on chapter
+    // change, so `fileId` doesn't need to be a dependency here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="relative min-h-[50vh] flex-1 overflow-hidden rounded-xl border border-[var(--home-border)] bg-black/20">
+      {objectUrl && (
+        <iframe src={objectUrl} title={title} className="h-full min-h-[50vh] w-full" style={{ minHeight: '50vh' }} />
+      )}
+
+      {!objectUrl && !failed && (
+        <p className="absolute inset-0 flex items-center justify-center text-base text-[var(--home-text-muted)]">
+          {t('Loading chapter...')}
+        </p>
+      )}
+
+      {failed && (
+        <p className="absolute inset-0 flex items-center justify-center text-base text-[var(--home-text-muted)]">
+          {t('Something went wrong')}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function MetaList({
   metadata,
   rating,
 }) {
+  const { t } = useTranslation();
   const rows =
     metadata ?? DEFAULT_METADATA;
 
@@ -188,7 +336,7 @@ function MetaList({
               text-[var(--home-text)]
             "
           >
-            {label}:
+            {t(label, label)}:
           </dt>
 
           <dd
@@ -217,7 +365,7 @@ function MetaList({
             text-[var(--home-text)]
           "
         >
-          Rating:
+          {t('Rating', 'Rating')}:
         </dt>
 
         <dd
@@ -254,12 +402,16 @@ function GenreList({
   light = false,
   reading = false,
 }) {
+  const { t } = useTranslation();
   const list =
     genres ?? DEFAULT_GENRES;
 
   return (
     <div className="flex flex-wrap gap-2.5">
-      {list.map((genre) => (
+      {list.map((genre) => {
+        const genreId = labelToGenreId(genre);
+        const displayLabel = genreId ? t(`genres.${genreId}`, genre) : t(genre, genre);
+        return (
         <span
           key={genre}
           className={
@@ -314,9 +466,10 @@ function GenreList({
                 `
           }
         >
-          {genre}
+          {displayLabel}
         </span>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -445,6 +598,45 @@ function Poster({
   );
 }
 
+// 5-star click-to-rate widget. `value` is the user's own rating (1-5, or
+// null if they haven't rated); hovering previews the star that would be
+// picked without committing until click.
+function StarRatingInput({ value, onRate, disabled = false }) {
+  const { t } = useTranslation();
+  const [hovered, setHovered] = useState(null);
+  const displayValue = hovered ?? value;
+
+  return (
+    <div
+      className="flex items-center gap-1"
+      role="radiogroup"
+      aria-label={t('Rate this story')}
+      onMouseLeave={() => setHovered(null)}
+    >
+      {[1, 2, 3, 4, 5].map((star) => {
+        const filled = displayValue != null && star <= displayValue;
+        return (
+          <button
+            key={star}
+            type="button"
+            role="radio"
+            aria-checked={value === star}
+            aria-label={`${t('Rate this story')} — ${star}/5`}
+            disabled={disabled}
+            className="p-0.5 text-[var(--home-accent)] transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50"
+            onMouseEnter={() => setHovered(star)}
+            onFocus={() => setHovered(star)}
+            onBlur={() => setHovered(null)}
+            onClick={() => onRate(star)}
+          >
+            <Star size={22} className={filled ? 'fill-current' : ''} strokeWidth={filled ? 0 : 1.8} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function HeroCard({
   isReading,
   onReadNow,
@@ -455,15 +647,34 @@ export default function HeroCard({
   chapterContent = null,
   chapterLoading = false,
   notificationReason = '',
+  fullscreen = false,
+  onToggleFullscreen,
 }) {
+  const { t } = useTranslation();
+  const canRate = isRealStoryId(book?.id);
+  const isLoggedIn = Boolean(loadAuth()?.token);
+  const { myRating, submitRating, submitting } = useMyRating(book?.id);
+  const [ratingOverride, setRatingOverride] = useState(null);
+
+  // Reset the optimistic aggregate whenever a different story is shown.
+  useEffect(() => {
+    Promise.resolve().then(() => setRatingOverride(null));
+  }, [book?.id]);
+
+  async function handleRate(star) {
+    if (!canRate || !isLoggedIn || submitting) return;
+    const result = await submitRating(star).catch(() => null);
+    if (result) setRatingOverride({ rating: result.rating, ratingCount: result.ratingCount });
+  }
+
   const title =
     book?.title ?? DEFAULT_TITLE;
 
   const rating =
-    book?.rating ?? DEFAULT_RATING;
+    ratingOverride?.rating ?? book?.rating ?? DEFAULT_RATING;
 
-  const color =
-    book?.color ?? null;
+  const ratingCount =
+    ratingOverride?.ratingCount ?? book?.ratingCount ?? null;
 
   const review =
     book?.description || DEFAULT_REVIEW;
@@ -474,12 +685,6 @@ export default function HeroCard({
   const meta =
     buildMetadata(book);
 
-
-  const bannerImage =
-    book?.banner ||
-    (title.toLowerCase() === 'solo leveling' ? images.banners.soloLeveling : book?.cover) ||
-    images.heroBanner;
-
   if (isReading) {
     return (
       <div
@@ -489,203 +694,66 @@ export default function HeroCard({
           h-full
           min-h-0
           flex-col
-          gap-4
         "
         style={{
           animation:
             'heroFadeIn 0.35s ease',
         }}
       >
-        {/* BANNER SECTION */}
-        <section
-          className="
-            relative
-            min-h-0
-            flex-[0_0_auto]
-            h-44
-            overflow-hidden
-            rounded-[1.75rem]
-            border
-            border-[var(--home-border)]
-          "
-        >
-          {/* BANNER IMAGE */}
-          <img
-            src={bannerImage}
-            alt={`${title} Banner`}
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-              object-center
-            "
-          />
-
-          {/* COLOR OVERLAY */}
-          {color && (
-            <div
-              className="
-                absolute
-                inset-0
-              "
-              style={{
-                background: `
-                  linear-gradient(
-                    135deg,
-                    ${color}88 0%,
-                    ${color}45 50%,
-                    transparent 100%
-                  )
-                `,
-              }}
-            />
-          )}
-
-          {/* DARK OVERLAY */}
-          <div
-            className="
-              absolute
-              inset-0
-              bg-gradient-to-r
-              from-black/60
-              via-black/25
-              to-transparent
-            "
-          />
-
-          {/* CLOSE BUTTON */}
-          <IconButton
-            label="Close reading mode"
-            onClick={onClose}
-            className="
-              absolute
-              right-4
-              top-4
-              z-20
-              bg-black/[0.35]
-              hover:bg-black/[0.55]
-            "
-          />
-
-          {/* BANNER TEXT & ACTIONS */}
-          <div
-            className="
-              absolute
-              bottom-3
-              left-4
-              z-10
-              flex
-              flex-col
-              items-start
-              gap-2.5
-              sm:bottom-4
-              sm:left-5
-            "
-          >
-            {/* BALANCED TITLE FRAME */}
-            <span
-              className="
-                inline-block
-                whitespace-nowrap
-                rounded-xl
-                bg-[var(--home-accent)]
-                text-base
-                font-extrabold
-                leading-none
-                text-black
-                shadow-md
-                sm:text-lg
-              "
-              style={{
-                paddingLeft: '20px',
-                paddingRight: '20px',
-                paddingTop: '8px',
-                paddingBottom: '8px',
-              }}
-            >
-              {title}
-            </span>
-
-            <div
-              className="
-                flex
-                flex-wrap
-                items-center
-                gap-2.5
-              "
-            >
-              <RatingBadge
-                rating={rating}
-                compact
-              />
-
-              {/* BALANCED DETAILS BUTTON FRAME */}
-              <button
-                type="button"
-                className="
-                  btn-yellow
-                  inline-flex
-                  items-center
-                  gap-2
-                  whitespace-nowrap
-                  rounded-xl
-                  text-xs
-                  font-bold
-                  text-black
-                  shadow-sm
-                  transition-all
-                  hover:brightness-105
-                  sm:text-sm
-                "
-                style={{
-                  paddingLeft: '16px',
-                  paddingRight: '16px',
-                  paddingTop: '6px',
-                  paddingBottom: '6px',
-                }}
-                onClick={onClose}
-              >
-                <BookOpen
-                  size={14}
-                  strokeWidth={2.3}
-                />
-                Details
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* CHAPTER READING PANE */}
+        {/* CHAPTER READING PANE — no banner in reading mode; every pixel
+            goes to the chapter itself (esp. PDF chapters). */}
         <Surface
           className="
             flex
             min-h-0
-            flex-[1_1_0%]
+            flex-1
             flex-col
             overflow-hidden
-            rounded-[1.75rem]
+            rounded-[1.25rem]
             p-0
           "
         >
-          <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
-            <div className="w-full">
-              <div className="mb-5 flex items-center justify-between gap-3 border-b border-[var(--home-border)] pb-4">
-                <h3 className="text-2xl font-extrabold text-[var(--home-text)] sm:text-3xl">
-                  {chapterContent ? chapterContent.title : 'Chapter 1'}
-                </h3>
+          <div className={`flex min-h-0 flex-1 flex-col pl-2.5 pr-1.5 py-1.5 sm:pl-3 sm:pr-2 sm:py-1.5 ${(chapterContent?.contentUrl || chapterContent?.pdfFileId) ? '' : 'panel-scroll overflow-y-auto'}`}>
+            <div className="flex min-h-0 w-full flex-1 flex-col">
+              <div className="mb-1 flex items-center justify-between gap-1.5 border-b border-[var(--home-border)] pb-1">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <h3 className="truncate text-sm font-extrabold text-[var(--home-text)] sm:text-base">
+                    {chapterContent ? chapterContent.title : `${t('Chapter')} 1`}
+                  </h3>
 
-                {chapterContent && (
-                  <span className="shrink-0 rounded-full bg-[var(--home-control)] px-3 py-1 text-xs font-bold text-[var(--home-ink)]">
-                    Ch. {chapterContent.number}
-                    {book?.totalChapters ? ` / ${book.totalChapters}` : ''}
-                  </span>
-                )}
+                  {chapterContent && (
+                    <span className="shrink-0 rounded-full bg-[var(--home-control)] px-2 py-0.5 text-[10px] font-bold text-[var(--home-ink)]">
+                      Ch. {chapterContent.number}
+                      {book?.totalChapters ? ` / ${book.totalChapters}` : ''}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={onToggleFullscreen}
+                    aria-label={fullscreen ? t('Exit full screen') : t('Full screen')}
+                    title={fullscreen ? t('Exit full screen') : t('Full screen')}
+                    className="flex h-6 w-6 items-center justify-center rounded-lg border border-[var(--home-border)] bg-[var(--home-panel-hover)] text-[var(--home-text)] transition-colors hover:bg-[var(--home-panel)]"
+                  >
+                    {fullscreen ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+                  </button>
+
+                  <IconButton
+                    label={t('Close reading mode')}
+                    onClick={onClose}
+                    compact
+                  />
+                </div>
               </div>
 
               {chapterLoading ? (
-                <p className="text-base text-[var(--home-text-muted)]">Loading chapter...</p>
+                <p className="text-base text-[var(--home-text-muted)]">{t('Loading chapter...')}</p>
+              ) : chapterContent?.pdfFileId ? (
+                <ChapterPdf key={chapterContent.pdfFileId} fileId={chapterContent.pdfFileId} title={chapterContent.title} t={t} />
+              ) : chapterContent?.contentUrl ? (
+                <ChapterEmbed key={chapterContent.contentUrl} url={chapterContent.contentUrl} title={chapterContent.title} t={t} />
               ) : (
                 <p
                   className="
@@ -728,7 +796,7 @@ export default function HeroCard({
       }}
     >
       <IconButton
-        label="Close details"
+        label={t('Close details')}
         onClick={onClose}
         className="
           absolute
@@ -823,7 +891,7 @@ export default function HeroCard({
               strokeWidth={0}
               aria-hidden="true"
             />
-            Read Now
+            {t('Read now')}
           </button>
 
           {/* FAVORITE BUTTON */}
@@ -863,8 +931,8 @@ export default function HeroCard({
               }
             />
             {isFavorite
-              ? 'Favorited'
-              : 'Add To Favorites'}
+              ? t('Favorited')
+              : t('Add to Favorites')}
           </button>
         </div>
 
@@ -872,11 +940,29 @@ export default function HeroCard({
               <MetaList metadata={meta} rating={rating} />
             </div>
 
+            {canRate && (
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-[var(--home-border)] bg-black/[0.12] px-4 py-3">
+                <span className="text-sm font-bold text-[var(--home-text)]">
+                  {isLoggedIn ? t('Your rating') : t('Log in to rate this story')}
+                </span>
+
+                {isLoggedIn && (
+                  <StarRatingInput value={myRating} onRate={handleRate} disabled={submitting} />
+                )}
+
+                {ratingCount != null && (
+                  <span className="text-xs text-[var(--home-text-muted)]">
+                    {ratingCount} {ratingCount === 1 ? t('rating') : t('ratings')}
+                  </span>
+                )}
+              </div>
+            )}
+
             {notificationReason && (
               <div className="mt-5 rounded-lg border border-[var(--home-border)] bg-black/[0.16] px-4 py-3 text-sm font-semibold leading-6 text-[var(--home-text)]">
                 <span className="mb-1 flex items-center gap-2 text-xs font-extrabold uppercase text-[var(--home-accent)]">
                   <Bell size={14} aria-hidden="true" />
-                  Notification reason
+                  {t('Notification reason')}
                 </span>
                 {notificationReason}
               </div>
@@ -893,7 +979,7 @@ export default function HeroCard({
             sm:text-2xl
           "
         >
-          Genres
+          {t('Genres')}
         </h3>
 
         <GenreList
@@ -913,7 +999,7 @@ export default function HeroCard({
             sm:text-2xl
           "
         >
-          Review
+          {t('Review')}
         </h3>
 
         <p

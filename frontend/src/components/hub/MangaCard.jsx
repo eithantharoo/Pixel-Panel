@@ -1,7 +1,9 @@
 import { Star } from 'lucide-react';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './MangaCard.css';
 
 function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, chapter, progress, rank, showChapterNumbers = true }) {
+  const { t } = useTranslation();
   const style = cover ? undefined : { background: `linear-gradient(160deg, ${color}, ${color}88)` };
 
   if (variant === 'trending') {
@@ -46,7 +48,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
     <article className={`manga-card manga-card--${variant}`}>
       <div className="manga-card__cover" style={style}>
         {cover && <img src={cover} alt={title} />}
-        {variant === 'new' && <span className="manga-card__badge">New</span>}
+        {variant === 'new' && <span className="manga-card__badge">{t('New')}</span>}
 
         {variant === 'featured' && rank != null && (
           <span className="manga-card__rank manga-card__rank--featured">{rank}</span>
@@ -67,7 +69,7 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
 
         {/* Hover overlay — genre-style pill button */}
         <div className="manga-card__hover-overlay">
-          <span className="manga-card__read-btn">Read Now</span>
+          <span className="manga-card__read-btn">{t('Read now')}</span>
         </div>
       </div>
 

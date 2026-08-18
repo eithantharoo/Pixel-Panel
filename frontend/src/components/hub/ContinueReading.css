@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   gap: 0;
-  padding: 0.75rem 1.5rem;
+  padding: 0.4rem 1.5rem;
   background: transparent;
   /* parent provides #4e2d58 */
   border-radius: 0;
@@ -29,14 +29,14 @@
 .continue-reading__toggle {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 42px;
-  padding: 0.45rem 0.9rem 0.45rem 0.65rem;
+  gap: 0.4rem;
+  min-height: 30px;
+  padding: 0.3rem 0.75rem 0.3rem 0.55rem;
   border-radius: 8px;
   background: rgba(56, 35, 66, 0.94);
   border: 1px solid rgba(255, 244, 61, 0.58);
   color: var(--home-accent);
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -126,11 +126,11 @@
 /* ── View All button — hidden by default, slides in with books ───── */
 .continue-reading__view-all {
   flex-shrink: 0;
-  padding: 0.45rem 1.25rem;
+  padding: 0.3rem 1.1rem;
   border-radius: 999px;
   background: var(--home-accent);
   color: var(--home-ink);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
   border: none;
@@ -158,7 +158,7 @@
 .continue-reading--open .continue-reading__view-all {
   max-width: 160px;
   opacity: 1;
-  padding: 0.45rem 1.25rem;
+  padding: 0.3rem 1.1rem;
   margin-left: 1rem;
 }
 

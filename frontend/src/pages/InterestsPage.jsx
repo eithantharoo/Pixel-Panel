@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import InterestCard from '../components/hub/InterestCard';
 import { saveInterests } from '../services/authService';
 import { clearAuth, loadAuth } from '../utils/authState';
+import { useTranslation } from '../utils/i18n/I18nContext';
 import './InterestsPage.css';
 
 const INTEREST_ROWS = [
@@ -16,7 +17,7 @@ const INTEREST_ROWS = [
   ],
   [
     { id: 'sci-fi', label: 'Sci-Fi' },
-    { id: 'slice of life', label: 'Slice of Life' },
+    { id: 'slice-of-life', label: 'Slice of Life' },
     { id: 'historical', label: 'Historical' },
     { id: 'adventure', label: 'Adventure' },
     { id: 'drama', label: 'Drama' },
@@ -45,6 +46,7 @@ function SelectedTag({ label, onRemove }) {
 
 export default function InterestsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [selected, setSelected] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -84,8 +86,8 @@ export default function InterestsPage() {
   return (
     <section className="interests-page">
       <div className="interests-page__picker">
-        <h2 className="interests-page__heading">Choose Your interests</h2>
-        <p className="interests-page__subheading">select at least three or more</p>
+        <h2 className="interests-page__heading">{t('Choose Your Interests')}</h2>
+        <p className="interests-page__subheading">{t('select at least three or more')}</p>
 
         <div className="interests-page__rows">
           {INTEREST_ROWS.map((row) => (
@@ -94,7 +96,7 @@ export default function InterestsPage() {
                 <InterestCard
                   key={interest.id}
                   id={interest.id}
-                  label={interest.label}
+                  label={t(`genres.${interest.id}`, interest.label)}
                   selected={selected.includes(interest.id)}
                   onToggle={() => toggleInterest(interest.id)}
                 />
@@ -106,12 +108,12 @@ export default function InterestsPage() {
 
       <div className="interests-page__footer">
         <div className="interests-page__footer-content">
-          <h3 className="interests-page__footer-title">Your selection</h3>
+          <h3 className="interests-page__footer-title">{t('Your selection')}</h3>
           <div className="interests-page__tags">
             {selectedItems.map((item) => (
               <SelectedTag
                 key={item.id}
-                label={item.label}
+                label={t(`genres.${item.id}`, item.label)}
                 onRemove={() => removeInterest(item.id)}
               />
             ))}
@@ -127,7 +129,7 @@ export default function InterestsPage() {
           disabled={!canContinue}
           title={canContinue ? 'Continue to language page' : `Select at least ${MIN_INTERESTS} interests`}
         >
-          {submitting ? 'Saving...' : 'Continue'}
+          {submitting ? t('Saving...') : t('Continue')}
         </button>
       </div>
     </section>

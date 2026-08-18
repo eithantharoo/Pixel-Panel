@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Camera, Check, ChevronDown, Grid3X3, Heart, LogIn, LogOut, Search, User, X } from 'lucide-react';
+import { Bell, Camera, Check, ChevronDown, Grid3X3, Heart, LayoutDashboard, LogIn, LogOut, Search, User, X } from 'lucide-react';
 import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
+import { useTranslation } from '../../utils/i18n/I18nContext';
 import './HomeHeader.css';
 
 const PROFILE_STORAGE_KEY = 'pixel-panel-profile';
@@ -31,11 +32,12 @@ function saveProfile(profile) {
 }
 
 function NotificationMenu({ notifications, onClose, onNotificationClick }) {
+  const { t } = useTranslation();
   return (
-    <div className="home-header__menu home-header__notifications" role="dialog" aria-label="Notifications">
+    <div className="home-header__menu home-header__notifications" role="dialog" aria-label={t('Notifications')}>
       <div className="home-header__menu-head">
         <span className="home-header__notif-heading">
-          Notifications
+          {t('Notifications')}
           {notifications.length > 0 && (
             <span className="home-header__notif-count">{notifications.length}</span>
           )}
@@ -65,7 +67,7 @@ function NotificationMenu({ notifications, onClose, onNotificationClick }) {
           ))}
         </div>
       ) : (
-        <p className="home-header__empty">No new updates yet.</p>
+        <p className="home-header__empty">{t('No notifications yet')}</p>
       )}
     </div>
   );
@@ -73,38 +75,39 @@ function NotificationMenu({ notifications, onClose, onNotificationClick }) {
 
 
 function ProfileMenu({ profile, draftName, onDraftNameChange, onImageChange, onSave, onLogin, onLogout }) {
+  const { t } = useTranslation();
   return (
-    <div className="home-header__menu home-header__profile-menu" role="dialog" aria-label="Profile menu">
+    <div className="home-header__menu home-header__profile-menu" role="dialog" aria-label={t('Profile')}>
       <div className="home-header__profile-preview">
         <span className="home-header__profile-large">
           <img src={profile.image} alt={profile.name} />
         </span>
         <label className="home-header__image-edit">
           <Camera size={14} aria-hidden="true" />
-          <span>Edit image</span>
+          <span>{t('Edit image')}</span>
           <input type="file" accept="image/*" onChange={onImageChange} />
         </label>
       </div>
 
       <label className="home-header__field">
-        <span>Edit name</span>
+        <span>{t('Edit name')}</span>
         <input value={draftName} onChange={(event) => onDraftNameChange(event.target.value)} />
       </label>
 
       <button type="button" className="home-header__profile-action" onClick={onSave}>
         <User size={15} aria-hidden="true" />
-        Save profile
+        {t('Save profile')}
       </button>
 
       {profile.isLoggedIn ? (
         <button type="button" className="home-header__profile-action home-header__profile-action--danger" onClick={onLogout}>
           <LogOut size={15} aria-hidden="true" />
-          Log out
+          {t('Log out')}
         </button>
       ) : (
         <button type="button" className="home-header__profile-action" onClick={onLogin}>
           <LogIn size={15} aria-hidden="true" />
-          Log in
+          {t('Log in')}
         </button>
       )}
     </div>
@@ -121,7 +124,11 @@ function HomeHeader({
   onLogin,
   onLogout,
   onFavoriteClick,
+  isAdmin = false,
+  onAdminClick,
+  compact = false,
 }) {
+  const { t, language, setLanguage } = useTranslation();
   const [genreOpen, setGenreOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -195,7 +202,7 @@ function HomeHeader({
   }
 
   return (
-    <header className="home-header">
+    <header className={`home-header${compact ? ' home-header--compact' : ''}`}>
       <div className="home-header__brand">
         <div className="home-header__logo">
           <img src="/images/logo_pic.png" alt="Pixel Panel" />    
@@ -208,8 +215,8 @@ function HomeHeader({
           <input
             type="text"
             className="home-header__search-input"
-            placeholder="Search manga"
-            aria-label="Search manga"
+            placeholder={t('Search manga')}
+            aria-label={t('Search manga')}
             value={searchValue}
             onChange={(event) => onSearchChange?.(event.target.value)}
           />
@@ -236,7 +243,7 @@ function HomeHeader({
             onClick={() => setGenreOpen((isOpen) => !isOpen)}
           >
             <Grid3X3 size={16} aria-hidden="true" />
-            <span className="home-header__genre-label">Genres</span>
+            <span className="home-header__genre-label">{t('Genres')}</span>
             <ChevronDown
               className={`home-header__genre-arrow${genreOpen ? ' home-header__genre-arrow--up' : ''}`}
               size={14}
@@ -256,7 +263,7 @@ function HomeHeader({
                   onClick={() => handleGenrePick(genre.id)}
                 >
                   <GenreIcon genreId={genre.id} size={16} />
-                  <span>{genre.label}</span>
+                  <span>{t(`genres.${genre.id}`, genre.label)}</span>
                   {activeGenre === genre.id && <Check className="home-header__genre-check" size={14} aria-hidden="true" />}
                 </button>
               ))}
@@ -268,9 +275,31 @@ function HomeHeader({
       <div className="home-header__actions" ref={actionsRef}>
         <button
           type="button"
+          className="home-header__icon-btn home-header__lang-btn"
+          aria-label={t('Switch language')}
+          title={t('Switch language')}
+          onClick={() => setLanguage(language === 'my' ? 'en' : 'my')}
+        >
+          {language === 'my' ? 'EN' : 'MM'}
+        </button>
+
+        {isAdmin && (
+          <button
+            type="button"
+            className="home-header__icon-btn"
+            aria-label={t('Admin Dashboard')}
+            title={t('Admin Dashboard')}
+            onClick={onAdminClick}
+          >
+            <LayoutDashboard size={20} aria-hidden="true" />
+          </button>
+        )}
+
+        <button
+          type="button"
           className={`home-header__icon-btn home-header__icon-btn--notification home-header__icon-btn--badge${notificationOpen ? ' home-header__icon-btn--active' : ''}`}
-          aria-label={`Notifications${notifications.length ? `, ${notifications.length} new` : ''}`}
-          title="Notifications"
+          aria-label={`${t('Notifications')}${notifications.length ? `, ${notifications.length} new` : ''}`}
+          title={t('Notifications')}
           aria-expanded={notificationOpen}
           onClick={() => {
             setNotificationOpen((isOpen) => !isOpen);
@@ -319,8 +348,8 @@ function HomeHeader({
         <button
           type="button"
           className="home-header__icon-btn"
-          aria-label="Favorites"
-          title="Favorites"
+          aria-label={t('Favorite')}
+          title={t('Favorite')}
           onClick={onFavoriteClick}
         >
           <Heart size={20} aria-hidden="true" />
