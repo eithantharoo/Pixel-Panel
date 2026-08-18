@@ -83,9 +83,38 @@ const getProgressForStory = asyncHandler(async (req, res) => {
   res.status(200).json(progress);
 });
 
+
+// @desc    Remove a single story's reading progress from history
+// @route   DELETE /api/progress/:storyId
+// @access  Private
+const deleteProgress = asyncHandler(async (req, res) => {
+  const progress = await ReadingProgress.findOneAndDelete({
+    user: req.user.id,
+    story: req.params.storyId,
+  });
+
+  if (!progress) {
+    res.status(404);
+    throw new Error('Reading progress not found');
+  }
+
+  res.status(200).json({ message: 'Reading progress removed successfully' });
+});
+
+
+// @desc    Clear all reading history for the current user
+// @route   DELETE /api/progress
+// @access  Private
+const clearReadingHistory = asyncHandler(async (req, res) => {
+  await ReadingProgress.deleteMany({ user: req.user.id });
+  res.status(200).json({ message: 'Reading history cleared successfully' });
+});
+
 module.exports = {
   getContinueReading,
   getReadingHistory,
   saveProgress,
   getProgressForStory,
+  deleteProgress,
+  clearReadingHistory,
 };

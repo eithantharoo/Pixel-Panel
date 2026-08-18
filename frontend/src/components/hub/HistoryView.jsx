@@ -10,12 +10,16 @@ function TrashIcon() {
   return <Trash2 size={14} strokeWidth={1.9} aria-hidden="true" />;
 }
 
-function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookClick, ...rest }) {
+function HistoryItem({ id, title, color, cover, chapter, readAt, progress, onBookClick, onRemove, ...rest }) {
   const { t } = useTranslation();
   const coverStyle = { background: `linear-gradient(160deg, ${color}, ${color}88)` };
-  const book = { title, color, cover, chapter, readAt, progress, ...rest };
+  const book = { id, title, color, cover, chapter, readAt, progress, ...rest };
   const isFinished = progress === 100;
   const openBook = () => onBookClick?.(book);
+  const removeBook = (e) => {
+    e.stopPropagation();
+    onRemove?.(id);
+  };
 
   return (
     <article
@@ -37,7 +41,7 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookCli
             type="button"
             className="hist-item__remove"
             aria-label={`Remove ${title} from history`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={removeBook}
           >
             <TrashIcon />
           </button>
@@ -65,7 +69,7 @@ function HistoryItem({ title, color, cover, chapter, readAt, progress, onBookCli
   );
 }
 
-function HistoryView({ items, emptyTitle, emptySubtitle, onBookClick }) {
+function HistoryView({ items, emptyTitle, emptySubtitle, onBookClick, onRemove, onClearAll }) {
   const { t } = useTranslation();
   if (!items || items.length === 0) {
     return (
@@ -79,15 +83,21 @@ function HistoryView({ items, emptyTitle, emptySubtitle, onBookClick }) {
     );
   }
 
+  const clearAll = () => {
+    if (window.confirm(t('Clear your entire reading history?'))) {
+      onClearAll?.();
+    }
+  };
+
   return (
     <div className="hist-view">
       <div className="hist-view__header">
         <h1 className="hist-view__title">{t('Reading History')}</h1>
-        <button type="button" className="hist-view__clear">{t('Clear All')}</button>
+        <button type="button" className="hist-view__clear" onClick={clearAll}>{t('Clear All')}</button>
       </div>
       <div className="hist-view__list">
         {items.map((item) => (
-          <HistoryItem key={item.id} {...item} onBookClick={onBookClick} />
+          <HistoryItem key={item.id} {...item} onBookClick={onBookClick} onRemove={onRemove} />
         ))}
       </div>
     </div>

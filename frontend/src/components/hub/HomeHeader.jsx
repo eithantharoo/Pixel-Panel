@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Camera, Check, ChevronDown, Grid3X3, Heart, LayoutDashboard, LogIn, LogOut, Search, User, X } from 'lucide-react';
+import { Bell, Camera, Check, ChevronDown, Grid3X3, LayoutDashboard, LogIn, LogOut, Search, User, X } from 'lucide-react';
 import { images } from '../../assets/images';
 import { GENRES } from '../../data/home_data';
 import GenreIcon from './GenreIcon';
@@ -123,7 +123,6 @@ function HomeHeader({
   onNotificationClick,
   onLogin,
   onLogout,
-  onFavoriteClick,
   isAdmin = false,
   onAdminClick,
   compact = false,
@@ -344,16 +343,6 @@ function HomeHeader({
             onLogout={handleLogout}
           />
         )}
-
-        <button
-          type="button"
-          className="home-header__icon-btn"
-          aria-label={t('Favorite')}
-          title={t('Favorite')}
-          onClick={onFavoriteClick}
-        >
-          <Heart size={20} aria-hidden="true" />
-        </button>
       </div>
     </header>
   );

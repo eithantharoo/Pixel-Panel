@@ -184,7 +184,7 @@ export default function HomePage() {
   const settings = useLiveSettings();
   const { trending, newReleases, popular, forYou, loading: catalogLoading } = useStoryCatalog();
   const filteredTrending = useMemo(() => filterItems(trending, searchQuery), [trending, searchQuery]);
-  const { continueReading, history, loading: progressLoading } = useReadingProgress();
+  const { continueReading, history, loading: progressLoading, removeFromHistory, clearHistory } = useReadingProgress();
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const {
     notifications: serverNotifications,
@@ -441,6 +441,8 @@ export default function HomePage() {
           emptyTitle={searchQuery ? t('No history found') : undefined}
           emptySubtitle={searchQuery ? t('Try another search in your reading history.') : undefined}
           onBookClick={openSavedChapter}
+          onRemove={removeFromHistory}
+          onClearAll={clearHistory}
         />
       );
     }

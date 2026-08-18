@@ -19,3 +19,11 @@ export function saveProgress({ storyId, chapterNumber, progress }, token) {
 export function getProgressForStory(storyId, token) {
   return apiRequest(`/progress/${storyId}`, { token });
 }
+
+export function deleteProgress(storyId, token) {
+  return apiRequest(`/progress/${storyId}`, { method: 'DELETE', token });
+}
+
+export function clearReadingHistory(token) {
+  return apiRequest('/progress', { method: 'DELETE', token });
+}

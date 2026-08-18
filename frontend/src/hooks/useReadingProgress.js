@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { getContinueReading, getReadingHistory } from '../services/progressService';
+import { useCallback, useEffect, useState } from 'react';
+import { clearReadingHistory, deleteProgress, getContinueReading, getReadingHistory } from '../services/progressService';
 import { mapProgressListToBooks } from '../utils/storyAdapter';
 import { loadAuth } from '../utils/authState';
 
@@ -36,5 +36,24 @@ export function useReadingProgress() {
     };
   }, []);
 
-  return { continueReading, history, loading };
+  const removeFromHistory = useCallback(async (storyId) => {
+    const token = loadAuth()?.token;
+    try {
+      await deleteProgress(storyId, token);
+    } catch {
+      // If the record was already gone server-side, fall through and
+      // still drop it from local state so the UI stays consistent.
+    }
+    setHistory((current) => current.filter((book) => book.id !== storyId));
+    setContinueReading((current) => current.filter((book) => book.id !== storyId));
+  }, []);
+
+  const clearHistory = useCallback(async () => {
+    const token = loadAuth()?.token;
+    await clearReadingHistory(token);
+    setHistory([]);
+    setContinueReading([]);
+  }, []);
+
+  return { continueReading, history, loading, removeFromHistory, clearHistory };
 }

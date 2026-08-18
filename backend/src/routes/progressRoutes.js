@@ -6,6 +6,8 @@ const {
   getReadingHistory,
   saveProgress,
   getProgressForStory,
+  deleteProgress,
+  clearReadingHistory,
 } = require('../controllers/progressController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -19,7 +21,13 @@ router.get('/history', protect, getReadingHistory);
 // Save reading progress
 router.post('/', protect, saveProgress);
 
+// Clear all reading history for the current user
+router.delete('/', protect, clearReadingHistory);
+
 // Get progress for a specific story
 router.get('/:storyId', protect, getProgressForStory);
+
+// Remove a single story's reading progress
+router.delete('/:storyId', protect, deleteProgress);
 
 module.exports = router;
