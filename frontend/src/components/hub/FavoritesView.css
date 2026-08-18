@@ -1,0 +1,232 @@
+.fav-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-right: 0.5rem;
+}
+
+.fav-view__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.fav-view__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.fav-view__count {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.fav-view__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
+}
+
+/* Individual card */
+.fav-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  outline: none;
+}
+
+.fav-card:focus-visible .fav-card__cover {
+  outline: 2px solid var(--home-accent);
+  outline-offset: 2px;
+}
+
+.fav-card:hover {
+  transform: translateY(-3px);
+}
+
+.fav-card__cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.fav-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Genres-style hover overlay */
+.fav-card__hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.fav-card:hover .fav-card__hover-overlay {
+  opacity: 1;
+}
+
+.fav-card__read-btn {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: #e8d5f5;
+  color: #2a1040;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.fav-card__genre {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+
+.fav-card__heart {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  cursor: pointer;
+  color: #e85d8a;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.fav-card__heart:hover {
+  background: rgba(0, 0, 0, 0.55);
+  transform: scale(1.1);
+}
+
+.fav-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fav-card__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--home-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fav-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--home-accent);
+}
+
+/* ── Book footer overlay ─────────────────────────────────────── */
+.fav-card__book-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
+  pointer-events: none;
+  text-align: left;
+}
+
+.fav-card__book-footer-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.fav-card__book-footer-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #fff43d;
+}
+
+/* Empty state */
+.fav-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.fav-empty__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--home-panel-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--home-accent);
+  margin-bottom: 0.5rem;
+}
+
+.fav-empty__text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--home-text);
+}
+
+.fav-empty__sub {
+  font-size: 0.8125rem;
+  color: var(--home-text-muted);
+}

@@ -1,0 +1,224 @@
+.hist-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-right: 0.5rem;
+}
+
+.hist-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hist-view__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.hist-view__clear {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--home-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+  font: inherit;
+}
+
+.hist-view__clear:hover {
+  background: rgba(234, 219, 238, 0.12);
+  color: var(--home-text);
+}
+
+.hist-view__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Individual history item */
+.hist-item {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  border-radius: 14px;
+  background: var(--home-panel-deep);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--home-border);
+  transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.hist-item:hover {
+  background: var(--home-panel-hover);
+  transform: translateX(3px);
+}
+
+.hist-item__cover {
+  position: relative;
+  width: 52px;
+  height: 70px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.hist-item__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* "Read Now" overlay */
+.hist-item__cover::after {
+  content: '▶';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.52);
+  color: #fff;
+  font-size: 1rem;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+
+.hist-item:hover .hist-item__cover::after {
+  opacity: 1;
+}
+
+.hist-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hist-item__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.hist-item__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--home-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hist-item__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--home-text-muted);
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.hist-item__remove:hover {
+  color: #c0392b;
+}
+
+.hist-item__chapter {
+  font-size: 0.75rem;
+  color: var(--home-text-muted);
+  font-weight: 500;
+}
+
+.hist-item__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.125rem;
+}
+
+.hist-item__time {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6875rem;
+  color: var(--home-text-muted);
+}
+
+.hist-item__badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--home-accent);
+  background: rgba(255, 244, 61, 0.12);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+
+.hist-item__badge--done {
+  color: #27ae60;
+  background: rgba(39, 174, 96, 0.12);
+}
+
+.hist-item__progress {
+  margin-top: 0.4rem;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(234, 219, 238, 0.18);
+  overflow: hidden;
+}
+
+.hist-item__progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--home-accent);
+  transition: width 0.4s ease;
+}
+
+/* Empty state */
+.hist-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.hist-empty__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--home-panel-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--home-accent);
+  margin-bottom: 0.5rem;
+}
+
+.hist-empty__text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--home-text);
+}
+
+.hist-empty__sub {
+  font-size: 0.8125rem;
+  color: var(--home-text-muted);
+}

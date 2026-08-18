@@ -1,0 +1,440 @@
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  background: var(--purple-light);
+}
+
+.auth-card {
+  flex: 0 0 min(520px, 92vw);
+  margin: 40px 48px 40px auto;
+  padding: 42px 40px 32px;
+  border-radius: var(--radius-card);
+  background: var(--purple-normal);
+  color: var(--text-white);
+  box-shadow: var(--shadow-card);
+  align-self: center;
+}
+
+.auth-card__header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.auth-card__header p {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.auth-form {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+/* =========================
+   INPUT BOX
+========================= */
+
+.auth-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 14px;
+
+  min-height: 48px;
+
+  border-radius: 14px;
+
+  background: var(--input-bg);
+  color: #3f3428;
+
+  overflow: hidden;
+}
+
+.auth-input-wrap input {
+  flex: 1;
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #3f3428;
+
+  font-size: 0.9rem;
+}
+
+.auth-input-wrap input::placeholder {
+  color: var(--input-placeholder);
+}
+
+/* =========================
+   INPUT ICON
+========================= */
+
+.auth-input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  opacity: 0.55;
+}
+
+/* =========================
+   PASSWORD EYE
+========================= */
+
+.auth-eye {
+  width: 24px;
+  height: 24px;
+
+  flex: 0 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  outline: none;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: #3f3428;
+
+  cursor: pointer;
+
+  opacity: 0.65;
+}
+
+.auth-eye:hover {
+  opacity: 0.9;
+}
+
+.auth-eye svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Hide Edge built-in password eye */
+
+.auth-input-wrap input[type="password"]::-ms-reveal,
+.auth-input-wrap input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+/* Hide Chrome password credential button if shown */
+
+.auth-input-wrap input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
+
+/* =========================
+   SIGN UP BUTTON
+========================= */
+
+.auth-submit {
+  margin-top: 4px;
+
+  width: 100%;
+  min-height: 50px;
+
+  border: none;
+
+  border-radius: var(--radius-pill);
+
+  background: var(--yellow-normal);
+
+  color: #000000 !important;
+
+  -webkit-text-fill-color: #000000 !important;
+
+  font-weight: 700;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+}
+
+.auth-submit:hover {
+  background: var(--yellow-normal-hover);
+
+  color: #000000 !important;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+
+.auth-divider {
+  position: relative;
+
+  text-align: center;
+
+  margin: 6px 0;
+}
+
+.auth-divider::before {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  top: 50%;
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.auth-divider span {
+  position: relative;
+
+  padding: 0 12px;
+
+  background: var(--purple-normal);
+
+  font-size: 0.85rem;
+}
+
+/* =========================
+   GOOGLE BUTTON
+========================= */
+
+
+.auth-google {
+  width: 100%;
+
+  min-height: 48px;
+
+  border: 2px solid rgba(255, 255, 255, 0.9);
+
+  border-radius: var(--radius-pill);
+
+  background: transparent;
+
+  color: var(--text-white);
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  padding: 0 20px;
+}
+/* GOOGLE LOGO FIX */
+
+.auth-google__icon,
+.auth-google img,
+.auth-google img.auth-google__icon {
+  width: 28px !important;
+  height: 28px !important;
+
+  min-width: 28px !important;
+  min-height: 28px !important;
+
+  max-width: 28px !important;
+  max-height: 28px !important;
+
+  flex: 0 0 28px !important;
+
+  object-fit: contain !important;
+
+  display: block !important;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.auth-footer {
+  margin-top: 22px;
+
+  text-align: center;
+
+  font-size: 0.92rem;
+}
+
+.auth-text-link {
+  border: none;
+
+  background: none;
+
+  color: var(--yellow-normal);
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-decoration: none;
+}
+
+.auth-text-link:hover {
+  text-decoration: underline;
+}
+
+.auth-text-link:disabled,
+.auth-google:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-text-link:disabled:hover {
+  text-decoration: none;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.auth-error {
+  color: #e53935;
+
+  font-size: 0.85rem;
+
+  margin-top: 6px;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 960px) {
+  .auth-page {
+    flex-direction: column;
+
+    justify-content: center;
+
+    padding: 2rem 1rem;
+  }
+
+  .auth-card {
+    margin: 0 auto;
+
+    width: 100%;
+
+    max-width: 480px;
+
+    flex: none;
+  }
+}
+
+/* =========================
+   LARGE PHONE
+========================= */
+
+@media (max-width: 600px) {
+  .auth-page {
+    padding: 1.25rem 1rem;
+  }
+
+  .auth-card {
+    padding: 32px 24px 24px;
+
+    border-radius: 20px;
+  }
+
+  .auth-card__header h2 {
+    font-size: 1.625rem;
+  }
+}
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-card {
+    padding: 24px 18px 20px;
+
+    border-radius: 18px;
+  }
+
+  .auth-card__header h2 {
+    font-size: 1.4rem;
+  }
+
+  .auth-card__header p {
+    font-size: 0.875rem;
+  }
+
+  .auth-input-wrap {
+    min-height: 44px;
+
+    padding: 0 10px;
+  }
+
+  .auth-submit {
+    min-height: 46px;
+
+    font-size: 0.9375rem;
+  }
+
+  .auth-google {
+    min-height: 44px;
+  }
+
+  .auth-google__icon,
+  .auth-google img {
+    width: 18px !important;
+    height: 18px !important;
+
+    min-width: 18px !important;
+    min-height: 18px !important;
+
+    max-width: 18px !important;
+    max-height: 18px !important;
+
+    flex-basis: 18px !important;
+  }
+}
+
+/* =========================
+   VERY SMALL PHONE
+========================= */
+
+@media (max-width: 375px) {
+  .auth-card {
+    padding: 20px 14px 16px;
+  }
+
+  .auth-card__header h2 {
+    font-size: 1.25rem;
+  }
+
+  .auth-form {
+    gap: 14px;
+  }
+}
