@@ -1,8 +1,10 @@
-import { Star } from 'lucide-react';
+import { Eye, Star } from 'lucide-react';
 import { useTranslation } from '../../utils/i18n/I18nContext';
 import './MangaCard.css';
 
-function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, chapter, progress, rank, showChapterNumbers = true }) {
+const viewsFormatter = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+
+function MangaCard({ title, cover, color = '#3a2858', variant = 'default', rating, views, chapter, progress, rank, showChapterNumbers = true }) {
   const { t } = useTranslation();
   const style = cover ? undefined : { background: `linear-gradient(160deg, ${color}, ${color}88)` };
 
@@ -13,13 +15,21 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
           {cover && <img src={cover} alt={title} />}
           {rank != null && <span className="manga-card__rank">{rank}</span>}
         </div>
-        <h3 className="manga-card__title">{title}</h3>
-        {rating != null && (
-          <div className="manga-card__rating manga-card__rating--inline">
-            <Star size={12} className="manga-card__star" aria-hidden="true" />
-            <span>{rating.toFixed(1)}</span>
-          </div>
-        )}
+        <div className="manga-card__trending-info">
+          <h3 className="manga-card__title">{title}</h3>
+          {rating != null && (
+            <div className="manga-card__rating manga-card__rating--inline">
+              <Star size={12} className="manga-card__star" aria-hidden="true" />
+              <span>{rating.toFixed(1)}</span>
+            </div>
+          )}
+          {views != null && (
+            <div className="manga-card__views manga-card__views--inline">
+              <Eye size={12} className="manga-card__views-icon" aria-hidden="true" />
+              <span>{viewsFormatter.format(views)}</span>
+            </div>
+          )}
+        </div>
       </article>
     );
   }
@@ -62,6 +72,12 @@ function MangaCard({ title, cover, color = '#3a2858', variant = 'default', ratin
               <div className="manga-card__book-footer-rating">
                 <Star size={10} className="manga-card__star" aria-hidden="true" />
                 <span>{rating.toFixed(1)}</span>
+              </div>
+            )}
+            {views != null && (
+              <div className="manga-card__book-footer-views">
+                <Eye size={10} className="manga-card__views-icon" aria-hidden="true" />
+                <span>{viewsFormatter.format(views)}</span>
               </div>
             )}
           </div>

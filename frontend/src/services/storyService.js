@@ -39,6 +39,11 @@ export function searchStories(q) {
   return apiRequest(`/stories/search?q=${encodeURIComponent(q)}`);
 }
 
+// Fire-and-forget: bumps the story's view count, which drives trending.
+export function recordStoryView(id) {
+  return apiRequest(`/stories/${id}/view`, { method: 'POST' });
+}
+
 export function createStory(story, token) {
   return apiRequest('/stories', { method: 'POST', body: story, token });
 }

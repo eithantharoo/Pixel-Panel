@@ -10,6 +10,7 @@ export function mapStoryToBook(story, extra = {}) {
     banner: story.banner ? encodeURI(story.banner) : undefined,
     rating: story.rating,
     ratingCount: story.ratingCount,
+    views: story.views,
     genre: story.genres?.join(', '),
     genres: story.genres,
     author: story.author,

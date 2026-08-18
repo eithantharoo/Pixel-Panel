@@ -8,6 +8,7 @@ const {
   getNewReleases,
   getPopularStories,
   searchStories,
+  recordStoryView,
   createStory,
   updateStory,
   deleteStory,
@@ -26,6 +27,7 @@ router.get('/for-you', protect, getForYou);
 // Public: get all and get one — /:id must be LAST
 router.get('/', getAllStories);
 router.get('/:id', getStoryById);
+router.post('/:id/view', recordStoryView);
 
 // Admin routes
 router.post('/', protect, adminOnly, createStory);

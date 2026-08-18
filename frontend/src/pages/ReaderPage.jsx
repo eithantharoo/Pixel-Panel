@@ -13,6 +13,8 @@ import { chapterToNumber, isFavoriteBook, loadFavorites, saveFavorites, toggleFa
 import { getBookNotificationIds, loadReadNotificationIds, markReadNotificationIds, READ_NOTIFICATIONS_STORAGE_KEY } from '../utils/notificationState';
 import { clearAuth, loadAuth } from '../utils/authState';
 import { isEditableTarget } from '../utils/isEditableTarget';
+import { isRealStoryId } from '../utils/objectId';
+import { recordStoryView } from '../services/storyService';
 import { useStoryCatalog } from '../hooks/useStoryCatalog';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useSavedProgress } from '../hooks/useSavedProgress';
@@ -81,6 +83,17 @@ export default function ReaderPage() {
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
+
+  // Bumps the story's view count when a reader actually starts reading —
+  // "Read Now", a saved-chapter link, or a direct continue-reading open all
+  // flip `showChapters` to true. This is what the trending ranking sorts
+  // by, so it should reflect readers who actually read, not just browsed
+  // to a book's details page.
+  useEffect(() => {
+    if (!showChapters) return;
+    if (!isRealStoryId(selectedBook?.id)) return;
+    recordStoryView(selectedBook.id).catch(() => {});
+  }, [showChapters, selectedBook?.id]);
 
   const handleChapterEnd = useCallback(() => {
     if (!settings.autoAdvance) return;

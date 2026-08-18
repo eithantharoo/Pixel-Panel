@@ -125,11 +125,18 @@
   font-weight: 700;
 }
 
+.manga-card__trending-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
 .manga-card--trending .manga-card__title {
   font-size: 0.8125rem;
   font-weight: 600;
   color: #fff;
-  flex: 1;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -140,9 +147,23 @@
   position: static;
   background: transparent;
   padding: 0;
-  margin-left: auto;
   flex-shrink: 0;
   color: #fff;
+}
+
+.manga-card__views--inline {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--home-text-muted);
+}
+
+.manga-card__views-icon {
+  color: var(--home-text-muted);
+  flex-shrink: 0;
 }
 
 /* Continue reading */
@@ -266,13 +287,16 @@ button:hover > .manga-card--continue .manga-card__cover::after {
   flex-shrink: 0;
 }
 
-/* ── Book info footer — transparent black 30% band at bottom of cover ── */
+/* ── Book info footer — transparent black band at bottom of cover.
+   min-height keeps the usual 2-line (name + rating) look; letting it grow
+   past that (rather than a fixed height) means an added 3rd line (views)
+   doesn't get clipped by the cover's overflow:hidden. ── */
 .manga-card__book-footer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 30%;
+  min-height: 30%;
   background: rgba(0, 0, 0, 0.72);
   display: flex;
   flex-direction: column;
@@ -303,6 +327,15 @@ button:hover > .manga-card--continue .manga-card__cover::after {
   font-size: 0.6rem;
   font-weight: 600;
   color: #fff43d;
+}
+
+.manga-card__book-footer-views {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ════════════════════════════════════════════════════════════════════

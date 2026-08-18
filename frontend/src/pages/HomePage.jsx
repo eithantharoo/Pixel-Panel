@@ -24,8 +24,7 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useFavorites } from '../hooks/useFavorites';
 import { useLiveSettings } from '../hooks/useLiveSettings';
 import { useServerNotifications } from '../hooks/useServerNotifications';
-import { searchStories } from '../services/storyService';
-import { mapStoriesToBooks, mapStoryToBook } from '../utils/storyAdapter';
+import { mapStoryToBook } from '../utils/storyAdapter';
 import { useTranslation } from '../utils/i18n/I18nContext';
 import './HomePage.css';
 
@@ -195,9 +194,6 @@ export default function HomePage() {
     [forYou, newReleases, popular, favorites],
   );
 
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-
   useEffect(() => {
     function onStorage(e) {
       if (e.key === READ_NOTIFICATIONS_STORAGE_KEY) {
@@ -207,31 +203,6 @@ export default function HomePage() {
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const query = searchQuery;
-
-    Promise.resolve().then(() => {
-      if (!cancelled) setSearchLoading(true);
-    });
-
-    const timer = setTimeout(async () => {
-      try {
-        const stories = await searchStories(query);
-        if (!cancelled) setSearchResults(mapStoriesToBooks(stories));
-      } catch {
-        if (!cancelled) setSearchResults([]);
-      } finally {
-        if (!cancelled) setSearchLoading(false);
-      }
-    }, 300);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [searchQuery]);
 
   function handleNavChange(nav) {
     setActiveNav(nav);

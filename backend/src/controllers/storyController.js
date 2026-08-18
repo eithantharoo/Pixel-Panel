@@ -137,6 +137,25 @@ const updateStory = asyncHandler(async (req, res) => {
 // @desc    Delete a story
 // @route   DELETE /api/stories/:id
 // @access  Private/Admin
+// @desc    Record a view of a story (drives the trending ranking) — fired
+//          when a reader opens a story's details, not on every list fetch
+// @route   POST /api/stories/:id/view
+// @access  Public
+const recordStoryView = asyncHandler(async (req, res) => {
+  const story = await Story.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { views: 1 } },
+    { new: true }
+  ).select('views');
+
+  if (!story) {
+    res.status(404);
+    throw new Error('Story not found');
+  }
+
+  res.status(200).json({ views: story.views });
+});
+
 const deleteStory = asyncHandler(async (req, res) => {
   const story = await Story.findById(req.params.id);
 
@@ -157,6 +176,7 @@ module.exports = {
   getNewReleases,
   getPopularStories,
   searchStories,
+  recordStoryView,
   createStory,
   updateStory,
   deleteStory,
