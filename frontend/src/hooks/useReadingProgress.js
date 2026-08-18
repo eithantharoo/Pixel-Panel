@@ -50,7 +50,11 @@ export function useReadingProgress() {
 
   const clearHistory = useCallback(async () => {
     const token = loadAuth()?.token;
-    await clearReadingHistory(token);
+    try {
+      await clearReadingHistory(token);
+    } catch {
+      // Fall through and clear local state anyway so the UI doesn't get stuck.
+    }
     setHistory([]);
     setContinueReading([]);
   }, []);
