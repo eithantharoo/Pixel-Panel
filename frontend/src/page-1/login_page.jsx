@@ -70,7 +70,7 @@ export default function LoginPage() {
       const user = await loginUser({ email: form.email.trim(), password: form.password });
       saveAuth({ user, token: user.token });
       seedProfileName(user.name);
-      navigate(user.interests?.length > 0 ? '/home' : '/get-started');
+      navigate('/home');
     } catch (error) {
       setErrors((prev) => ({ ...prev, form: error.message }));
     } finally {
