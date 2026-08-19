@@ -105,19 +105,19 @@ function MangaButton({ manga, navigate, variant }) {
   );
 }
 
-function HomeMainContent({ navigate, forYou, newReleases, popular, loading }) {
+function HomeMainContent({ navigate, forYou, newReleases, popular, loading, searchQuery }) {
   const { t } = useTranslation();
   const [expandedSections, setExpandedSections] = useState({});
 
   if (loading) return <LoadingResults />;
 
   const sections = [
-    { key: 'For you', title: t('For you'), items: forYou, variant: 'overlay' },
-    { key: 'Newly released', title: t('Newly released'), items: newReleases, variant: 'new' },
-    { key: 'Popular', title: t('Popular'), items: popular, variant: 'popular' },
+    { key: 'For you', title: t('For you'), items: filterItems(forYou, searchQuery), variant: 'overlay' },
+    { key: 'Newly released', title: t('Newly released'), items: filterItems(newReleases, searchQuery), variant: 'new' },
+    { key: 'Popular', title: t('Popular'), items: filterItems(popular, searchQuery), variant: 'popular' },
   ].filter((section) => section.items.length > 0);
 
-  if (sections.length === 0) return <EmptyResults query="" />;
+  if (sections.length === 0) return <EmptyResults query={searchQuery} />;
 
   return sections.map((section) => (
     <SectionRow
@@ -420,7 +420,7 @@ export default function HomePage() {
 
     if (activeNav === 'library') return <LibraryContent navigate={navigate} searchQuery={searchQuery} libraryItems={libraryItems} />;
     if (activeGenre) return <GenreView genreId={activeGenre} query={searchQuery} />;
-    return <HomeMainContent navigate={navigate} forYou={forYou} newReleases={newReleases} popular={popular} loading={catalogLoading} />;
+    return <HomeMainContent navigate={navigate} forYou={forYou} newReleases={newReleases} popular={popular} loading={catalogLoading} searchQuery={searchQuery} />;
   }
 
   return (
